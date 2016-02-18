@@ -11,17 +11,21 @@
 #======================================================#
 # BUILD_LIST
 #======================================================#
-_build_=host
+_build_=avr
 #======================================================#
 # BUILD CONFIG
 #======================================================#
 #Flavor
 host_FLAVOR=host
-target_FLAVOR=mega_328P
+avr_FLAVOR=mega_328P
+
+#MCU
+$(avr_FLAVOR)_MCU=atmega328p
 
 #MACRO
 host_MACROS+=\
--DHOST=1
+-DHOST=1     \
+-DPROGMEM=   \
 
 mega_328P_MACROS+=\
 -DF_CPU=8000000L \
@@ -36,8 +40,15 @@ $(_build_)_MAK_DIR:=pk_project
 # PROJECT INCLUDES SEARCH PATHS
 #======================================================#
 $(_build_)_PROJECT_INC_DIR+=\
-$(realpath setup)                    \
-$(realpath setup/$(_build_) )        \
+$(realpath setup )             \
+
+ifeq "$(_build_)" "avr"
+
+$(_build_)_PROJECT_INC_DIR+=\
+$(HOME)/gnu/avr8-gnu-toolchain/avr/include     \
+$(HOME)/gnu/avr8-gnu-toolchain/avr/avr/include \
+
+endif
 
 $(_build_)_PROJECT_DIR=$(realpath . )
 #=======================================================================================#

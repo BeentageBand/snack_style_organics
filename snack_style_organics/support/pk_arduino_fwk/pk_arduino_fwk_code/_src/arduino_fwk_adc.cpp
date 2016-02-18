@@ -40,7 +40,7 @@
 /*=====================================================================================* 
  * Local Function Prototypes
  *=====================================================================================*/
-const uint8_t PWM_Channel_To_Pin [] =
+const uint8_t ADC_Channel_To_Pin [] =
 {
    9,/*ARDUINO_ADC_CHANNEL_0*/
    5,/*ARDUINO_ADC_CHANNEL_1*/
@@ -57,26 +57,28 @@ const uint8_t PWM_Channel_To_Pin [] =
 /*=====================================================================================* 
  * Exported Function Definitions
  *=====================================================================================*/
-void arduino::Init_PWM(const ARDUINO_PWM_CHANNEL_T channel)
+void arduino::Init_ADC(const ARDUINO_ADC_CHANNEL_T channel)
 {
    if(channel < ARDUINO_ADC_MAX_CHANNELS)
    {
-       pinMode(PWM_Channel_To_Pin[channel], OUTPUT);
+       pinMode(ADC_Channel_To_Pin[channel], INPUT);
    }
 }
-void arduino::Set_PWM(const ARDUINO_PWM_CHANNEL_T channel, const uint8_t output)
+uint16_t arduino::Get_ADC(const ARDUINO_ADC_CHANNEL_T channel)
 {
+   uint16_t read = 0xFFFFU;
    if(channel < ARDUINO_ADC_MAX_CHANNELS)
    {
-      analogWrite(PWM_Channel_To_Pin[channel], output);
+      read = analogRead(ADC_Channel_To_Pin[channel]);
    }
+   return read;
 }
 
-void arduino::Stop_PWM(const ARDUINO_PWM_CHANNEL_T channel)
+void arduino::Stop_ADC(const ARDUINO_ADC_CHANNEL_T channel)
 {
    if(channel < ARDUINO_ADC_MAX_CHANNELS)
    {
-      analogWrite(PWM_Channel_To_Pin[channel], 0);
+      analogWrite(ADC_Channel_To_Pin[channel], INPUT);
    }
 }
 /*=====================================================================================* 

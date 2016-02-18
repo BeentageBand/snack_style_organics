@@ -13,10 +13,11 @@
  * Project Includes
  *=====================================================================================*/
 #include "arduino_fwk_uart.h"
+#include "arduino_fwk_uset.h"
 /*=====================================================================================* 
  * Standard Includes
  *=====================================================================================*/
-
+#include "Arduino.h"
 /*=====================================================================================* 
  * Local X-Macros
  *=====================================================================================*/
@@ -32,7 +33,10 @@
 /*=====================================================================================* 
  * Local Object Definitions
  *=====================================================================================*/
-
+static HardwareSerial UART_Channels_To_Ports[] =
+{
+      HardwareSerial(0,0,0,0,0,0),
+};
 /*=====================================================================================* 
  * Exported Object Definitions
  *=====================================================================================*/
@@ -52,7 +56,56 @@
 /*=====================================================================================* 
  * Exported Function Definitions
  *=====================================================================================*/
+void arduino::Init_UART(Arduino_UART_T const & uart)
+{
+   if(uart.channel < ARDUINO_UART_MAX_CHANNELS)
+   {
+      UART_Channels_To_Ports[uart.channel].begin(uart.baudrate);
+   }
+}
+void arduino::Put_UART(Arduino_UART_T const & uart, const uint8_t c)
+{
+   if(uart.channel < ARDUINO_UART_MAX_CHANNELS)
+   {
+      UART_Channels_To_Ports[uart.channel].write(c);
+   }
+}
+uint8_t arduino::Get_UART(Arduino_UART_T const & uart)
+{
+   uint8_t read = 0xFFU;
 
+   if(uart.channel < ARDUINO_UART_MAX_CHANNELS &&
+     (UART_Channels_To_Ports[uart.channel].available() > 0))
+   {
+      read = UART_Channels_To_Ports[uart.channel].read();
+   }
+   return read;
+}
+uint16_t arduino::Get_Available_UART(Arduino_UART_T const & uart)
+{
+   uint16_t available = 0;
+
+   if(uart.channel < ARDUINO_UART_MAX_CHANNELS)
+   {
+      available = UART_Channels_To_Ports[uart.channel].available();
+   }
+   return available;
+}
+void arduino::Flush_UART(Arduino_UART_T const & uart)
+{
+   if(uart.channel < ARDUINO_UART_MAX_CHANNELS)
+   {
+      UART_Channels_To_Ports[uart.channel].flush();
+   }
+}
+
+void arduino::Stop_UART(Arduino_UART_T const & uart)
+{
+   if(uart.channel < ARDUINO_UART_MAX_CHANNELS)
+   {
+      UART_Channels_To_Ports[uart.channel].end();
+   }
+}
 /*=====================================================================================* 
  * api.cpp
  *=====================================================================================*

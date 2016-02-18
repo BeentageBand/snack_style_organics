@@ -56,6 +56,7 @@ void arduino::Init_Clk(void)
 {
 
 }
+
 uint32_t arduino::Get_Clk( void)
 {
    return millis();

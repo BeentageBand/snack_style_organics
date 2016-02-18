@@ -92,7 +92,7 @@ define $(_build_)_$(_curr_)_LIB_NAME_MAKE
 
 ifneq "$($(_build_)_$(_curr_)_lib_name)" ""
 $($(_build_)_LIB_DIR)/$(_lprefix_)$($(_build_)_$(_curr_)_lib_name)$(_lib_ext_) : $($(_build_)_LIB_DIR) $($(_build_)_$(_curr_)_lib_objs) $($(_build_)_$(_curr_)_lib_libs)
-	ar -qvc $$@ $($(_build_)_$(_curr_)_lib_objs) $($(_build_)_$(_curr_)_lib_libs)
+	$(_ar_) -qvc $$@ $($(_build_)_$(_curr_)_lib_objs) $($(_build_)_$(_curr_)_lib_libs)
 endif 
 endef
 
