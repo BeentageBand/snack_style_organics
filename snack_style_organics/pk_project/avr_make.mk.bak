@@ -17,16 +17,9 @@ _gc_flags_=\
 -g2                                                                   \
 -Wall                                                                 \
 -mmcu=$($($(_build_)_FLAVOR)_MCU)                                     \
--Os                                                                   \
--ffunction-sections                                                   \
--DF_CPU=8000000L                                                      \
--DARDUINO=10605                                                       \
--DARDUINO_AVR_PRO                                                     \
--DARDUINO_ARCH_AVR                                                    \
-
 #\
-
-_lbs_=-lm
+-O1                                                                   \
+-ffunction-sections                                                   \
 
 include $($(_build_)_PROJECT_DIR)/$($(_build_)_MAK_DIR)/make.mk
 #=======================================================================================#

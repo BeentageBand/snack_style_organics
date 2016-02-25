@@ -16,7 +16,8 @@ define $(_build_)_$(_curr_)_MAKE
 #     or
 #     $(_build_)_$(_curr_)_src_dir=_src
 #=======================================================================================#
-$(_build_)_$(_curr_)_src_dir=_src
+$(_build_)_$(_curr_)_src_dir=pk_arduino_fwk_code/_src
+$(_build_)_$(_curr_)_lib_dir=pk_arduino_fwk_code/_lib
 
 #=======================================================================================#
 # LIB REQUISITES
@@ -26,7 +27,24 @@ $(_build_)_$(_curr_)_src_dir=_src
  # Object Requisites
  # e.g: $(_build_)_$(_curr_)_lib_objs=$($(_build_)_OBJ_DIR)/my_lib_obj$(_obj_ext_) \
  ##
-$(_build_)_$(_curr_)_lib_objs=
+ifeq "host" "$(_build_)"
+$(_build_)_$(_curr_)_lib_objs=\
+   $($(_build_)_OBJ_DIR)/arduino_fwk_stubs$(_obj_ext_) \
+   
+endif
+
+ifeq "avr" "$(_build_)"
+$(_build_)_$(_curr_)_lib_objs=\
+   $($(_build_)_OBJ_DIR)/arduino_fwk_dio$(_obj_ext_)  \
+   $($(_build_)_OBJ_DIR)/arduino_fwk_adc$(_obj_ext_)  \
+   $($(_build_)_OBJ_DIR)/arduino_fwk_isr$(_obj_ext_)  \
+   $($(_build_)_OBJ_DIR)/arduino_fwk_uart$(_obj_ext_) \
+   $($(_build_)_OBJ_DIR)/arduino_fwk_lcd$(_obj_ext_)  \
+   $($(_build_)_OBJ_DIR)/arduino_fwk_sd$(_obj_ext_)   \
+   $($(_build_)_OBJ_DIR)/arduino_fwk_spi$(_obj_ext_)  \
+   
+endif
+
 
 ##
  # Library Requisites
@@ -38,7 +56,7 @@ $(_build_)_$(_curr_)_lib_libs=
  # Target Library
  # e.g: $(_build_)_$(_curr_)_lib_name=my_lib_name
  ##
-$(_build_)_$(_curr_)_lib_name=
+$(_build_)_$(_curr_)_lib_name=arduino_fwk
 
 #=======================================================================================#
 # BIN REQUISITES
@@ -48,54 +66,19 @@ $(_build_)_$(_curr_)_lib_name=
  # Object Requisites
  # e.g: $(_build_)_$(_curr_)_bin_objs=$($(_build_)_OBJ_DIR)/my_bin_obj$(_obj_ext_) \
  ##
-$(_build_)_$(_curr_)_bin_objs=\
-   $($(_build_)_OBJ_DIR)/main$(_obj_ext_)                 \
-   # \
+$(_build_)_$(_curr_)_bin_objs=
 
 ##
  # Library Requisites
  # e.g: $(_build_)_$(_curr_)_bin_libs=$($(_build_)_LIB_DIR)/$(_lprefix_)my_bin_lib$(_lib_ext_) \
  ##
- ifeq "$(_build_)" "avr"
- $(_build_)_$(_curr_)_bin_libs=\
-   $($(_build_)_LIB_DIR)/$(_lprefix_)hamatora_sched$(_lib_ext_)         \
-   $($(_build_)_LIB_DIR)/$(_lprefix_)snack_org_lcd$(_lib_ext_)          \
-   $($(_build_)_LIB_DIR)/$(_lprefix_)temp_monitor$(_lib_ext_)           \
-   $($(_build_)_LIB_DIR)/$(_lprefix_)axial_fan_ctl$(_lib_ext_)          \
-   $($(_build_)_LIB_DIR)/$(_lprefix_)heater_ctl$(_lib_ext_)             \
-   $($(_build_)_LIB_DIR)/$(_lprefix_)daylight_monitor$(_lib_ext_)       \
-   $($(_build_)_LIB_DIR)/$(_lprefix_)data_logger$(_lib_ext_)            \
-   $($(_build_)_LIB_DIR)/$(_lprefix_)snacky_dehyd_ctl$(_lib_ext_)       \
-   $($(_build_)_LIB_DIR)/$(_lprefix_)pid_ctl$(_lib_ext_)                \
-   $($(_build_)_LIB_DIR)/$(_lprefix_)snack_org_friends$(_lib_ext_)      \
-   $($(_build_)_LIB_DIR)/$(_lprefix_)arduino_fwk$(_lib_ext_)            \
-   $($(_build_)_LIB_DIR)/$(_lprefix_)arduino_core$(_lib_ext_)           \
-#\
-   $($(_build_)_LIB_DIR)/$(_lprefix_)power_mode$(_lib_ext_)             \
- 
- else
- $(_build_)_$(_curr_)_bin_libs=\
-   $($(_build_)_LIB_DIR)/$(_lprefix_)hamatora_sched$(_lib_ext_)         \
-   $($(_build_)_LIB_DIR)/$(_lprefix_)snack_org_lcd$(_lib_ext_)          \
-   $($(_build_)_LIB_DIR)/$(_lprefix_)temp_monitor$(_lib_ext_)           \
-   $($(_build_)_LIB_DIR)/$(_lprefix_)axial_fan_ctl$(_lib_ext_)          \
-   $($(_build_)_LIB_DIR)/$(_lprefix_)heater_ctl$(_lib_ext_)             \
-   $($(_build_)_LIB_DIR)/$(_lprefix_)daylight_monitor$(_lib_ext_)       \
-   $($(_build_)_LIB_DIR)/$(_lprefix_)data_logger$(_lib_ext_)            \
-   $($(_build_)_LIB_DIR)/$(_lprefix_)snacky_dehyd_ctl$(_lib_ext_)       \
-   $($(_build_)_LIB_DIR)/$(_lprefix_)pid_ctl$(_lib_ext_)                \
-   $($(_build_)_LIB_DIR)/$(_lprefix_)snack_org_friends$(_lib_ext_)      \
-   $($(_build_)_LIB_DIR)/$(_lprefix_)arduino_fwk$(_lib_ext_)            \
-#\
-   $($(_build_)_LIB_DIR)/$(_lprefix_)power_mode$(_lib_ext_)             \
-    
- endif
+$(_build_)_$(_curr_)_bin_libs=
 
 ##
  # Target Binary
  # e.g: $(_build_)_$(_curr_)_bin_name=my_bin_name
  ##
-$(_build_)_$(_curr_)_bin_name=snack_style_org_launcher
+$(_build_)_$(_curr_)_bin_name=
 #=======================================================================================#
 # END PACKAGE RULE
 #=======================================================================================#
@@ -103,7 +86,23 @@ endef
 #=======================================================================================#
 # LOCAL VARIABLES
 #=======================================================================================#
+ifeq "$(_build_)" "avr"
 
+ifeq "$(OS)" "Windows_NT"
+$(_build_)_PROJECT_INC_DIR+=\
+"C:/Dropbox/Arduino/DIR/hardware/arduino/avr/cores/arduino"     \
+"C:/Dropbox/Arduino/DIR/libraries"                              \
+"C:/Dropbox/Arduino/DIR/hardware/arduino/avr/libraries"         \
+"C:/Dropbox/Arduino/DIR/hardware/arduino/avr/variants/standard" \
+
+else
+$(_build_)_PROJECT_INC_DIR+=\
+$(HOME)/Dropbox/Arduino/DIR/hardware/arduino/avr/cores/arduino     \
+$(HOME)/Dropbox/Arduino/DIR/libraries                              \
+$(HOME)/Dropbox/Arduino/DIR/hardware/arduino/avr/libraries         \
+$(HOME)/Dropbox/Arduino/DIR/hardware/arduino/avr/variants/standard \
+
+endif
 #=======================================================================================#
 # LOCAL DEFINES 
 #=======================================================================================#
@@ -115,10 +114,13 @@ endef
 #=======================================================================================#
 # LOCAL RULES EXPANSIONS
 #=======================================================================================#
-
+$($(_build_)_LIB_DIR)/$(_lprefix_)arduino_core$(_lib_ext_) : $($(_build_)_LIB_DIR) $($(_build_)_$(_curr_)_lib_dir)/$(_lprefix_)arduino_core$(_lib_ext_)
+	-cp -sf  $($(_build_)_$(_curr_)_lib_dir)/$(_lprefix_)arduino_core$(_lib_ext_) $@
 #=======================================================================================#
 # INCLUDE PK PROJECT UTILITY
 #=======================================================================================#
+endif
+
 include $($(_build_)_PROJECT_DIR)/$($(_build_)_MAK_DIR)/epilog.mk
 #=======================================================================================#
 # api_makefile.mk
@@ -127,4 +129,3 @@ include $($(_build_)_PROJECT_DIR)/$($(_build_)_MAK_DIR)/epilog.mk
 #
 #
 #=======================================================================================#
-

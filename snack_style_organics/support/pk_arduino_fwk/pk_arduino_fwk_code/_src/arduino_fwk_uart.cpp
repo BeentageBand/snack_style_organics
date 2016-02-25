@@ -33,9 +33,9 @@
 /*=====================================================================================* 
  * Local Object Definitions
  *=====================================================================================*/
-static HardwareSerial UART_Channels_To_Ports[] =
+static HardwareSerial* UART_Channels_To_Ports[] =
 {
-      HardwareSerial(0,0,0,0,0,0),
+      &Serial,
 };
 /*=====================================================================================* 
  * Exported Object Definitions
@@ -60,14 +60,14 @@ void arduino::Init_UART(Arduino_UART_T const & uart)
 {
    if(uart.channel < ARDUINO_UART_MAX_CHANNELS)
    {
-      UART_Channels_To_Ports[uart.channel].begin(uart.baudrate);
+      UART_Channels_To_Ports[uart.channel]->begin(uart.baud);
    }
 }
 void arduino::Put_UART(Arduino_UART_T const & uart, const uint8_t c)
 {
    if(uart.channel < ARDUINO_UART_MAX_CHANNELS)
    {
-      UART_Channels_To_Ports[uart.channel].write(c);
+      UART_Channels_To_Ports[uart.channel]->write(c);
    }
 }
 uint8_t arduino::Get_UART(Arduino_UART_T const & uart)
@@ -75,9 +75,9 @@ uint8_t arduino::Get_UART(Arduino_UART_T const & uart)
    uint8_t read = 0xFFU;
 
    if(uart.channel < ARDUINO_UART_MAX_CHANNELS &&
-     (UART_Channels_To_Ports[uart.channel].available() > 0))
+     (UART_Channels_To_Ports[uart.channel]->available() > 0))
    {
-      read = UART_Channels_To_Ports[uart.channel].read();
+      read = UART_Channels_To_Ports[uart.channel]->read();
    }
    return read;
 }
@@ -87,7 +87,7 @@ uint16_t arduino::Get_Available_UART(Arduino_UART_T const & uart)
 
    if(uart.channel < ARDUINO_UART_MAX_CHANNELS)
    {
-      available = UART_Channels_To_Ports[uart.channel].available();
+      available = UART_Channels_To_Ports[uart.channel]->available();
    }
    return available;
 }
@@ -95,7 +95,7 @@ void arduino::Flush_UART(Arduino_UART_T const & uart)
 {
    if(uart.channel < ARDUINO_UART_MAX_CHANNELS)
    {
-      UART_Channels_To_Ports[uart.channel].flush();
+      UART_Channels_To_Ports[uart.channel]->flush();
    }
 }
 
@@ -103,7 +103,7 @@ void arduino::Stop_UART(Arduino_UART_T const & uart)
 {
    if(uart.channel < ARDUINO_UART_MAX_CHANNELS)
    {
-      UART_Channels_To_Ports[uart.channel].end();
+      UART_Channels_To_Ports[uart.channel]->end();
    }
 }
 /*=====================================================================================* 

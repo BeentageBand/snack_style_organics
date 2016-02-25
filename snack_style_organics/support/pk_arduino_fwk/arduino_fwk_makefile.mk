@@ -35,13 +35,15 @@ endif
 
 ifeq "avr" "$(_build_)"
 $(_build_)_$(_curr_)_lib_objs=\
-   $($(_build_)_OBJ_DIR)/arduino_fwk_dio$(_obj_ext_)  \
    $($(_build_)_OBJ_DIR)/arduino_fwk_adc$(_obj_ext_)  \
+   $($(_build_)_OBJ_DIR)/arduino_fwk_clk$(_obj_ext_)  \
+   $($(_build_)_OBJ_DIR)/arduino_fwk_dio$(_obj_ext_)  \
    $($(_build_)_OBJ_DIR)/arduino_fwk_isr$(_obj_ext_)  \
-   $($(_build_)_OBJ_DIR)/arduino_fwk_uart$(_obj_ext_) \
    $($(_build_)_OBJ_DIR)/arduino_fwk_lcd$(_obj_ext_)  \
+   $($(_build_)_OBJ_DIR)/arduino_fwk_pwm$(_obj_ext_)  \
    $($(_build_)_OBJ_DIR)/arduino_fwk_sd$(_obj_ext_)   \
    $($(_build_)_OBJ_DIR)/arduino_fwk_spi$(_obj_ext_)  \
+   $($(_build_)_OBJ_DIR)/arduino_fwk_uart$(_obj_ext_) \
    
 endif
 
@@ -86,33 +88,34 @@ endef
 #=======================================================================================#
 # LOCAL VARIABLES
 #=======================================================================================#
-ifeq "$(_build_)" "avr"
 
-$(_build_)_PROJECT_INC_DIR+=\
-$(HOME)/Dropbox/Arduino/DIR/hardware/arduino/avr/cores/arduino     \
-$(HOME)/Dropbox/Arduino/DIR/libraries                              \
-$(HOME)/Dropbox/Arduino/DIR/hardware/arduino/avr/libraries         \
-$(HOME)/Dropbox/Arduino/DIR/hardware/arduino/avr/variants/standard \
 #=======================================================================================#
 # LOCAL DEFINES 
 #=======================================================================================#
+define Arduino_LIB_MAKE 
 
+ifeq "$(_build_)" "avr"
+
+$($(_build_)_LIB_DIR)/$(_lprefix_)arduino_core$(_lib_ext_) : $($(_build_)_LIB_DIR) $(_path_)$($(_build_)_$(_curr_)_lib_dir)/$(_lprefix_)arduino_core$(_lib_ext_)
+	-cp -pf  $(_path_)$($(_build_)_$(_curr_)_lib_dir)/$(_lprefix_)arduino_core$(_lib_ext_) $$@
+
+endif
+
+endef
 #=======================================================================================#
 # LOCAL DEFINE EXPANSIONS
 #=======================================================================================#
-$(_build_)_$(_curr_)_lib_libs=\
-$($(_build_)_LIB_DIR)/$(_lprefix_)arduino_core$(_lib_ext_) \
-#=======================================================================================#
-# LOCAL RULES EXPANSIONS
-#=======================================================================================#
-$($(_build_)_LIB_DIR)/$(_lprefix_)arduino_core$(_lib_ext_) : $($(_build_)_LIB_DIR) $($(_build_)_$(_curr_)_lib_dir)/$(_lprefix_)arduino_core$(_lib_ext_)
-	-cp -sf  $($(_build_)_$(_curr_)_lib_dir)/$(_lprefix_)arduino_core$(_lib_ext_) $@
+
 #=======================================================================================#
 # INCLUDE PK PROJECT UTILITY
 #=======================================================================================#
-endif
-
 include $($(_build_)_PROJECT_DIR)/$($(_build_)_MAK_DIR)/epilog.mk
+#=======================================================================================#
+# LOCAL RULES EXPANSIONS
+#=======================================================================================#
+$(eval \
+   $(call INFO_VERBOSE_template, $(Arduino_LIB_MAKE) )\
+)
 #=======================================================================================#
 # api_makefile.mk
 #=======================================================================================#

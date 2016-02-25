@@ -9,7 +9,7 @@
  # BUILD OUTPUT DIR
  ##===========================================================================#
 ifneq "$($(_build_)_PROJECT_DIR)" ""
-export $(_build_)_PROJECT_DIR=.
+export $(_build_)_PROJECT_DIR=$(realpath . )
 endif
 
 export $(_build_)_OUT_DIR=$($(_build_)_PROJECT_DIR)/out
@@ -18,19 +18,16 @@ export $(_build_)_OBJ_DIR=$($(_build_)_OUT_DIR)/$(_build_)/obj
 export $(_build_)_LIB_DIR=$($(_build_)_OUT_DIR)/$(_build_)/lib
 export $(_build_)_BIN_DIR=$($(_build_)_OUT_DIR)/$(_build_)/bin
 
-VERBOSE_MAKE=0
-
 $(_build_)_PROJECT_INC_DIR+=$($(_build_)_INC_DIR)
-$(_build_)_PROJECT_LIB_DIR+=$($(_build_)_LIB_DIR)
 ##============================================================================#
  # DEFINE RULES
  ##===========================================================================#
 define INFO_VERBOSE_template
 $1
 
-#ifeq "$(MAKE_VERB)" "1"
-#   $(info $1 )
-#endif
+ifeq "$(MAKE_VERB)" "1"
+   $(info $1 )
+endif
 
 endef
 ##============================================================================#
@@ -174,7 +171,7 @@ $(foreach _pk_, $($(_build_)_PACKAGE_NAME), \
 define PACKAGE_INC_BUILD
 
 $($(_build_)_INC_DIR)/$(notdir $(_inc_) ) : $($(_build_)_INC_DIR) $(_inc_)
-	-cp -pf $(_inc_) $($(_build_)_INC_DIR)
+	-cp -sf $(_inc_) $($(_build_)_INC_DIR)
 
 endef
 

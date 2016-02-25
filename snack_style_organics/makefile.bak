@@ -40,11 +40,13 @@ $(_build_)_MAK_DIR:=pk_project
 # PROJECT INCLUDES SEARCH PATHS
 #======================================================#
 $(_build_)_PROJECT_INC_DIR+=\
-setup             \
+$(realpath setup )             \
 
 ifeq "$(_build_)" "avr"
+
 $(_build_)_PROJECT_INC_DIR+=\
-"C:/avr-gcc-4.9.2/avr-gcc/avr/include" \
+$(HOME)/gnu/avr8-gnu-toolchain/avr/include     \
+$(HOME)/gnu/avr8-gnu-toolchain/avr/avr/include \
 
 endif
 
@@ -52,35 +54,11 @@ $(_build_)_PROJECT_DIR=$(realpath . )
 #=======================================================================================#
 # PROJECT DEFINES 
 #=======================================================================================#
-define Arduino_INCS
 
-ifeq "$(_build_)" "avr"
-
-#ifeq "$(OS)" "Windows_NT"
-$(_build_)_PROJECT_INC_DIR+=\
-"C:/Dropbox/Arduino/DIR/hardware/arduino/avr/cores/arduino"     \
-"C:/Dropbox/Arduino/DIR/libraries"                              \
-"C:/Dropbox/Arduino/DIR/hardware/arduino/avr/libraries"         \
-"C:/Dropbox/Arduino/DIR/hardware/arduino/avr/variants/standard" \
-
-$(_build_)_PROJECT_LIB_DIR+=\
-"C:/avr-gcc-4.9.2/avr-gcc/avr/lib"                              \
-#else
-#$(_build_)_PROJECT_INC_DIR+=\
-$(HOME)/Dropbox/Arduino/DIR/hardware/arduino/avr/cores/arduino     \
-$(HOME)/Dropbox/Arduino/DIR/libraries                              \
-$(HOME)/Dropbox/Arduino/DIR/hardware/arduino/avr/libraries         \
-$(HOME)/Dropbox/Arduino/DIR/hardware/arduino/avr/variants/standard \
-
-#endif
-
-endif
-
-endef
 #=======================================================================================#
 # PROJECT DEFINE EXPANSIONS
 #=======================================================================================#
-$(eval $(Arduino_INCS) )
+
 #=======================================================================================#
 # PROJECT RULES EXPANSIONS
 #=======================================================================================#

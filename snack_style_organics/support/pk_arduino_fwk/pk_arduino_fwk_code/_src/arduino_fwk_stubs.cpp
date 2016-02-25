@@ -82,12 +82,12 @@ void arduino::Init_LCD(void){}
 void arduino::Set_LCD(Arduino_LCD_T const & lcd){}
 void arduino::Stop_LCD(void){}
 
-void arduino::Init_UART(void){}
+void arduino::Init_UART(Arduino_UART_T const & uart){}
 void arduino::Put_UART(Arduino_UART_T const & uart, const uint8_t c){}
 uint8_t arduino::Get_UART(Arduino_UART_T const & uart){return 0;}
 uint16_t arduino::Get_Available_UART(Arduino_UART_T const & uart){return 0;}
 void arduino::Flush_UART(Arduino_UART_T const & uart){}
-void arduino::Stop_UART(void){}
+void arduino::Stop_UART(Arduino_UART_T const & uart){}
 
 void arduino::Init_Clk(void){}
 uint32_t arduino::Get_Clk(void){return 0;}

@@ -73,7 +73,9 @@ define $(_build_)_$(_curr_)_BIN_NAME_MAKE
 ifneq "$($(_build_)_$(_curr_)_bin_name)" ""
 $($(_build_)_BIN_DIR)/$($(_build_)_$(_curr_)_bin_name) : $($(_build_)_BIN_DIR) $($(_build_)_$(_curr_)_bin_objs) $($(_build_)_$(_curr_)_bin_libs)
 	$(_gc_) $(_gc_flags_) $(_gc_macros_) $(addprefix -I, $($(_build_)_PROJECT_INC_DIR) ) \
-      -o $$@ $($(_build_)_$(_curr_)_bin_objs) -L$($(_build_)_LIB_DIR) $(patsubst $($(_build_)_LIB_DIR)/$(_lprefix_)%$(_lib_ext_),-l%,$($(_build_)_$(_curr_)_bin_libs) )
+      -o $$@ $($(_build_)_$(_curr_)_bin_objs) $(addprefix -L, $($(_build_)_PROJECT_LIB_DIR) ) \
+      $(patsubst $($(_build_)_LIB_DIR)/$(_lprefix_)%$(_lib_ext_),-l%,$($(_build_)_$(_curr_)_bin_libs) ) \
+      $(_lbs_)
 endif
 endef
 
@@ -92,7 +94,7 @@ define $(_build_)_$(_curr_)_LIB_NAME_MAKE
 
 ifneq "$($(_build_)_$(_curr_)_lib_name)" ""
 $($(_build_)_LIB_DIR)/$(_lprefix_)$($(_build_)_$(_curr_)_lib_name)$(_lib_ext_) : $($(_build_)_LIB_DIR) $($(_build_)_$(_curr_)_lib_objs) $($(_build_)_$(_curr_)_lib_libs)
-	$(_ar_) -qvc $$@ $($(_build_)_$(_curr_)_lib_objs) $($(_build_)_$(_curr_)_lib_libs)
+	$(_ar_) -rcs $$@ $($(_build_)_$(_curr_)_lib_objs) $($(_build_)_$(_curr_)_lib_libs)
 endif 
 endef
 
