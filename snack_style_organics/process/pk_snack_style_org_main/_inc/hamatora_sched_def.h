@@ -19,8 +19,9 @@
 #include "data_logger.h"
 #include "heater_ctl.h"
 #include "hamatora_sched_types.h"
-#include "snack_org_lcd.h"
 #include "snacky_dehyd_ctl.h"
+#include "snack_org_lcd.h"
+#include "snack_power_mode.h"
 /*=====================================================================================* 
  * Standard Includes
  *=====================================================================================*/
@@ -33,11 +34,12 @@
    HAMA_SCHED_APP(SNACK_ORG_CTL_ID,      snack_dehyd::Init, snack_dehyd::Main,  snack_dehyd::Shut   ) \
    HAMA_SCHED_APP(DATA_LOGGER_ID,        logger::Init,      logger::Main,       logger::Shut        ) \
    HAMA_SCHED_APP(SNACK_ORG_LCD_ID,      snack_lcd::Init,   snack_lcd::Main,    snack_lcd::Shut     ) \
-   HAMA_SCHED_APP(DAYLIGHT_MONITOR_ID,   day_mon::Init,     NULL,               day_mon::Shut       ) \
-   HAMA_SCHED_APP(TEMP_MONITOR_ID,       temp_mon::Init,    NULL,               temp_mon::Shut      ) \
-   HAMA_SCHED_APP(HEATER_CTL_ID,         heater::Init,      NULL,               heater::Shut        ) \
-   HAMA_SCHED_APP(AXIAL_FAN_CTL_ID,      fan::Init,         NULL,               fan::Shut           ) \
-   HAMA_SCHED_APP(HAMA_SCHED_ID,         NULL,              NULL,               hama::Shut          ) \
+   HAMA_SCHED_APP(SNACK_PMODE_ID,        pmode::Init,       pmode::Main,        pmode::Shut         ) \
+   HAMA_SCHED_APP(DAYLIGHT_MONITOR_ID,   day_mon::Init,     0,                  day_mon::Shut       ) \
+   HAMA_SCHED_APP(TEMP_MONITOR_ID,       temp_mon::Init,    0,                  temp_mon::Shut      ) \
+   HAMA_SCHED_APP(HEATER_CTL_ID,         heater::Init,      0,                  heater::Shut        ) \
+   HAMA_SCHED_APP(AXIAL_FAN_CTL_ID,      fan::Init,         0,                  fan::Shut           ) \
+   HAMA_SCHED_APP(HAMA_SCHED_ID,         0,                 0,                  hama::Shut          ) \
    /*
    */
 

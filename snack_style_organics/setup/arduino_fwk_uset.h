@@ -43,6 +43,11 @@
    ARDUINO_UART_CHANNEL_INDEX(ARDUINO_UART_CHANNEL_0) \
 
 #define ARDUINO_UART_BAUDRATE ((uint32_t) 19200UL)
+
+//DIO
+#define ARDUINO_DIO_CHANNELS_TABLE \
+   ARDUINO_DIO_CHANNEL_INDEX(ARDUINO_DIO_CHANNEL_0) \
+   ARDUINO_DIO_CHANNEL_INDEX(ARDUINO_DIO_CHANNEL_1) \
 /*=====================================================================================* 
  * Exported Define Macros
  *=====================================================================================*/

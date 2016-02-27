@@ -14,6 +14,7 @@
  *=====================================================================================*/
 #include "arduino_fwk_isr.h"
 #include "daylight_monitor.h"
+#include "snack_power_mode.h"
 #include "pid_ctl.h"
 #include "pid_ctl_set.h"
 #include "snacky_dehyd_ctl.h"
@@ -74,11 +75,14 @@ void snack_dehyd::Main(void)
 
       if(!Run_Thread)
       {
+         pmode::Set_State(PMODE_AC_OFF);
          pid::Stop(PID_CTL_CHANNEL_FAN_DOOR);
          pid::Stop(PID_CTL_CHANNEL_HEATER);
+
       }
       else
       {
+         pmode::Set_State(PMODE_ALL_ON);
          pid::Run(PID_CTL_CHANNEL_FAN_DOOR);
          pid::Run(PID_CTL_CHANNEL_HEATER);
       }

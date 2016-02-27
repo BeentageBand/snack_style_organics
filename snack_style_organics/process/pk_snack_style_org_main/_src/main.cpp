@@ -8,6 +8,7 @@
 #include "hamatora_sched_def.h"
 #include "hamatora_sched.h"
 #include "hamatora_sched_ext.h"
+#include <stdlib.h>
 
 #undef HAMA_SCHED_APP
 #define HAMA_SCHED_APP(app, init, run, stop) {app, init, run, stop},

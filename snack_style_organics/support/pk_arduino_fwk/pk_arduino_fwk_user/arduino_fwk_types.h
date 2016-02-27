@@ -1,6 +1,6 @@
 /*=====================================================================================*/
 /**
- * api_types.h
+ * arduino_fwk_types.h
  * author : puch
  * date : Oct 22 2015
  *
@@ -18,6 +18,7 @@
  * Standard Includes
  *=====================================================================================*/
 #include <stdint.h>
+
 /*=====================================================================================* 
  * Exported Define Macros
  *=====================================================================================*/
@@ -77,8 +78,16 @@ typedef struct
    uint8_t  channel;
    uint16_t baud;
 }Arduino_UART_T;
+
+#undef ARDUINO_DIO_CHANNEL_INDEX
+#define ARDUINO_DIO_CHANNEL_INDEX(ch) ch,
+typedef enum
+{
+   ARDUINO_DIO_CHANNELS_TABLE
+   ARDUINO_DIO_MAX_CHANNELS
+}ARDUINO_DIO_CHANNEL_T;
 /*=====================================================================================* 
- * api_types.h
+ * arduino_fwk_types.h
  *=====================================================================================*
  * Log History
  *

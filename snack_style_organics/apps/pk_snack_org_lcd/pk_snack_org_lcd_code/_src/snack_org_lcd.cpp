@@ -37,8 +37,8 @@
 /*=====================================================================================* 
  * Local Object Definitions
  *=====================================================================================*/
-const uint8_t LCD_0_Fmt[16] = {"Temp: __._F    "};
-const uint8_t LCD_1_Fmt[16] = {"Time: 00:00-Day"};
+const uint8_t LCD_0_Fmt[] PROGMEM = {"Temp: __.__    "};
+const uint8_t PROGMEM LCD_1_Fmt[]  = {"Time: 00:00-Day"};
 static uint8_t LCD_Data[16];
 
 static bool Daylight = false;

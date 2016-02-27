@@ -13,6 +13,9 @@
  * Project Includes
  *=====================================================================================*/
 #include "snack_power_mode.h"
+#include "snack_power_mode_types.h"
+#include "snack_power_mode_ext.h"
+#include "arduino_fwk_pwm.h"
 /*=====================================================================================* 
  * Standard Includes
  *=====================================================================================*/
@@ -28,11 +31,28 @@
 /*=====================================================================================* 
  * Local Type Definitions
  *=====================================================================================*/
-
+typedef struct
+{
+   void(*enter)(void);
+   void(*exit)(void);
+}Change_Of_State_T;
 /*=====================================================================================* 
  * Local Object Definitions
  *=====================================================================================*/
+#undef PMODE_STATE
+#define PMODE_STATE(st) \
+{\
+   pmode::Enter_##st, \
+   pmode::Exit_##st   \
+},\
 
+const Change_Of_State_T PMode_SM[] PROGMEM =
+{
+   POWER_MODE_STATES_TB
+};
+
+static PMode_State_T Current_State = 0;
+static PMode_State_T New_State = 0;
 /*=====================================================================================* 
  * Exported Object Definitions
  *=====================================================================================*/
@@ -40,9 +60,40 @@
 /*=====================================================================================* 
  * Local Function Prototypes
  *=====================================================================================*/
-void pmode::Init(void){}
-void pmode::Main(void){}
-void pmode::Shut(void){}
+#undef PMODE_SOURCE
+#define PMODE_SOURCE(src, osc) \
+   src##_init();
+
+void pmode::Init(void)
+{
+   POWER_MODE_SOURCES_TB
+}
+void pmode::Main(void)
+{
+   if(New_State != Current_State)
+   {
+      PMode_SM[Current_State].exit();
+      PMode_SM[New_State].enter();
+      Current_State = New_State;
+   }
+}
+
+void pmode::Set_State(PMode_State_T state)
+{
+   if(New_State < PMODE_MAX_STATES)
+   {
+      New_State = state;
+   }
+}
+
+PMode_State_T pmode::Get_State(void)
+{
+   return Current_State;
+}
+void pmode::Shut(void)
+{
+   pmode::Set_State(PMODE_ALL_OFF_STATE);
+}
 /*=====================================================================================* 
  * Local Inline-Function Like Macros
  *=====================================================================================*/

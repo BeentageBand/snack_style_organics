@@ -1,6 +1,6 @@
 /*=====================================================================================*/
 /**
- * arduino_fwk.h
+ * snack_power_mode.cpp
  * author : puch
  * date : Oct 22 2015
  *
@@ -12,43 +12,113 @@
 /*=====================================================================================*
  * Project Includes
  *=====================================================================================*/
-#ifndef TEMP_MONITOR_H_
-#define TEMP_MONITOR_H_
+#include "snack_power_mode_types.h"
+#include "snack_power_mode_ext.h"
+#include "arduino_fwk_pwm.h"
 /*=====================================================================================* 
  * Standard Includes
  *=====================================================================================*/
-#include <stdint.h>
+
 /*=====================================================================================* 
- * Exported X-Macros
+ * Local X-Macros
  *=====================================================================================*/
 
 /*=====================================================================================* 
- * Exported Define Macros
+ * Local Define Macros
  *=====================================================================================*/
 
 /*=====================================================================================* 
- * Exported Type Declarations
- *=====================================================================================*/
-namespace temp_mon{
-/*=====================================================================================* 
- * Exported Object Declarations
+ * Local Type Definitions
  *=====================================================================================*/
 
 /*=====================================================================================* 
- * Exported Function Prototypes
+ * Local Object Definitions
  *=====================================================================================*/
-extern void Init(void);
-extern uint16_t Get_Temperature(void);
-extern void Shut(void);
+
 /*=====================================================================================* 
- * Exported Function Like Macros
+ * Exported Object Definitions
  *=====================================================================================*/
-}/*namespace temp_mon*/
+
 /*=====================================================================================* 
- * arduino_fwk.h
+ * Local Function Prototypes
+ *=====================================================================================*/
+#undef PMODE_SOURCE
+#define PMODE_SOURCE(src, osc) \
+   static void src##_start(const uint8_t osc_val); \
+   static void src##_stop(void);
+POWER_MODE_SOURCES_TB
+
+/*=====================================================================================* 
+ * Local Inline-Function Like Macros
+ *=====================================================================================*/
+
+/*=====================================================================================* 
+ * Local Function Definitions
+ *=====================================================================================*/
+// Source defs
+void PMODE_SOURCE_AC_start(const uint8_t osc_val)
+{
+
+}
+
+void PMODE_SOURCE_AC_stop(void)
+{
+
+}
+void PMODE_SOURCE_NEG_DC_start(const uint8_t osc_val)
+{
+
+}
+
+void PMODE_SOURCE_NEG_DC_stop(void)
+{
+
+}
+/*=====================================================================================* 
+ * Exported Function Definitions
+ *=====================================================================================*/
+void pmode::PMODE_SOURCE_AC_init(void)
+{
+
+}
+
+void pmode::PMODE_SOURCE_NEG_DC_init(void)
+{
+
+}
+
+void pmode::Enter_PMODE_AC_OFF(void)
+{
+   PMODE_SOURCE_NEG_DC_start(0);
+}
+
+void pmode::Enter_PMODE_ALL_OFF_STATE(void)
+{
+   PMODE_SOURCE_NEG_DC_stop();
+}
+
+void pmode::Enter_PMODE_ALL_ON(void)
+{
+   PMODE_SOURCE_AC_start(0);
+}
+
+void pmode::Exit_PMODE_AC_OFF(void)
+{
+
+}
+
+void pmode::Exit_PMODE_ALL_OFF_STATE(void)
+{
+
+}
+
+void pmode::Exit_PMODE_ALL_ON(void)
+{
+   PMODE_SOURCE_AC_stop();
+}
+/*=====================================================================================* 
+ * snack_power_mode.cpp
  *=====================================================================================*
  * Log History
  *
  *=====================================================================================*/
-#endif /*TEMP_MONITOR_H_*/
-

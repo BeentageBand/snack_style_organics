@@ -1,5 +1,5 @@
 #=======================================================================================#
-# api_makefile.mk
+# arduino_fwk_dio_makefile.mk
 #=======================================================================================#
 #  Created on: Oct 3, 2015
 #      Author: puch
@@ -38,8 +38,10 @@ $(_build_)_$(_curr_)_lib_objs=\
    $($(_build_)_OBJ_DIR)/arduino_fwk_adc$(_obj_ext_)  \
    $($(_build_)_OBJ_DIR)/arduino_fwk_clk$(_obj_ext_)  \
    $($(_build_)_OBJ_DIR)/arduino_fwk_dio$(_obj_ext_)  \
+   $($(_build_)_OBJ_DIR)/arduino_fwk_iic$(_obj_ext_)  \
    $($(_build_)_OBJ_DIR)/arduino_fwk_isr$(_obj_ext_)  \
    $($(_build_)_OBJ_DIR)/arduino_fwk_lcd$(_obj_ext_)  \
+   $($(_build_)_OBJ_DIR)/arduino_fwk_mgr$(_obj_ext_)  \
    $($(_build_)_OBJ_DIR)/arduino_fwk_pwm$(_obj_ext_)  \
    $($(_build_)_OBJ_DIR)/arduino_fwk_sd$(_obj_ext_)   \
    $($(_build_)_OBJ_DIR)/arduino_fwk_spi$(_obj_ext_)  \
@@ -117,7 +119,7 @@ $(eval \
    $(call INFO_VERBOSE_template, $(Arduino_LIB_MAKE) )\
 )
 #=======================================================================================#
-# api_makefile.mk
+# arduino_fwk_dio_makefile.mk
 #=======================================================================================#
 # Changes Log
 #

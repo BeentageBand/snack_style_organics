@@ -1,6 +1,6 @@
 /*=====================================================================================*/
 /**
- * api.cpp
+ * arduino_fwk.cpp
  * author : puch
  * date : Oct 22 2015
  *
@@ -57,7 +57,7 @@ void hamatora_sched_main(void)
    {
       for(uint8_t app_id = 0; app_id < Num_Of_Scheduled_Apps; app_id++)
       {
-         if(NULL != Scheduled_Apps[app_id].run)
+         if(0 != Scheduled_Apps[app_id].run)
          {
             Scheduled_Apps[app_id].run();
          }
@@ -70,7 +70,7 @@ static void hamatora_sched_start(void)
 
    for(uint8_t app_id = 0; app_id < Num_Of_Scheduled_Apps; app_id++)
    {
-      if(NULL != Scheduled_Apps[app_id].init)
+      if(0 != Scheduled_Apps[app_id].init)
       {
          Scheduled_Apps[app_id].init();
       }
@@ -81,7 +81,7 @@ static void hamatora_sched_stop(void)
 {
    for(uint8_t app_id = 0; app_id < Num_Of_Scheduled_Apps; app_id++)
    {
-      if(NULL != Scheduled_Apps[app_id].stop)
+      if(0 != Scheduled_Apps[app_id].stop)
       {
          Scheduled_Apps[app_id].stop();
       }
@@ -103,7 +103,7 @@ void hama::Shut(void)
    Stop_Hama_Sched = false;
 }
 /*=====================================================================================* 
- * api.cpp
+ * arduino_fwk.cpp
  *=====================================================================================*
  * Log History
  *

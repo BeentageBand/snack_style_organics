@@ -28,6 +28,7 @@ $(_build_)_$(_curr_)_src_dir=pk_snack_power_mode_code/_src
  ##
 $(_build_)_$(_curr_)_lib_objs=\
    $($(_build_)_OBJ_DIR)/snack_power_mode$(_obj_ext_) \
+   $($(_build_)_OBJ_DIR)/snack_power_mode_frs$(_obj_ext_) \
 
 ##
  # Library Requisites
