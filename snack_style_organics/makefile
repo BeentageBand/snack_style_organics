@@ -62,6 +62,7 @@ $(_build_)_PROJECT_INC_DIR+=\
 "C:/Dropbox/Arduino/DIR/libraries"                              \
 "C:/Dropbox/Arduino/DIR/hardware/arduino/avr/libraries"         \
 "C:/Dropbox/Arduino/DIR/hardware/arduino/avr/variants/standard" \
+"C:/Dropbox/Arduino/DIR/libraries/SD/src"                       \
 
 $(_build_)_PROJECT_LIB_DIR+=\
 "C:/avr-gcc-4.9.2/avr-gcc/avr/lib"                              \

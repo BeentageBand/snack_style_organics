@@ -1,6 +1,6 @@
 /*=====================================================================================*/
 /**
- * arduino_fwk_dio.cpp
+ * data_logger_frs.cpp
  * author : puch
  * date : Oct 22 2015
  *
@@ -12,12 +12,12 @@
 /*=====================================================================================*
  * Project Includes
  *=====================================================================================*/
-#include "arduino_fwk_uart.h"
-#include "arduino_fwk_uset.h"
+#include "data_logger_ext.h"
+#include "arduino_fwk_sd.h"
 /*=====================================================================================* 
  * Standard Includes
  *=====================================================================================*/
-#include "Arduino.h"
+
 /*=====================================================================================* 
  * Local X-Macros
  *=====================================================================================*/
@@ -33,10 +33,7 @@
 /*=====================================================================================* 
  * Local Object Definitions
  *=====================================================================================*/
-static HardwareSerial UART_Channels_To_Ports[] =
-{
-      HardwareSerial(0,0,0,0,0,0),
-};
+
 /*=====================================================================================* 
  * Exported Object Definitions
  *=====================================================================================*/
@@ -56,61 +53,51 @@ static HardwareSerial UART_Channels_To_Ports[] =
 /*=====================================================================================* 
  * Exported Function Definitions
  *=====================================================================================*/
-void arduino::Init_UART(Arduino_UART_T const & uart)
+void logger::DATA_LOGGER_STREAM_SD_init(void)
 {
-   if(uart.channel < ARDUINO_UART_MAX_CHANNELS)
-   {
-      UART_Channels_To_Ports[uart.channel].begin(uart.baudrate);
-   }
-}
-void arduino::Put_UART(Arduino_UART_T const & uart, const uint8_t c)
-{
-   if(uart.channel < ARDUINO_UART_MAX_CHANNELS)
-   {
-      UART_Channels_To_Ports[uart.channel].write(c);
-   }
-}
-uint8_t arduino::Get_UART(Arduino_UART_T const & uart)
-{
-   uint8_t read = 0xFFU;
-
-   if(uart.channel < ARDUINO_UART_MAX_CHANNELS &&
-     (UART_Channels_To_Ports[uart.channel].available() > 0))
-   {
-      read = UART_Channels_To_Ports[uart.channel].read();
-   }
-   return read;
-}
-uint16_t arduino::Get_Available_UART(Arduino_UART_T const & uart)
-{
-   uint16_t available = 0;
-
-   if(uart.channel < ARDUINO_UART_MAX_CHANNELS)
-   {
-      available = UART_Channels_To_Ports[uart.channel].available();
-   }
-   return available;
-}
-void arduino::Flush_UART(Arduino_UART_T const & uart)
-{
-   if(uart.channel < ARDUINO_UART_MAX_CHANNELS)
-   {
-      UART_Channels_To_Ports[uart.channel].flush();
-   }
+   arduino::Init_SD();
 }
 
-void arduino::Stop_UART(Arduino_UART_T const & uart)
+void logger::DATA_LOGGER_STREAM_SD_print_int(const int d)
 {
-   if(uart.channel < ARDUINO_UART_MAX_CHANNELS)
-   {
-      UART_Channels_To_Ports[uart.channel].end();
-   }
+
 }
+
+void logger::DATA_LOGGER_STREAM_SD_write(const char c)
+{
+
+}
+
+void logger::DATA_LOGGER_STREAM_SD_print_str(const char * str)
+{
+
+}
+
+
+void logger::DATA_LOGGER_STREAM_UART_init(void)
+{
+   arduino::Init_UART(ARDUINO_UART_CHANNEL_0);
+
+}
+
+void logger::DATA_LOGGER_STREAM_UART_print_int(const int d)
+{
+   arduino::
+}
+
+void logger::DATA_LOGGER_STREAM_UART_print_str(const char * str)
+{
+
+}
+
+void logger::DATA_LOGGER_STREAM_UART_write(const char c)
+{
+
+}
+
 /*=====================================================================================* 
- * arduino_fwk_dio.cpp
+ * data_logger_frs.cpp
  *=====================================================================================*
  * Log History
  *
  *=====================================================================================*/
-
-

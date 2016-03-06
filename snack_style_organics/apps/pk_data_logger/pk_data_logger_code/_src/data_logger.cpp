@@ -14,6 +14,7 @@
  *=====================================================================================*/
 #include "data_logger.h"
 #include "data_logger_ext.h"
+#include "arduino_fwk_clk.h"
 /*=====================================================================================* 
  * Standard Includes
  *=====================================================================================*/
@@ -32,21 +33,15 @@
 typedef struct
 {
    void (*init)(void);
-   void (*write)(char);
+   void (*write)(const char);
    void (*print_str)(const char *);
-   void (*print_int)(int);
+   void (*print_int)(const int);
 }Log_Stream_T;
 /*=====================================================================================* 
  * Local Object Definitions
  *=====================================================================================*/
 #undef DLOG_STREAM
-#define DOG_STREAM(os) \
-{ \
-log::os##_init ,\
-log::os##_write,\
-log::os##_print_str,\
-log::os##_print_int \
-}, \
+#define DLOG_STREAM(os) {logger::os##_init , logger::os##_write, logger::os##_print_str, logger::os##_print_int}, \
 
 const Log_Stream_T Log_Stream[] PROGMEM =
 {
@@ -71,15 +66,15 @@ const Log_Stream_T Log_Stream[] PROGMEM =
 /*=====================================================================================* 
  * Exported Function Definitions
  *=====================================================================================*/
-void log::Init(void)
-{
-   Log_Stream[DATA_LOGGER_STREAM_UART].init();
-}
-void log::Main(void)
+void logger::Init(void)
 {
 
 }
-void log::Shut(void)
+void logger::Main(void)
+{
+
+}
+void logger::Shut(void)
 {
 
 }
