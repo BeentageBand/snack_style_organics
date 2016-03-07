@@ -46,6 +46,7 @@ $(_build_)_$(_curr_)_lib_objs=\
    $($(_build_)_OBJ_DIR)/arduino_fwk_sd$(_obj_ext_)   \
    $($(_build_)_OBJ_DIR)/arduino_fwk_spi$(_obj_ext_)  \
    $($(_build_)_OBJ_DIR)/arduino_fwk_uart$(_obj_ext_) \
+   $($(_build_)_OBJ_DIR)/LiquidCrystal$(_obj_ext_) \
    
 endif
 

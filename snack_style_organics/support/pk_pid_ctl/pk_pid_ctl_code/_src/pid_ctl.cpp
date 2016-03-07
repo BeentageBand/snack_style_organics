@@ -15,10 +15,11 @@
 #include "pid_ctl.h"
 #include "pid_ctl_ext.h"
 #include "pid_ctl_set.h"
+#include "std_def.h"
 /*=====================================================================================* 
  * Standard Includes
  *=====================================================================================*/
-#include <string.h>
+
 /*=====================================================================================* 
  * Local X-Macros
  *=====================================================================================*/
@@ -88,6 +89,8 @@ const  Fix32_T TAU_MS = PID_CTL_TAU_COEFF_MS * 1000UL;
 static void Pid_Ctl_Calculate_Err(const uint8_t channel);
 static void Pid_Ctl_Set_Output(const uint8_t channel);
 static void Pid_Ctl_Read_FeedBack(const uint8_t channel);
+static void Pid_Tau_Timeout(void);
+
 /*=====================================================================================* 
  * Local Inline-Function Like Macros
  *=====================================================================================*/
@@ -158,6 +161,7 @@ void pid::Stop(const PID_CHANNEL_T channel)
 
 void pid::Main(void)
 {
+   Pid_Tau_Timeout();
    for(uint8_t i =0; i < PID_CTL_MAX_CHANNELS ;i++)
    {
       if(Pid_Callback[i].is_running)

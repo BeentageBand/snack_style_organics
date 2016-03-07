@@ -12,7 +12,7 @@
 /*=====================================================================================*
  * Project Includes
  *=====================================================================================*/
-#include "arduino_fwk_isr.h"
+#include "arduino_fwk_clk.h"
 #include "daylight_monitor.h"
 #include "snack_power_mode.h"
 #include "pid_ctl.h"
@@ -29,7 +29,7 @@
 /*=====================================================================================* 
  * Local Define Macros
  *=====================================================================================*/
-#define PID_CTL_ISR_THREAD ARDUINO_ISR_THREAD_1
+
 /*=====================================================================================* 
  * Local Type Definitions
  *=====================================================================================*/
@@ -46,7 +46,7 @@ static bool Run_Thread = false;
 /*=====================================================================================* 
  * Local Function Prototypes
  *=====================================================================================*/
-
+static void Wait_For_Sample(void);
 /*=====================================================================================* 
  * Local Inline-Function Like Macros
  *=====================================================================================*/
@@ -54,46 +54,30 @@ static bool Run_Thread = false;
 /*=====================================================================================* 
  * Local Function Definitions
  *=====================================================================================*/
-
+void Wait_For_Sample(void)
+{
+   static uint32_t sample_tout = arduino::Get_Clk();
+   while(  (arduino::Get_Clk() -  sample_tout) > PID_CTL_TAU_COEFF_MS)
+   {}
+}
 /*=====================================================================================* 
  * Exported Function Definitions
  *=====================================================================================*/
 void snack_dehyd::Init(void)
 {
-   arduino::Set_ISR(PID_CTL_ISR_THREAD, pid::Main, PID_CTL_TAU_COEFF_MS);
    pid::Set_Point(PID_CTL_CHANNEL_FAN_DOOR, Dehydrator_Set_Point_Temp);
    pid::Set_Point(PID_CTL_CHANNEL_HEATER, Dehydrator_Set_Point_Temp);
-   arduino::Run_ISR(PID_CTL_ISR_THREAD);
 }
 
 void snack_dehyd::Main(void)
 {
-   bool day = day_mon::Get_Daylight_Presence();
-   if( day != Run_Thread )
-   {
-      Run_Thread = day;
-
-      if(!Run_Thread)
-      {
-         pmode::Set_State(PMODE_AC_OFF);
-         pid::Stop(PID_CTL_CHANNEL_FAN_DOOR);
-         pid::Stop(PID_CTL_CHANNEL_HEATER);
-
-      }
-      else
-      {
-         pmode::Set_State(PMODE_ALL_ON);
-         pid::Run(PID_CTL_CHANNEL_FAN_DOOR);
-         pid::Run(PID_CTL_CHANNEL_HEATER);
-      }
-   }
+   Wait_For_Sample();
 }
 
 void snack_dehyd::Shut(void)
 {
    pid::Stop(PID_CTL_CHANNEL_FAN_DOOR);
    pid::Stop(PID_CTL_CHANNEL_HEATER);
-   arduino::Stop_ISR(PID_CTL_ISR_THREAD);
 }
 /*=====================================================================================* 
  * snack_power_mode.cpp

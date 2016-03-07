@@ -14,6 +14,7 @@
  *=====================================================================================*/
 #include "data_logger_ext.h"
 #include "arduino_fwk_sd.h"
+#include "arduino_fwk_uart.h"
 /*=====================================================================================* 
  * Standard Includes
  *=====================================================================================*/
@@ -49,7 +50,7 @@
 /*=====================================================================================* 
  * Local Function Definitions
  *=====================================================================================*/
-
+static char data_stream[16];
 /*=====================================================================================* 
  * Exported Function Definitions
  *=====================================================================================*/
@@ -82,7 +83,14 @@ void logger::DATA_LOGGER_STREAM_UART_init(void)
 
 void logger::DATA_LOGGER_STREAM_UART_print_int(const int d)
 {
-   arduino::
+   memset(data_stream, 0x00, sizeof(data_stream));
+   char * ss = data_stream;
+   sprintf(data_stream,"%d", d);
+
+   for (; ss != 0; ++ss)
+   {
+      arduino::Put_UART(ARDUINO_UART_CHANNEL_0, ss);
+   }
 }
 
 void logger::DATA_LOGGER_STREAM_UART_print_str(const char * str)
