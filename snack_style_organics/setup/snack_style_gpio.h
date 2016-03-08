@@ -1,6 +1,6 @@
 /*=====================================================================================*/
 /**
- * arduino_fwk_clk.h
+ * snack_style_gpio.h
  * author : puch
  * date : Oct 22 2015
  *
@@ -8,16 +8,42 @@
  *
  */
 /*=====================================================================================*/
-#ifndef ARDUINO_FWK_CLK_H_
-#define ARDUINO_FWK_CLK_H_
+#ifndef SNACK_STYLE_GPIO_H_
+#define SNACK_STYLE_GPIO_H_
 /*=====================================================================================*
  * Project Includes
  *=====================================================================================*/
-#include "arduino_fwk_types.h"
+
 /*=====================================================================================* 
  * Standard Includes
  *=====================================================================================*/
-#include <stdint.h>
+
+/*=====================================================================================* 
+ * Exported X-Macros
+ *=====================================================================================*/
+//DIO
+
+#define SNACK_GPIO_UART_RXD          (ARDUINO_DIO_CHANNEL_0)
+#define SNACK_GPIO_UART_TXD          (ARDUINO_DIO_CHANNEL_1)
+#define SNACK_GPIO_NEG_5V_1KHZ       (ARDUINO_DIO_CHANNEL_2)
+#define SNACK_GPIO_AC_H_120HZ        (ARDUINO_DIO_CHANNEL_3)
+#define SNACK_GPIO_AC_L_120HZ        (ARDUINO_DIO_CHANNEL_4)
+#define SNACK_GPIO_FAN_PWM           (ARDUINO_DIO_CHANNEL_5)
+#define SNACK_GPIO_RES_PWM           (ARDUINO_DIO_CHANNEL_6)
+#define SNACK_GPIO_DC_MOTOR_H        (ARDUINO_DIO_CHANNEL_7)
+#define SNACK_GPIO_DC_MOTOR_L        (ARDUINO_DIO_CHANNEL_8)
+#define SNACK_GPIO_LCD_EN            (ARDUINO_DIO_CHANNEL_9)
+#define SNACK_GPIO_LCD_D4            (ARDUINO_DIO_CHANNEL_10)
+#define SNACK_GPIO_LCD_D5            (ARDUINO_DIO_CHANNEL_11)
+#define SNACK_GPIO_LCD_D6            (ARDUINO_DIO_CHANNEL_12)
+#define SNACK_GPIO_LCD_D7            (ARDUINO_DIO_CHANNEL_13)
+#define SNACK_GPIO_ADC_TEMP_AVG      (ARDUINO_DIO_CHANNEL_14)
+#define SNACK_GPIO_ADC_LIGHT_AVG     (ARDUINO_DIO_CHANNEL_15)
+#define SNACK_GPIO_ADC_FAN_OUT       (ARDUINO_DIO_CHANNEL_16)
+#define SNACK_GPIO_ADC_RES_OUT       (ARDUINO_DIO_CHANNEL_17)
+#define SNACK_GPIO_ADC_BATT          (ARDUINO_DIO_CHANNEL_18)
+#define SNACK_GPIO_ADC_TEMP_OUTDOORS (ARDUINO_DIO_CHANNEL_19)
+
 /*=====================================================================================* 
  * Exported Define Macros
  *=====================================================================================*/
@@ -25,30 +51,12 @@
 /*=====================================================================================* 
  * Exported Type Declarations
  *=====================================================================================*/
-namespace arduino{
-/*=====================================================================================* 
- * Exported Object Declarations
- *=====================================================================================*/
 
 /*=====================================================================================* 
- * Exported Function Prototypes
- *=====================================================================================*/
-extern void Init_Clk(void);
-extern uint32_t Get_Clk(void);
-
-extern void Init_Tone(const ARDUINO_DIO_CHANNEL_T pin);
-extern void Set_Tone(const ARDUINO_DIO_CHANNEL_T pin, uint16_t freq);
-extern void Stop_Tone(const ARDUINO_DIO_CHANNEL_T pin);
-
-/*=====================================================================================* 
- * Exported Function Like Macros
- *=====================================================================================*/
-}
-/*=====================================================================================* 
- * arduino_fwk_clk.h
+ * snack_style_gpio.h
  *=====================================================================================*
  * Log History
  *
  *=====================================================================================*/
-#endif /*ARDUINO_FWK_CLK_H_*/
 
+#endif /*snack_style_gpio*/

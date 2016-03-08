@@ -37,7 +37,7 @@ namespace arduino{
 /*=====================================================================================* 
  * Exported Function Prototypes
  *=====================================================================================*/
-extern void Init_DIO(const ARDUINO_DIO_CHANNEL_T pin);
+extern void Init_DIO(const ARDUINO_DIO_CHANNEL_T pin, uint8_t mode);
 extern void Set_DIO(const ARDUINO_DIO_CHANNEL_T pin,const uint8_t value);
 extern uint8_t Get_DIO(const ARDUINO_DIO_CHANNEL_T pin);
 extern void Shut_DIO(const ARDUINO_DIO_CHANNEL_T pin);
