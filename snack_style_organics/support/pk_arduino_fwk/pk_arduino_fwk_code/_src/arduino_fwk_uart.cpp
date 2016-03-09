@@ -70,6 +70,14 @@ void arduino::Put_UART(Arduino_UART_T const & uart, const uint8_t c)
       UART_Channels_To_Ports[uart.channel]->write(c);
    }
 }
+
+void arduino::Print_UART(Arduino_UART_T const & uart, const char * printed)
+{
+	if(uart.channel < ARDUINO_UART_MAX_CHANNELS)
+	{
+		UART_Channels_To_Ports[uart.channel]->write(printed);
+	}
+}
 uint8_t arduino::Get_UART(Arduino_UART_T const & uart)
 {
    uint8_t read = 0xFFU;

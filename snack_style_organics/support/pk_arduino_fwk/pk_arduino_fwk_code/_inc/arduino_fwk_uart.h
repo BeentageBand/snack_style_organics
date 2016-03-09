@@ -39,6 +39,7 @@ namespace arduino{
  *=====================================================================================*/
 extern void Init_UART(Arduino_UART_T const & uart);
 extern void Put_UART(Arduino_UART_T const & uart, const uint8_t c);
+extern void Print_UART(Arduino_UART_T const & uart, const char * printed);
 extern uint8_t Get_UART(Arduino_UART_T const & uart);
 extern uint16_t Get_Available_UART(Arduino_UART_T const & uart);
 extern void Flush_UART(Arduino_UART_T const & uart);

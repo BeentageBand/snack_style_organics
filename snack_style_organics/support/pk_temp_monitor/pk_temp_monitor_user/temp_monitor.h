@@ -39,6 +39,7 @@ namespace temp_mon{
  *=====================================================================================*/
 extern void Init(void);
 extern uint16_t Get_Temperature(void);
+extern void Main(void);
 extern void Shut(void);
 /*=====================================================================================* 
  * Exported Function Like Macros

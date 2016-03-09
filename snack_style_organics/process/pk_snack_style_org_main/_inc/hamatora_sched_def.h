@@ -36,8 +36,8 @@
    HAMA_SCHED_APP(SNACK_ORG_LCD_ID,      snack_lcd::Init,   snack_lcd::Main,    snack_lcd::Shut     ) \
    HAMA_SCHED_APP(SNACK_PMODE_ID,        pmode::Init,       pmode::Main,        pmode::Shut         ) \
    HAMA_SCHED_APP(HAMA_SCHED_ID,         0,                 0,                  hama::Shut          ) \
-   HAMA_SCHED_APP(DAYLIGHT_MONITOR_ID,   day_mon::Init,     0,                  day_mon::Shut       ) \
-   HAMA_SCHED_APP(TEMP_MONITOR_ID,       temp_mon::Init,    0,                  temp_mon::Shut      ) \
+   HAMA_SCHED_APP(DAYLIGHT_MONITOR_ID,   day_mon::Init,     day_mon::Main,      day_mon::Shut       ) \
+   HAMA_SCHED_APP(TEMP_MONITOR_ID,       temp_mon::Init,    temp_mon::Main,     temp_mon::Shut      ) \
    HAMA_SCHED_APP(HEATER_CTL_ID,         heater::Init,      0,                  heater::Shut        ) \
    HAMA_SCHED_APP(AXIAL_FAN_CTL_ID,      fan::Init,         0,                  fan::Shut           ) \
    /*

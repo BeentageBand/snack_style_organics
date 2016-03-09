@@ -23,6 +23,8 @@
  *=====================================================================================*/
 #define DAYLIGHT_MON_DAYLIGHT_READING ((uint16_t) 1U)
 #define DAYLIGHT_MON_HYSTHERESIS      ((uint16_t) 1U)
+#define DAYLIGHT_MON_AVG_SIZE         (8U)
+#define DAYLIGHT_CONVERSION_COEFF     (1)
 /*=====================================================================================* 
  * Exported Define Macros
  *=====================================================================================*/

@@ -56,9 +56,9 @@ uint16_t Get_Average(void)
    uint16_t avg = 0;
    for(uint8_t i = 0; i < TEMP_MONITOR_AVG_SIZE; ++i)
    {
-      avg +=
+      avg += Temp_Channel_Readings[i];
    }
-   return avg;
+   return (avg/TEMP_MONITOR_AVG_SIZE);
 }
 /*=====================================================================================* 
  * Exported Function Definitions
@@ -70,19 +70,19 @@ void temp_mon::Init(void)
 
 uint16_t temp_mon::Get_Temperature(void)
 {
-   return (TEMPERATURE_CONVERSION_COEFF* );
+   return Get_Average();
 }
 
 void temp_mon::Main(void)
 {
-   uint16_t temp = arduino::Get_ADC( SNACK_GPIO_ADC_TEMP_AVG );
+   uint16_t temp = TEMPERATURE_CONVERSION_COEFF*arduino::Get_ADC( SNACK_GPIO_ADC_TEMP_AVG );
    memcpy( Temp_Channel_Readings, &Temp_Channel_Readings[1], sizeof(Temp_Channel_Readings) );
    Temp_Channel_Readings[TEMP_MONITOR_AVG_SIZE-1] = temp;
 }
 
 void temp_mon::Shut(void)
 {
-   arduino::Stop_ADC( TEMP_MON_ADC_CHANNEL );
+   arduino::Stop_ADC( SNACK_GPIO_ADC_TEMP_AVG );
 }
 /*=====================================================================================* 
  * arduino_fwk.cpp

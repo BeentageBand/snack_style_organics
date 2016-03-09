@@ -37,9 +37,11 @@ namespace day_mon{
 /*=====================================================================================* 
  * Exported Function Prototypes
  *=====================================================================================*/
-void Init(void);
-bool Get_Daylight_Presence(void);
-void Shut(void);
+extern void Init(void);
+extern bool Get_Daylight_Presence(void);
+extern uint16_t Get_Daylight_Percentage(void);
+extern void Main(void);
+extern void Shut(void);
 /*=====================================================================================* 
  * Exported Function Like Macros
  *=====================================================================================*/

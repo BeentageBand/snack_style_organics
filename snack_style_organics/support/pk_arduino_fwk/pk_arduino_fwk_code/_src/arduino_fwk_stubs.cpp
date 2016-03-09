@@ -112,6 +112,7 @@ void arduino::Shut_SD(void){}
 //UART
 void arduino::Init_UART(Arduino_UART_T const & uart){}
 void arduino::Put_UART(Arduino_UART_T const & uart, const uint8_t c){}
+void arduino::Print_UART(Arduino_UART_T const & uart, const char * printed){}
 uint8_t arduino::Get_UART(Arduino_UART_T const & uart){return 0;}
 uint16_t arduino::Get_Available_UART(Arduino_UART_T const & uart){return 0;}
 void arduino::Flush_UART(Arduino_UART_T const & uart){}
