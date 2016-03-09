@@ -77,20 +77,13 @@ void logger::DATA_LOGGER_STREAM_SD_print_str(const char * str)
 
 void logger::DATA_LOGGER_STREAM_UART_init(void)
 {
-   arduino::Init_UART(ARDUINO_UART_CHANNEL_0);
+   Arduino_UART_T uart_init = {ARDUINO_UART_CHANNEL_0,19200};
+   arduino::Init_UART(uart_init);
 
 }
 
 void logger::DATA_LOGGER_STREAM_UART_print_int(const int d)
 {
-   memset(data_stream, 0x00, sizeof(data_stream));
-   char * ss = data_stream;
-   sprintf(data_stream,"%d", d);
-
-   for (; ss != 0; ++ss)
-   {
-      arduino::Put_UART(ARDUINO_UART_CHANNEL_0, ss);
-   }
 }
 
 void logger::DATA_LOGGER_STREAM_UART_print_str(const char * str)

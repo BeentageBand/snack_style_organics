@@ -43,9 +43,12 @@
  *=====================================================================================*/
 const uint8_t ADC_Channel_To_Pin[] PROGMEM =
 {
-   9,/*ARDUINO_ADC_CHANNEL_0*/
-   5,/*ARDUINO_ADC_CHANNEL_1*/
-   4,/*ARDUINO_ADC_CHANNEL_2*/
+   ARDUINO_DIO_CHANNEL_14,/*ARDUINO_ADC_CHANNEL_0*/
+   ARDUINO_DIO_CHANNEL_15,/*ARDUINO_ADC_CHANNEL_1*/
+   ARDUINO_DIO_CHANNEL_16,/*ARDUINO_ADC_CHANNEL_2*/
+   ARDUINO_DIO_CHANNEL_17,/*ARDUINO_ADC_CHANNEL_3*/
+   ARDUINO_DIO_CHANNEL_18,/*ARDUINO_ADC_CHANNEL_4*/
+   ARDUINO_DIO_CHANNEL_19,/*ARDUINO_ADC_CHANNEL_5*/
 };
 /*=====================================================================================* 
  * Local Inline-Function Like Macros

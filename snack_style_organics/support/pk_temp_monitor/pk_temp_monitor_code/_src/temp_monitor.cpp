@@ -15,6 +15,7 @@
 #include "arduino_fwk_adc.h"
 #include "temp_monitor.h"
 #include "temp_monitor_set.h"
+#include "snack_style_gpio.h"
 /*=====================================================================================* 
  * Standard Includes
  *=====================================================================================*/
@@ -34,7 +35,7 @@
 /*=====================================================================================* 
  * Local Object Definitions
  *=====================================================================================*/
-const ARDUINO_ADC_CHANNEL_T TEMP_MON_ADC_CHANNEL = ARDUINO_ADC_CHANNEL_1;
+static uint16_t Temp_Channel_Readings[TEMP_MONITOR_AVG_SIZE] = {0};
 /*=====================================================================================* 
  * Exported Object Definitions
  *=====================================================================================*/
@@ -50,18 +51,33 @@ const ARDUINO_ADC_CHANNEL_T TEMP_MON_ADC_CHANNEL = ARDUINO_ADC_CHANNEL_1;
 /*=====================================================================================* 
  * Local Function Definitions
  *=====================================================================================*/
-
+uint16_t Get_Average(void)
+{
+   uint16_t avg = 0;
+   for(uint8_t i = 0; i < TEMP_MONITOR_AVG_SIZE; ++i)
+   {
+      avg +=
+   }
+   return avg;
+}
 /*=====================================================================================* 
  * Exported Function Definitions
  *=====================================================================================*/
 void temp_mon::Init(void)
 {
-   arduino::Init_ADC( TEMP_MON_ADC_CHANNEL );
+   arduino::Init_ADC( SNACK_GPIO_ADC_TEMP_AVG );
 }
 
 uint16_t temp_mon::Get_Temperature(void)
 {
-   return (TEMPERATURE_CONVERSION_COEFF*arduino::Get_ADC( TEMP_MON_ADC_CHANNEL ) );
+   return (TEMPERATURE_CONVERSION_COEFF* );
+}
+
+void temp_mon::Main(void)
+{
+   uint16_t temp = arduino::Get_ADC( SNACK_GPIO_ADC_TEMP_AVG );
+   memcpy( Temp_Channel_Readings, &Temp_Channel_Readings[1], sizeof(Temp_Channel_Readings) );
+   Temp_Channel_Readings[TEMP_MONITOR_AVG_SIZE-1] = temp;
 }
 
 void temp_mon::Shut(void)
