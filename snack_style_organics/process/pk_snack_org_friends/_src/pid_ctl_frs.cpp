@@ -16,6 +16,7 @@
 #include "axial_fan_ctl.h"
 #include "heater_ctl.h"
 #include "temp_monitor.h"
+#include "arduino_fwk_clk.h"
 /*=====================================================================================* 
  * Standard Includes
  *=====================================================================================*/
@@ -77,6 +78,10 @@ void pid::Put_PID_CTL_CHANNEL_HEATER(const Fix32_T uout)
 }
 
 
+uint32_t pid::Get_Sample_Time(void)
+{
+   return arduino::Get_Clk();
+}
 /*=====================================================================================* 
  * pid_ctl_frs.cpp
  *=====================================================================================*

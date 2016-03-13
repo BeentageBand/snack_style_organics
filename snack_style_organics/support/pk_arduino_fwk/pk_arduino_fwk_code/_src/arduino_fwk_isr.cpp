@@ -25,7 +25,7 @@
 /*=====================================================================================* 
  * Local Define Macros
  *=====================================================================================*/
-
+#define ARDUINO_ISR_PERIOD ((float)0.0005)
 /*=====================================================================================* 
  * Local Type Definitions
  *=====================================================================================*/
@@ -34,15 +34,14 @@ typedef struct
    Arduino_ISR_T isr;
    uint16_t      count;
    uint32_t      msecs;
-   uint8_t       overflowing;
-   uint16_t      tcnt;
+   bool          overflowing;
 }ISR_Handler_T;
 
 /*=====================================================================================* 
  * Local Object Definitions
  *=====================================================================================*/
 static volatile ISR_Handler_T ISR_Handler[ARDUINO_ISR_MAX_THREADS] = {0};
-
+static uint8_t  Timer_Counter = 0;
 /*=====================================================================================* 
  * Exported Object Definitions
  *=====================================================================================*/
@@ -60,8 +59,15 @@ static void On_Overflow(volatile ISR_Handler_T & isr);
  *=====================================================================================*/
 ISR(TIMER2_OVF_vect)
 {
-   TCNT2 = ISR_Handler[ARDUINO_ISR_THREAD_0].tcnt;
-   On_Overflow( ISR_Handler[ARDUINO_ISR_THREAD_0] );
+   TCNT2 = Timer_Counter;
+
+   for(uint8_t i = 0; i < ARDUINO_ISR_MAX_THREADS; ++i)
+   {
+      if(0 != ISR_Handler[i].isr)
+      {
+         On_Overflow( ISR_Handler[i] );
+      }
+   }
 }
 
 void On_Overflow(volatile ISR_Handler_T & isr)
@@ -83,25 +89,8 @@ void arduino::Init_ISR(const ARDUINO_ISR_THREAD_T thread)
 {
    if(thread < ARDUINO_ISR_MAX_THREADS)
    {
-
-   }
-}
-void arduino::Set_ISR(const ARDUINO_ISR_THREAD_T thread, Arduino_ISR_T isr, const uint32_t timer)
-{
-   if(thread < ARDUINO_ISR_MAX_THREADS)
-   {
       float prescaler = 0.0;
 
-      if (timer == 0)
-      {
-         ISR_Handler[thread].msecs = 1;
-      }
-      else
-      {
-         ISR_Handler[thread].msecs = timer;
-      }
-
-      ISR_Handler[thread].isr = isr;
       TIMSK2 &= ~(1<<TOIE2);
       TCCR2A &= ~((1<<WGM21) | (1<<WGM20));
       TCCR2B &= ~(1<<WGM22);
@@ -122,7 +111,24 @@ void arduino::Set_ISR(const ARDUINO_ISR_THREAD_T thread, Arduino_ISR_T isr, cons
          prescaler = 128.0;
       }
 
-      ISR_Handler[thread].tcnt = 256 - (int)((float)F_CPU * 0.001 / prescaler);
+      Timer_Counter = 256 - (int)((float)F_CPU * ARDUINO_ISR_PERIOD / prescaler);
+   }
+}
+void arduino::Set_ISR(const ARDUINO_ISR_THREAD_T thread, Arduino_ISR_T isr, const uint32_t timer)
+{
+   if(thread < ARDUINO_ISR_MAX_THREADS)
+   {
+
+      if (timer == 0)
+      {
+         ISR_Handler[thread].msecs = 1;
+      }
+      else
+      {
+         ISR_Handler[thread].msecs = timer;
+      }
+
+      ISR_Handler[thread].isr = isr;
    }
 }
 void arduino::Run_ISR(const ARDUINO_ISR_THREAD_T thread)
@@ -131,7 +137,7 @@ void arduino::Run_ISR(const ARDUINO_ISR_THREAD_T thread)
    {
       ISR_Handler[thread].count = 0;
       ISR_Handler[thread].overflowing = 0;
-      TCNT2 = ISR_Handler[thread].tcnt;
+      TCNT2 = Timer_Counter;
       TIMSK2 |= (1<<TOIE2);
    }
 }

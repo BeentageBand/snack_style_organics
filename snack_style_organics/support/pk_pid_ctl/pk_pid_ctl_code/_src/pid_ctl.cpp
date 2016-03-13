@@ -15,6 +15,7 @@
 #include "pid_ctl.h"
 #include "pid_ctl_ext.h"
 #include "pid_ctl_set.h"
+#include "hama_dbg_trace.h"
 #include "std_def.h"
 /*=====================================================================================* 
  * Standard Includes
@@ -79,6 +80,7 @@ static Pid_Ctl_Channel_T Pid_Channels[PID_CTL_MAX_CHANNELS];
 
 const  Fix32_T TAU_MS = PID_CTL_TAU_COEFF_MS * 1000UL;
 
+static uint32_t Sample_Tout = 0;
 /*=====================================================================================* 
  * Exported Object Definitions
  *=====================================================================================*/
@@ -89,7 +91,7 @@ const  Fix32_T TAU_MS = PID_CTL_TAU_COEFF_MS * 1000UL;
 static void Pid_Ctl_Calculate_Err(const uint8_t channel);
 static void Pid_Ctl_Set_Output(const uint8_t channel);
 static void Pid_Ctl_Read_FeedBack(const uint8_t channel);
-
+static bool Wait_For_Sample(void);
 /*=====================================================================================* 
  * Local Inline-Function Like Macros
  *=====================================================================================*/
@@ -118,6 +120,12 @@ void Pid_Ctl_Read_FeedBack(const uint8_t channel)
    Pid_Channels[channel].feedback = Pid_Callback[channel].feedback_func();
 }
 
+bool Wait_For_Sample(void)
+{
+   uint32_t time_now = pid::Get_Sample_Time();
+   TR_INFO_2("Waiting %d == %d", time_now, Sample_Tout);
+   return ( (time_now -  Sample_Tout) >= PID_CTL_TAU_COEFF_MS);
+}
 /*=====================================================================================* 
  * Exported Function Definitions
  *=====================================================================================*/
@@ -140,6 +148,7 @@ void pid::Init(void)
 
 void pid::Set_Point(const PID_CHANNEL_T channel, const Fix32_T val)
 {
+   TR_INFO_3("%s pid_ch = %d, val %ld", __FUNCTION__,channel,val);
    Pid_Channels[channel].set_point = val;
 }
 
@@ -160,16 +169,21 @@ void pid::Stop(const PID_CHANNEL_T channel)
 
 void pid::Main(void)
 {
-   for(uint8_t i =0; i < PID_CTL_MAX_CHANNELS ;i++)
+   if(Wait_For_Sample())
    {
-      if(Pid_Callback[i].is_running)
+      Sample_Tout = pid::Get_Sample_Time();
+      for(uint8_t i =0; i < PID_CTL_MAX_CHANNELS ;i++)
       {
-         Pid_Channels[i].u_out[1U] = Pid_Channels[i].u_out[0];
-         Pid_Channels[i].err[1U] = Pid_Channels[i].err[0];
+         if(Pid_Callback[i].is_running)
+         {
 
-         Pid_Ctl_Read_FeedBack(i);
-         Pid_Ctl_Calculate_Err(i);
-         Pid_Ctl_Set_Output(i);
+            Pid_Channels[i].u_out[1U] = Pid_Channels[i].u_out[0];
+            Pid_Channels[i].err[1U] = Pid_Channels[i].err[0];
+
+            Pid_Ctl_Read_FeedBack(i);
+            Pid_Ctl_Calculate_Err(i);
+            Pid_Ctl_Set_Output(i);
+         }
       }
    }
 }

@@ -20,6 +20,7 @@
 #include "snacky_dehyd_ctl.h"
 #include "temp_monitor.h"
 #include "hama_dbg_trace.h"
+#include "chimney_ctl.h"
 /*=====================================================================================* 
  * Standard Includes
  *=====================================================================================*/
@@ -31,8 +32,8 @@
 /*=====================================================================================* 
  * Local Define Macros
  *=====================================================================================*/
-#define SNACK_DEHYD_CTL_MIN_TEMP (11000)
-#define SNACK_DEHYD_CTL_MAX_TEMP (11800)
+#define SNACK_DEHYD_CTL_MIN_TEMP (110000)
+#define SNACK_DEHYD_CTL_MAX_TEMP (118000)
 /*=====================================================================================* 
  * Local Type Definitions
  *=====================================================================================*/
@@ -41,7 +42,6 @@
  * Local Object Definitions
  *=====================================================================================*/
 const Fix32_T Dehydrator_Set_Point_Temp = 0U;
-static uint32_t sample_tout = 0;
 /*=====================================================================================* 
  * Exported Object Definitions
  *=====================================================================================*/
@@ -49,7 +49,7 @@ static uint32_t sample_tout = 0;
 /*=====================================================================================* 
  * Local Function Prototypes
  *=====================================================================================*/
-static void Wait_For_Sample(void);
+
 /*=====================================================================================* 
  * Local Inline-Function Like Macros
  *=====================================================================================*/
@@ -57,40 +57,36 @@ static void Wait_For_Sample(void);
 /*=====================================================================================* 
  * Local Function Definitions
  *=====================================================================================*/
-void Wait_For_Sample(void)
-{
-   sample_tout = arduino::Get_Clk();
-   while(  (arduino::Get_Clk() -  sample_tout) < PID_CTL_TAU_COEFF_MS)
-   {
-      TR_INFO_2("Wait for sample %d - %d", arduino::Get_Clk(), sample_tout);
-   }
-}
+
 /*=====================================================================================* 
  * Exported Function Definitions
  *=====================================================================================*/
 void snack_dehyd::Init(void)
 {
+   TR_INFO(__FUNCTION__);
    pid::Set_Point(PID_CTL_CHANNEL_FAN_DOOR, Dehydrator_Set_Point_Temp);
    pid::Set_Point(PID_CTL_CHANNEL_HEATER, Dehydrator_Set_Point_Temp);
 }
 
 void snack_dehyd::Main(void)
 {
-   Wait_For_Sample();
    if(SNACK_DEHYD_CTL_MIN_TEMP < temp_mon::Get_Temperature())
    {
-	   pid::Run(PID_CTL_CHANNEL_HEATER);
-	   pid::Stop(PID_CTL_CHANNEL_FAN_DOOR);
+      pid::Run(PID_CTL_CHANNEL_HEATER);
+      chim::Set_State(CHIMNEY_CLOSED);
+
+      pid::Stop(PID_CTL_CHANNEL_FAN_DOOR);
    }
    else if(SNACK_DEHYD_CTL_MAX_TEMP < temp_mon::Get_Temperature())
    {
-	   pid::Run(PID_CTL_CHANNEL_FAN_DOOR);
-	   pid::Stop(PID_CTL_CHANNEL_HEATER);
+      pid::Run(PID_CTL_CHANNEL_FAN_DOOR);
+      chim::Set_State(CHIMNEY_OPEN);
+      pid::Stop(PID_CTL_CHANNEL_HEATER);
    }
    else
    {
-	   pid::Run(PID_CTL_CHANNEL_HEATER);
-	   pid::Run(PID_CTL_CHANNEL_FAN_DOOR);
+      pid::Run(PID_CTL_CHANNEL_HEATER);
+      pid::Run(PID_CTL_CHANNEL_FAN_DOOR);
    }
 }
 

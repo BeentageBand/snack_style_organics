@@ -66,13 +66,13 @@ $(_build_)_$(_curr_)_bin_objs=\
    $($(_build_)_LIB_DIR)/$(_lprefix_)daylight_monitor$(_lib_ext_)       \
    $($(_build_)_LIB_DIR)/$(_lprefix_)data_logger$(_lib_ext_)            \
    $($(_build_)_LIB_DIR)/$(_lprefix_)snacky_dehyd_ctl$(_lib_ext_)       \
+   $($(_build_)_LIB_DIR)/$(_lprefix_)chimney_ctl$(_lib_ext_)            \
    $($(_build_)_LIB_DIR)/$(_lprefix_)pid_ctl$(_lib_ext_)                \
    $($(_build_)_LIB_DIR)/$(_lprefix_)snack_power_mode$(_lib_ext_)       \
    $($(_build_)_LIB_DIR)/$(_lprefix_)snack_org_friends$(_lib_ext_)      \
    $($(_build_)_LIB_DIR)/$(_lprefix_)arduino_fwk$(_lib_ext_)            \
    $($(_build_)_LIB_DIR)/$(_lprefix_)arduino_core$(_lib_ext_)           \
 #\
-   $($(_build_)_LIB_DIR)/$(_lprefix_)power_mode$(_lib_ext_)             \
  
  else
  $(_build_)_$(_curr_)_bin_libs=\
@@ -84,6 +84,7 @@ $(_build_)_$(_curr_)_bin_objs=\
    $($(_build_)_LIB_DIR)/$(_lprefix_)daylight_monitor$(_lib_ext_)       \
    $($(_build_)_LIB_DIR)/$(_lprefix_)data_logger$(_lib_ext_)            \
    $($(_build_)_LIB_DIR)/$(_lprefix_)snacky_dehyd_ctl$(_lib_ext_)       \
+   $($(_build_)_LIB_DIR)/$(_lprefix_)chimney_ctl$(_lib_ext_)            \
    $($(_build_)_LIB_DIR)/$(_lprefix_)pid_ctl$(_lib_ext_)                \
    $($(_build_)_LIB_DIR)/$(_lprefix_)snack_power_mode$(_lib_ext_)       \
    $($(_build_)_LIB_DIR)/$(_lprefix_)snack_org_friends$(_lib_ext_)      \

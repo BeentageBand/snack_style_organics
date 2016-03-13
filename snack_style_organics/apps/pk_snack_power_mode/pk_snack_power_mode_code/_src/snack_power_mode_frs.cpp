@@ -29,8 +29,11 @@
 /*=====================================================================================* 
  * Local Define Macros
  *=====================================================================================*/
-#define PMODE_SOURCE_AC_60HZ (8)
+#define PMODE_SOURCE_AC_60HZ (16) //120 HZ nyquist
+#define PMODE_SOURCE_NEG_1KHZ (2) //2kHz  nyquist
+#define PMODE_TICK_PERIOD_US    (500) // Tick 5 us
 #define PMODE_SOURCE_AC_60HZ_THREAD (ARDUINO_ISR_THREAD_0)
+#define PMODE_SOURCE_NEG_1kHZ_THREAD (ARDUINO_ISR_THREAD_1)
 /*=====================================================================================* 
  * Local Type Definitions
  *=====================================================================================*/
@@ -38,9 +41,12 @@
 /*=====================================================================================* 
  * Local Object Definitions
  *=====================================================================================*/
+static bool AC_Source_Is_Running = false;
 static bool AC_Source_Signal_H_State = false;
 static bool AC_Source_Signal_L_State = false;
 
+static bool NEG_Source_Is_Running = false;
+static bool NEG_Source_Signal = false;
 /*=====================================================================================* 
  * Exported Object Definitions
  *=====================================================================================*/
@@ -55,6 +61,7 @@ static bool AC_Source_Signal_L_State = false;
 POWER_MODE_SOURCES_TB
 
 static void PMode_AC_Run(void);
+static void PMode_NEG_5V_Run(void);
 
 /*=====================================================================================* 
  * Local Inline-Function Like Macros
@@ -66,55 +73,66 @@ static void PMode_AC_Run(void);
 // Source defs
 void PMODE_SOURCE_AC_start(void)
 {
-   AC_Source_Signal_H_State = false;
+   AC_Source_Is_Running =true;
+
+   AC_Source_Signal_H_State = true;
    AC_Source_Signal_L_State = false;
-   arduino::Run_ISR(PMODE_SOURCE_AC_60HZ_THREAD);
 }
 
 void PMODE_SOURCE_AC_stop(void)
 {
+   AC_Source_Is_Running = false;
+
    AC_Source_Signal_H_State = false;
    AC_Source_Signal_L_State = false;
-   arduino::Stop_ISR(PMODE_SOURCE_AC_60HZ_THREAD);
+   arduino::Set_DIO(SNACK_GPIO_AC_H_120HZ, AC_Source_Signal_H_State);
+   arduino::Set_DIO(SNACK_GPIO_AC_L_120HZ, AC_Source_Signal_L_State);
+
 }
 void PMODE_SOURCE_NEG_DC_start(void)
 {
-   arduino::Set_Tone(SNACK_GPIO_NEG_5V_1KHZ, 1000);
+   NEG_Source_Is_Running = true;
 }
 
 void PMODE_SOURCE_NEG_DC_stop(void)
 {
-   arduino::Stop_Tone(SNACK_GPIO_NEG_5V_1KHZ);
+   NEG_Source_Is_Running = false;
 }
+
 void PMode_AC_Run(void)
 {
-   AC_Source_Signal_H_State = !AC_Source_Signal_H_State;
-   AC_Source_Signal_L_State = !AC_Source_Signal_L_State;
-   arduino::Set_DIO(SNACK_GPIO_AC_H_120HZ, AC_Source_Signal_H_State);
-   arduino::Set_DIO(SNACK_GPIO_AC_L_120HZ, AC_Source_Signal_L_State);
+      AC_Source_Signal_H_State = AC_Source_Signal_H_State ^ AC_Source_Is_Running;
+      AC_Source_Signal_L_State = AC_Source_Signal_L_State ^ AC_Source_Is_Running;
+      arduino::Set_DIO(SNACK_GPIO_AC_H_120HZ, AC_Source_Signal_H_State);
+      arduino::Set_DIO(SNACK_GPIO_AC_L_120HZ, AC_Source_Signal_L_State);
+}
+
+void PMode_NEG_5V_Run(void)
+{
+      NEG_Source_Signal = NEG_Source_Signal ^ NEG_Source_Signal;
+      arduino::Set_DIO(SNACK_GPIO_NEG_5V_1KHZ, NEG_Source_Signal);
 }
 /*=====================================================================================* 
  * Exported Function Definitions
  *=====================================================================================*/
 void pmode::PMODE_SOURCE_AC_init(void)
 {
-   arduino::Set_ISR(PMODE_SOURCE_AC_60HZ_THREAD, PMode_AC_Run,PMODE_SOURCE_AC_60HZ);
+   arduino::Init_ISR(PMODE_SOURCE_AC_60HZ_THREAD);
+   arduino::Set_ISR(PMODE_SOURCE_AC_60HZ_THREAD, PMode_AC_Run, PMODE_SOURCE_AC_60HZ);
 }
 
 void pmode::PMODE_SOURCE_NEG_DC_init(void)
 {
-   arduino::Init_Tone(SNACK_GPIO_NEG_5V_1KHZ);
+   arduino::Set_ISR(PMODE_SOURCE_NEG_1kHZ_THREAD, PMode_NEG_5V_Run, PMODE_SOURCE_NEG_1KHZ);
 }
 
 void pmode::Enter_PMODE_AC_OFF(void)
-{
-   PMODE_SOURCE_NEG_DC_start();
-
-}
+{}
 
 void pmode::Enter_PMODE_ALL_OFF_STATE(void)
 {
    PMODE_SOURCE_NEG_DC_stop();
+   arduino::Stop_ISR(PMODE_SOURCE_AC_60HZ_THREAD);
 }
 
 void pmode::Enter_PMODE_ALL_ON(void)
@@ -123,14 +141,14 @@ void pmode::Enter_PMODE_ALL_ON(void)
 }
 
 void pmode::Exit_PMODE_AC_OFF(void)
-{
-
-}
+{}
 
 void pmode::Exit_PMODE_ALL_OFF_STATE(void)
 {
-
+   PMODE_SOURCE_NEG_DC_start();
+   arduino::Run_ISR(PMODE_SOURCE_AC_60HZ_THREAD);
 }
+
 
 void pmode::Exit_PMODE_ALL_ON(void)
 {

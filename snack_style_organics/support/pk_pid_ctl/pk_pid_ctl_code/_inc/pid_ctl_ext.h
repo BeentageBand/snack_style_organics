@@ -36,6 +36,8 @@ namespace pid{
    extern Fix32_T Get_##ch(void); \
 
 PID_CTL_CHANNELS_TABLE
+
+extern uint32_t Get_Sample_Time(void);
 }
 /*=====================================================================================* 
  * Exported Function Prototypes
