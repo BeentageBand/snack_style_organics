@@ -14,14 +14,15 @@
  * Project Includes
  *=====================================================================================*/
 #include "axial_fan_ctl.h"
-#include "temp_monitor.h"
-#include "daylight_monitor.h"
 #include "data_logger.h"
-#include "heater_ctl.h"
+#include "daylight_monitor.h"
 #include "hamatora_sched_types.h"
+#include "heater_ctl.h"
+#include "pid_ctl.h"
 #include "snacky_dehyd_ctl.h"
 #include "snack_org_lcd.h"
 #include "snack_power_mode.h"
+#include "temp_monitor.h"
 /*=====================================================================================* 
  * Standard Includes
  *=====================================================================================*/
@@ -40,6 +41,7 @@
    HAMA_SCHED_APP(TEMP_MONITOR_ID,       temp_mon::Init,    temp_mon::Main,     temp_mon::Shut      ) \
    HAMA_SCHED_APP(HEATER_CTL_ID,         heater::Init,      0,                  heater::Shut        ) \
    HAMA_SCHED_APP(AXIAL_FAN_CTL_ID,      fan::Init,         0,                  fan::Shut           ) \
+   HAMA_SCHED_APP(PID_CTL_ID,            pid::Init,         pid::Main,          0                   ) \
    /*
    */
 

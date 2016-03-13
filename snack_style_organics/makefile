@@ -61,6 +61,7 @@ $(_build_)_PROJECT_INC_DIR+=\
 "C:/Dropbox/Arduino/DIR/hardware/arduino/avr/cores/arduino"     \
 "C:/Dropbox/Arduino/DIR/libraries"                              \
 "C:/Dropbox/Arduino/DIR/hardware/arduino/avr/libraries"         \
+"C:/Dropbox/Arduino/DIR/hardware/arduino/avr/libraries/SPI"     \
 "C:/Dropbox/Arduino/DIR/hardware/arduino/avr/variants/standard" \
 "C:/Dropbox/Arduino/DIR/libraries/SD/src"                       \
 

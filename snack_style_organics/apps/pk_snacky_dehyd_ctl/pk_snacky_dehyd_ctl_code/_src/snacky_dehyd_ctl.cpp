@@ -19,6 +19,7 @@
 #include "snack_power_mode.h"
 #include "snacky_dehyd_ctl.h"
 #include "temp_monitor.h"
+#include "hama_dbg_trace.h"
 /*=====================================================================================* 
  * Standard Includes
  *=====================================================================================*/
@@ -59,8 +60,10 @@ static void Wait_For_Sample(void);
 void Wait_For_Sample(void)
 {
    sample_tout = arduino::Get_Clk();
-   while(  (arduino::Get_Clk() -  sample_tout) > PID_CTL_TAU_COEFF_MS)
-   {}
+   while(  (arduino::Get_Clk() -  sample_tout) < PID_CTL_TAU_COEFF_MS)
+   {
+      TR_INFO_2("Wait for sample %d - %d", arduino::Get_Clk(), sample_tout);
+   }
 }
 /*=====================================================================================* 
  * Exported Function Definitions

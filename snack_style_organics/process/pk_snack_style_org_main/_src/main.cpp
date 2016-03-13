@@ -11,6 +11,7 @@
 #include "hamatora_sched_def.h"
 #include "hamatora_sched.h"
 #include "hamatora_sched_ext.h"
+#include "hama_dbg_trace.h"
 /*================================================================================================*
  * Standard Includes
  *================================================================================================*/
@@ -33,7 +34,7 @@ const uint8_t Num_Of_Scheduled_Apps = sizeof(Scheduled_Apps)/sizeof(Scheduled_Ap
  *================================================================================================*/
 int main(void)
 {
-   /* Replace with your application code */
+   TR_INFO("Start Snack Style Organics");
    hama::Run_All_Apps();
    return 0;
 }

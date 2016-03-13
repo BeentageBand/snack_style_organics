@@ -1,6 +1,6 @@
 /*=====================================================================================*/
 /**
- * data_logger_frs.cpp
+ * hama_dbg_trace.h
  * author : puch
  * date : Oct 22 2015
  *
@@ -8,80 +8,72 @@
  *
  */
 /*=====================================================================================*/
-
+#ifndef HAMA_DBG_TRACE_H_
+#define HAMA_DBG_TRACE_H_
 /*=====================================================================================*
  * Project Includes
  *=====================================================================================*/
-#include "data_logger_ext.h"
-#include "arduino_fwk_uart.h"
+
 /*=====================================================================================* 
  * Standard Includes
  *=====================================================================================*/
-
+#if HOST
+#include <cstdio>
 /*=====================================================================================* 
- * Local X-Macros
+ * Exported X-Macros
  *=====================================================================================*/
 
 /*=====================================================================================* 
- * Local Define Macros
+ * Exported Define Macros
+ *=====================================================================================*/
+
+#define TR_PRINT_FILE printf("TR_INFO %s %d", __FILE__, __LINE__)
+#define TR_PRINT_LINE printf("\n")
+
+#else
+
+#define TR_PRINT_FILE
+#define TR_PRINT_LINE
+
+#endif
+/*=====================================================================================* 
+ * Exported Type Declarations
  *=====================================================================================*/
 
 /*=====================================================================================* 
- * Local Type Definitions
+ * Exported Object Declarations
  *=====================================================================================*/
 
 /*=====================================================================================* 
- * Local Object Definitions
- *=====================================================================================*/
-Arduino_UART_T UART_Init =
-{
-      ARDUINO_UART_CHANNEL_0,
-      19200
-};
-/*=====================================================================================* 
- * Exported Object Definitions
+ * Exported Function Prototypes
  *=====================================================================================*/
 
 /*=====================================================================================* 
- * Local Function Prototypes
+ * Exported Function Like Macros
  *=====================================================================================*/
+#if HOST
 
+#define TR_INFO(msg)                       TR_PRINT_FILE; printf(msg);                     TR_PRINT_LINE
+#define TR_INFO_1(msg, a1)                 TR_PRINT_FILE; printf(msg, a1);                 TR_PRINT_LINE
+#define TR_INFO_2(msg, a1, a2)             TR_PRINT_FILE; printf(msg, a1, a2);             TR_PRINT_LINE
+#define TR_INFO_3(msg, a1, a2, a3)         TR_PRINT_FILE; printf(msg, a1, a2, a3);         TR_PRINT_LINE
+#define TR_INFO_4(msg, a1, a2, a3, a4)     TR_PRINT_FILE; printf(msg, a1, a2, a3, a4);     TR_PRINT_LINE
+#define TR_INFO_5(msg, a1, a2, a3, a4, a5) TR_PRINT_FILE; printf(msg, a1, a2, a3, a4, a5); TR_PRINT_LINE
+
+#else
+
+#define TR_INFO(msg)
+#define TR_INFO_1(msg, a1)
+#define TR_INFO_2(msg, a1, a2)
+#define TR_INFO_3(msg, a1, a2, a3)
+#define TR_INFO_4(msg, a1, a2, a3, a4)
+#define TR_INFO_5(msg, a1, a2, a3, a4, a5)
+
+#endif
 /*=====================================================================================* 
- * Local Inline-Function Like Macros
- *=====================================================================================*/
-
-/*=====================================================================================* 
- * Local Function Definitions
- *=====================================================================================*/
-
-/*=====================================================================================* 
- * Exported Function Definitions
- *=====================================================================================*/
-void logger::DATA_LOGGER_STREAM_UART_init(void)
-{
-   arduino::Init_UART(UART_Init);
-
-}
-
-void logger::DATA_LOGGER_STREAM_UART_print_int(const int d)
-{
-
-
-}
-
-void logger::DATA_LOGGER_STREAM_UART_print_str(const char * str)
-{
-   arduino::Print_UART(UART_Init, str);
-}
-
-void logger::DATA_LOGGER_STREAM_UART_write(const char c)
-{
-   arduino::Put_UART(UART_Init, c);
-}
-
-/*=====================================================================================* 
- * data_logger_frs.cpp
+ * hama_dbg_trace.h
  *=====================================================================================*
  * Log History
  *
  *=====================================================================================*/
+#endif /*HAMA_DBG_TRACE_H_*/
