@@ -22,4 +22,4 @@ out.txt
 # Atmel Studio 7 >
 *.componentinfo.xml
 *.cppproj
-
+*.bak
