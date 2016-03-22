@@ -63,55 +63,93 @@ void arduino::Init_UART(Arduino_UART_T const & uart)
       UART_Channels_To_Ports[uart.channel]->begin(uart.baud);
    }
 }
-void arduino::Put_UART(Arduino_UART_T const & uart, const uint8_t c)
+void arduino::Put_UART(const ARDUINO_UART_CHANNEL_T uart, const uint8_t c)
 {
-   if(uart.channel < ARDUINO_UART_MAX_CHANNELS)
+   if(uart < ARDUINO_UART_MAX_CHANNELS)
    {
-      UART_Channels_To_Ports[uart.channel]->write(c);
+      UART_Channels_To_Ports[uart]->write(c);
    }
 }
 
-void arduino::Print_UART(Arduino_UART_T const & uart, const char * printed)
+void arduino::Print_UART(const ARDUINO_UART_CHANNEL_T uart, const char * printed)
 {
-	if(uart.channel < ARDUINO_UART_MAX_CHANNELS)
-	{
-		UART_Channels_To_Ports[uart.channel]->write(printed);
-	}
+   if(uart < ARDUINO_UART_MAX_CHANNELS)
+   {
+      UART_Channels_To_Ports[uart]->write(printed);
+   }
 }
-uint8_t arduino::Get_UART(Arduino_UART_T const & uart)
+
+void arduino::Print_UART_P(const ARDUINO_UART_CHANNEL_T uart, const Pgm_Char_T const_c)
+{
+   if(uart < ARDUINO_UART_MAX_CHANNELS)
+   {
+      const char c = pgm_read_byte(const_c);
+      UART_Channels_To_Ports[uart]->write(c);
+   }
+}
+
+void arduino::Print_UART_P(const ARDUINO_UART_CHANNEL_T uart, const Pgm_Char_T * const_c)
+{
+   if(uart < ARDUINO_UART_MAX_CHANNELS)
+   {
+      char c =' ';
+      for(uint8_t i =0 ; 0 != pgm_read_byte(*const_c + i); ++i)
+      {
+         c = pgm_read_byte(*const_c + i);
+         UART_Channels_To_Ports[uart]->write(c);
+      }
+   }
+}
+
+void arduino::Print_UART(const ARDUINO_UART_CHANNEL_T uart, int d)
+{
+   if(uart < ARDUINO_UART_MAX_CHANNELS)
+   {
+      UART_Channels_To_Ports[uart]->print(d, DEC);
+   }
+}
+
+void arduino::Print_UART(const ARDUINO_UART_CHANNEL_T uart, long l)
+{
+   if(uart < ARDUINO_UART_MAX_CHANNELS)
+   {
+      UART_Channels_To_Ports[uart]->print(l, DEC);
+   }
+}
+uint8_t arduino::Get_UART(const ARDUINO_UART_CHANNEL_T uart)
 {
    uint8_t read = 0xFFU;
 
-   if(uart.channel < ARDUINO_UART_MAX_CHANNELS &&
-     (UART_Channels_To_Ports[uart.channel]->available() > 0))
+   if(uart < ARDUINO_UART_MAX_CHANNELS &&
+     (UART_Channels_To_Ports[uart]->available() > 0))
    {
-      read = UART_Channels_To_Ports[uart.channel]->read();
+      read = UART_Channels_To_Ports[uart]->read();
    }
    return read;
 }
-uint16_t arduino::Get_Available_UART(Arduino_UART_T const & uart)
+uint16_t arduino::Get_Available_UART(const ARDUINO_UART_CHANNEL_T uart)
 {
    uint16_t available = 0;
 
-   if(uart.channel < ARDUINO_UART_MAX_CHANNELS)
+   if(uart < ARDUINO_UART_MAX_CHANNELS)
    {
-      available = UART_Channels_To_Ports[uart.channel]->available();
+      available = UART_Channels_To_Ports[uart]->available();
    }
    return available;
 }
-void arduino::Flush_UART(Arduino_UART_T const & uart)
+void arduino::Flush_UART(const ARDUINO_UART_CHANNEL_T uart)
 {
-   if(uart.channel < ARDUINO_UART_MAX_CHANNELS)
+   if(uart < ARDUINO_UART_MAX_CHANNELS)
    {
-      UART_Channels_To_Ports[uart.channel]->flush();
+      UART_Channels_To_Ports[uart]->flush();
    }
 }
 
-void arduino::Stop_UART(Arduino_UART_T const & uart)
+void arduino::Stop_UART(const ARDUINO_UART_CHANNEL_T uart)
 {
-   if(uart.channel < ARDUINO_UART_MAX_CHANNELS)
+   if(uart < ARDUINO_UART_MAX_CHANNELS)
    {
-      UART_Channels_To_Ports[uart.channel]->end();
+      UART_Channels_To_Ports[uart]->end();
    }
 }
 /*=====================================================================================* 

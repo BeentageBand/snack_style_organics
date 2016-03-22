@@ -68,11 +68,11 @@ const Log_Stream_T Log_Stream[] PROGMEM =
  *=====================================================================================*/
 void logger::Init(void)
 {
-
+   logger::DATA_LOGGER_STREAM_UART_init();
 }
 void logger::Main(void)
 {
-
+   logger::DATA_LOGGER_STREAM_UART_print_str("it's alive");
 }
 void logger::Shut(void)
 {

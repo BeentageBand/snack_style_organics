@@ -34,8 +34,12 @@ const uint8_t Num_Of_Scheduled_Apps = sizeof(Scheduled_Apps)/sizeof(Scheduled_Ap
  *================================================================================================*/
 int main(void)
 {
+   dbg::Init();
+
    TR_INFO("Start Snack Style Organics");
    hama::Run_All_Apps();
+
+   dbg::Shut();
    return 0;
 }
 

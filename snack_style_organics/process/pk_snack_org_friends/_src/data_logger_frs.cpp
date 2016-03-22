@@ -33,11 +33,7 @@
 /*=====================================================================================* 
  * Local Object Definitions
  *=====================================================================================*/
-Arduino_UART_T UART_Init =
-{
-      ARDUINO_UART_CHANNEL_0,
-      19200
-};
+
 /*=====================================================================================* 
  * Exported Object Definitions
  *=====================================================================================*/
@@ -59,7 +55,7 @@ Arduino_UART_T UART_Init =
  *=====================================================================================*/
 void logger::DATA_LOGGER_STREAM_UART_init(void)
 {
-   arduino::Init_UART(UART_Init);
+
 
 }
 
@@ -71,12 +67,12 @@ void logger::DATA_LOGGER_STREAM_UART_print_int(const int d)
 
 void logger::DATA_LOGGER_STREAM_UART_print_str(const char * str)
 {
-   arduino::Print_UART(UART_Init, str);
+
 }
 
 void logger::DATA_LOGGER_STREAM_UART_write(const char c)
 {
-   arduino::Put_UART(UART_Init, c);
+
 }
 
 /*=====================================================================================* 

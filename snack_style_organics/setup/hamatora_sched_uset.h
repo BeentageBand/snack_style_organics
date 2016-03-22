@@ -33,6 +33,7 @@
    HAMA_SCHED_APP_ID_INDEX(SNACK_ORG_LCD_ID)    \
    HAMA_SCHED_APP_ID_INDEX(SNACK_PMODE_ID)      \
    HAMA_SCHED_APP_ID_INDEX(TEMP_MONITOR_ID)     \
+   HAMA_SCHED_APP_ID_INDEX(HAMA_DBG_TRACE_ID)   \
 /*=====================================================================================* 
  * Exported Define Macros
  *=====================================================================================*/

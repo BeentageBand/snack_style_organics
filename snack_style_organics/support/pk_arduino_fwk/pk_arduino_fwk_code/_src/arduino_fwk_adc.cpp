@@ -65,7 +65,7 @@ void arduino::Init_ADC(const ARDUINO_ADC_CHANNEL_T channel)
 {
    if(channel < ARDUINO_ADC_MAX_CHANNELS)
    {
-       pinMode(ADC_Channel_To_Pin[channel], INPUT);
+       pinMode(pgm_read_byte(ADC_Channel_To_Pin + channel), INPUT);
    }
 }
 uint16_t arduino::Get_ADC(const ARDUINO_ADC_CHANNEL_T channel)
@@ -73,7 +73,7 @@ uint16_t arduino::Get_ADC(const ARDUINO_ADC_CHANNEL_T channel)
    uint16_t read = 0xFFFFU;
    if(channel < ARDUINO_ADC_MAX_CHANNELS)
    {
-      read = analogRead(ADC_Channel_To_Pin[channel]);
+      read = analogRead(pgm_read_byte(ADC_Channel_To_Pin + channel));
    }
    return read;
 }
@@ -82,7 +82,7 @@ void arduino::Stop_ADC(const ARDUINO_ADC_CHANNEL_T channel)
 {
    if(channel < ARDUINO_ADC_MAX_CHANNELS)
    {
-      analogWrite(ADC_Channel_To_Pin[channel], INPUT);
+      analogWrite(pgm_read_byte(ADC_Channel_To_Pin + channel), INPUT);
    }
 }
 /*=====================================================================================* 

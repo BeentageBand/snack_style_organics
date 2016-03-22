@@ -72,6 +72,7 @@ $(_build_)_$(_curr_)_bin_objs=\
    $($(_build_)_LIB_DIR)/$(_lprefix_)snack_org_friends$(_lib_ext_)      \
    $($(_build_)_LIB_DIR)/$(_lprefix_)arduino_fwk$(_lib_ext_)            \
    $($(_build_)_LIB_DIR)/$(_lprefix_)arduino_core$(_lib_ext_)           \
+   $($(_build_)_LIB_DIR)/$(_lprefix_)hama_dbg_trace$(_lib_ext_)         \
 #\
  
  else
@@ -89,6 +90,7 @@ $(_build_)_$(_curr_)_bin_objs=\
    $($(_build_)_LIB_DIR)/$(_lprefix_)snack_power_mode$(_lib_ext_)       \
    $($(_build_)_LIB_DIR)/$(_lprefix_)snack_org_friends$(_lib_ext_)      \
    $($(_build_)_LIB_DIR)/$(_lprefix_)arduino_fwk$(_lib_ext_)            \
+   $($(_build_)_LIB_DIR)/$(_lprefix_)hama_dbg_trace$(_lib_ext_)         \
 #\
    $($(_build_)_LIB_DIR)/$(_lprefix_)power_mode$(_lib_ext_)             \
     

@@ -27,7 +27,7 @@ $(_build_)_$(_curr_)_src_dir=pk_hama_dbg_trace_code/_src
  # e.g: $(_build_)_$(_curr_)_lib_objs=$($(_build_)_OBJ_DIR)/my_lib_obj$(_obj_ext_) \
  ##
 $(_build_)_$(_curr_)_lib_objs=\
-   $($(_build_)_OBJ_DIR)/hama_dbg_trace$(_obj_ext_) \
+   $($(_build_)_OBJ_DIR)/$(_build_)_hama_dbg_trace$(_obj_ext_) \
 
 ##
  # Library Requisites

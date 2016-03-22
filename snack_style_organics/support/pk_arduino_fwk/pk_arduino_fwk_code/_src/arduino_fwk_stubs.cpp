@@ -23,6 +23,7 @@
 #include "arduino_fwk_sd.h"
 #include "arduino_fwk_spi.h"
 #include "arduino_fwk_uart.h"
+#include "hama_dbg_trace.h"
 /*=====================================================================================* 
  * Standard Includes
  *=====================================================================================*/
@@ -105,17 +106,17 @@ const char* Arduino_ISR_Threads_Names[] =
 //Framework
 void arduino::Shut(void)
 {
-	std::cout << __FUNCTION__ << std::endl;
+   TR_INFO(__FUNCTION__);
 }
 void arduino::Init(void)
 {
-   std::cout << __FUNCTION__ << std::endl;
+   TR_INFO(__FUNCTION__);
 }
 
 //CLK
 void arduino::Init_Clk(void)
 {
-	std::cout << __FUNCTION__ << std::endl;
+	TR_INFO(__FUNCTION__);
 }
 uint32_t arduino::Get_Clk(void)
 {
@@ -131,52 +132,56 @@ void arduino::Set_Tone(const ARDUINO_DIO_CHANNEL_T pin, uint16_t freq)
 {
    std::cout << __FUNCTION__ << ":" << freq << std::endl;
 }
-void arduino::Stop_Tone(const ARDUINO_DIO_CHANNEL_T pin){std::cout << __FUNCTION__ << std::endl;}
+void arduino::Stop_Tone(const ARDUINO_DIO_CHANNEL_T pin){TR_INFO(__FUNCTION__);}
 
 //ADC Stubs
-void arduino::Init_ADC(const ARDUINO_ADC_CHANNEL_T channel){std::cout << __FUNCTION__ << std::endl;}
-uint16_t arduino::Get_ADC(const ARDUINO_ADC_CHANNEL_T channel){std::cout << __FUNCTION__ << std::endl;return 0;}
-void arduino::Stop_ADC(const ARDUINO_ADC_CHANNEL_T channel){std::cout << __FUNCTION__ << std::endl;}
+void arduino::Init_ADC(const ARDUINO_ADC_CHANNEL_T channel){TR_INFO(__FUNCTION__);}
+uint16_t arduino::Get_ADC(const ARDUINO_ADC_CHANNEL_T channel){TR_INFO(__FUNCTION__);return 0;}
+void arduino::Stop_ADC(const ARDUINO_ADC_CHANNEL_T channel){TR_INFO(__FUNCTION__);}
 
 //DIO Stubs
-void arduino::Init_DIO(const ARDUINO_DIO_CHANNEL_T pin, uint8_t mode){std::cout << __FUNCTION__ << std::endl;}
-void arduino::Set_DIO(const ARDUINO_DIO_CHANNEL_T pin,const uint8_t value){std::cout << __FUNCTION__ << std::endl;}
-uint8_t arduino::Get_DIO(const ARDUINO_DIO_CHANNEL_T pin){std::cout << __FUNCTION__ << std::endl; return 0;}
-void arduino::Shut_DIO(const ARDUINO_DIO_CHANNEL_T pin){std::cout << __FUNCTION__ << std::endl;}
+void arduino::Init_DIO(const ARDUINO_DIO_CHANNEL_T pin, uint8_t mode){TR_INFO(__FUNCTION__);}
+void arduino::Set_DIO(const ARDUINO_DIO_CHANNEL_T pin,const uint8_t value){TR_INFO(__FUNCTION__);}
+uint8_t arduino::Get_DIO(const ARDUINO_DIO_CHANNEL_T pin){TR_INFO(__FUNCTION__); return 0;}
+void arduino::Shut_DIO(const ARDUINO_DIO_CHANNEL_T pin){TR_INFO(__FUNCTION__);}
 
 //ISR Stubs
 void arduino::Init_ISR(const ARDUINO_ISR_THREAD_T channel){}
-void arduino::Set_ISR(const ARDUINO_ISR_THREAD_T channel, Arduino_ISR_T isr, const uint32_t timer){std::cout << __FUNCTION__ << std::endl; isr();}
-void arduino::Run_ISR(const ARDUINO_ISR_THREAD_T channel){std::cout << __FUNCTION__ << std::endl;}
-void arduino::Stop_ISR(const ARDUINO_ISR_THREAD_T channel){std::cout << __FUNCTION__ << std::endl;}
+void arduino::Set_ISR(const ARDUINO_ISR_THREAD_T channel, Arduino_ISR_T isr, const uint32_t timer){TR_INFO(__FUNCTION__); isr();}
+void arduino::Run_ISR(const ARDUINO_ISR_THREAD_T channel){TR_INFO(__FUNCTION__);}
+void arduino::Stop_ISR(const ARDUINO_ISR_THREAD_T channel){TR_INFO(__FUNCTION__);}
 
 //LCD
-void arduino::Init_LCD(void){std::cout << __FUNCTION__ << std::endl;}
-void arduino::Set_LCD(Arduino_LCD_T const & lcd){std::cout << __FUNCTION__ << std::endl;}
-void arduino::Print_LCD(Arduino_LCD_T & lcd, uint8_t * data_print, size_t lenght){std::cout << __FUNCTION__ << std::endl;}
-void arduino::Stop_LCD(void){std::cout << __FUNCTION__ << std::endl;}
+void arduino::Init_LCD(void){TR_INFO(__FUNCTION__);}
+void arduino::Set_LCD(Arduino_LCD_T const & lcd){TR_INFO(__FUNCTION__);}
+void arduino::Print_LCD(Arduino_LCD_T & lcd, uint8_t * data_print, size_t lenght){TR_INFO(__FUNCTION__);}
+void arduino::Stop_LCD(void){TR_INFO(__FUNCTION__);}
 
 //PWM Stubs
-void arduino::Init_PWM(const ARDUINO_PWM_CHANNEL_T channel){std::cout << __FUNCTION__ << std::endl;}
-void arduino::Set_PWM(const ARDUINO_PWM_CHANNEL_T channel, const uint8_t output){std::cout << __FUNCTION__ << std::endl;}
-void arduino::Stop_PWM(const ARDUINO_PWM_CHANNEL_T channel){std::cout << __FUNCTION__ << std::endl;}
+void arduino::Init_PWM(const ARDUINO_PWM_CHANNEL_T channel){TR_INFO(__FUNCTION__);}
+void arduino::Set_PWM(const ARDUINO_PWM_CHANNEL_T channel, const uint8_t output){TR_INFO(__FUNCTION__);}
+void arduino::Stop_PWM(const ARDUINO_PWM_CHANNEL_T channel){TR_INFO(__FUNCTION__);}
 
-void arduino::Init_SD(void){std::cout << __FUNCTION__ << std::endl;}
-bool arduino::Open_File(const char * file_name, uint8_t perms){std::cout << __FUNCTION__ << std::endl;return true;}
-void arduino::Close_File(void){std::cout << __FUNCTION__ << std::endl;}
-void arduino::Write_SD(const char c){std::cout << __FUNCTION__ << std::endl;}
-void arduino::Print_Str_SD(const char * str){std::cout << __FUNCTION__ << std::endl;}
-void arduino::Print_Int_SD(const int d){std::cout << __FUNCTION__ << std::endl;}
-void arduino::Shut_SD(void){std::cout << __FUNCTION__ << std::endl;}
+void arduino::Init_SD(void){TR_INFO(__FUNCTION__);}
+bool arduino::Open_File(const char * file_name, uint8_t perms){TR_INFO(__FUNCTION__);return true;}
+void arduino::Close_File(void){TR_INFO(__FUNCTION__);}
+void arduino::Write_SD(const char c){TR_INFO(__FUNCTION__);}
+void arduino::Print_Str_SD(const char * str){TR_INFO(__FUNCTION__);}
+void arduino::Print_Int_SD(const int d){TR_INFO(__FUNCTION__);}
+void arduino::Shut_SD(void){TR_INFO(__FUNCTION__);}
 
 //UART
-void arduino::Init_UART(Arduino_UART_T const & uart){std::cout << __FUNCTION__ << std::endl;}
-void arduino::Put_UART(Arduino_UART_T const & uart, const uint8_t c){std::cout << __FUNCTION__ << std::endl;}
-void arduino::Print_UART(Arduino_UART_T const & uart, const char * printed){std::cout << __FUNCTION__ << std::endl;}
-uint8_t arduino::Get_UART(Arduino_UART_T const & uart){std::cout << __FUNCTION__ << std::endl;return 0;}
-uint16_t arduino::Get_Available_UART(Arduino_UART_T const & uart){std::cout << __FUNCTION__ << std::endl;return 0;}
-void arduino::Flush_UART(Arduino_UART_T const & uart){std::cout << __FUNCTION__ << std::endl;}
-void arduino::Stop_UART(Arduino_UART_T const & uart){std::cout << __FUNCTION__ << std::endl;}
+void arduino::Init_UART(Arduino_UART_T const & uart){TR_INFO(__FUNCTION__);}
+void arduino::Put_UART(               const ARDUINO_UART_CHANNEL_T uart, const uint8_t c){TR_INFO(__FUNCTION__);}
+void arduino::Print_UART(             const ARDUINO_UART_CHANNEL_T uart, const char * printed){TR_INFO(__FUNCTION__);}
+void arduino::Print_UART_P(             const ARDUINO_UART_CHANNEL_T uart, const Pgm_Char_T  PROGMEM const_c){TR_INFO(__FUNCTION__);}
+void arduino::Print_UART_P(             const ARDUINO_UART_CHANNEL_T uart, const Pgm_Char_T * PROGMEM printed){TR_INFO(__FUNCTION__);}
+void arduino::Print_UART(             const ARDUINO_UART_CHANNEL_T uart, const int d){TR_INFO(__FUNCTION__);}
+void arduino::Print_UART(             const ARDUINO_UART_CHANNEL_T uart, const long l){TR_INFO(__FUNCTION__);}
+uint8_t arduino::Get_UART(            const ARDUINO_UART_CHANNEL_T uart){TR_INFO(__FUNCTION__);return 0;}
+uint16_t arduino::Get_Available_UART( const ARDUINO_UART_CHANNEL_T uart){TR_INFO(__FUNCTION__);return 0;}
+void arduino::Flush_UART(             const ARDUINO_UART_CHANNEL_T uart){TR_INFO(__FUNCTION__);}
+void arduino::Stop_UART(              const ARDUINO_UART_CHANNEL_T uart){TR_INFO(__FUNCTION__);}
 
 /*=====================================================================================* 
  * arduino_fwk_stubs.cpp

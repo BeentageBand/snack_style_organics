@@ -13,6 +13,7 @@
  * Project Includes
  *=====================================================================================*/
 #include "arduino_fwk_pwm.h"
+
 /*=====================================================================================* 
  * Standard Includes
  *=====================================================================================*/
@@ -36,11 +37,14 @@
 /*=====================================================================================* 
  * Exported Object Definitions
  *=====================================================================================*/
-const uint8_t PWM_Channel_To_Pin []=
+const uint8_t PWM_Channel_To_Pin [] PROGMEM=
 {
-   0, /*ADRUINO_PWM_CHANNEL_0*/
-   2, /*ADRUINO_PWM_CHANNEL_1*/
-   3, /*ADRUINO_PWM_CHANNEL_2*/
+   ARDUINO_DIO_CHANNEL_3,/*ADRUINO_PWM_CHANNEL_0,*/
+   ARDUINO_DIO_CHANNEL_5,/*ADRUINO_PWM_CHANNEL_1,*/
+   ARDUINO_DIO_CHANNEL_6,/*ADRUINO_PWM_CHANNEL_2,*/
+   ARDUINO_DIO_CHANNEL_9,/*ADRUINO_PWM_CHANNEL_3,*/
+   ARDUINO_DIO_CHANNEL_10,/*ADRUINO_PWM_CHANNEL_4,*/
+   ARDUINO_DIO_CHANNEL_11/*ADRUINO_PWM_CHANNEL_5,*/
 };
 /*=====================================================================================* 
  * Local Function Prototypes
@@ -61,7 +65,7 @@ void arduino::Init_PWM(const ARDUINO_PWM_CHANNEL_T channel)
 {
    if(channel < ARDUINO_PWM_MAX_CHANNELS)
    {
-      pinMode(PWM_Channel_To_Pin[channel], OUTPUT);
+      pinMode(pgm_read_byte(PWM_Channel_To_Pin + channel), OUTPUT);
    }
 }
 
@@ -69,7 +73,7 @@ void arduino::Set_PWM(const ARDUINO_PWM_CHANNEL_T channel, const uint8_t output)
 {
    if(channel < ARDUINO_PWM_MAX_CHANNELS)
    {
-      analogWrite(PWM_Channel_To_Pin[channel], output);
+      analogWrite(pgm_read_byte(PWM_Channel_To_Pin + channel), output);
    }
 }
 
@@ -77,7 +81,7 @@ void arduino::Stop_PWM(const ARDUINO_PWM_CHANNEL_T channel)
 {
    if(channel < ARDUINO_PWM_MAX_CHANNELS)
    {
-      pinMode(PWM_Channel_To_Pin[channel], INPUT);
+      pinMode(pgm_read_byte(PWM_Channel_To_Pin + channel), INPUT);
    }
 }
 /*=====================================================================================* 

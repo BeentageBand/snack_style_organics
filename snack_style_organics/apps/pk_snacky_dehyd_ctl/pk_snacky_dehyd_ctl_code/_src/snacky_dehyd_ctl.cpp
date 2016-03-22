@@ -63,7 +63,7 @@ const Fix32_T Dehydrator_Set_Point_Temp = 0U;
  *=====================================================================================*/
 void snack_dehyd::Init(void)
 {
-   TR_INFO(__FUNCTION__);
+   TR_INFO_1("%s",__FUNCTION__);
    pid::Set_Point(PID_CTL_CHANNEL_FAN_DOOR, Dehydrator_Set_Point_Temp);
    pid::Set_Point(PID_CTL_CHANNEL_HEATER, Dehydrator_Set_Point_Temp);
 }

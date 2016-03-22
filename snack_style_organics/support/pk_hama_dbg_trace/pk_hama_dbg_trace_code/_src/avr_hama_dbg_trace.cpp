@@ -1,6 +1,6 @@
 /*=====================================================================================*/
 /**
- * arduino_fwk.cpp
+ * hama_dbg_trace.cpp
  * author : puch
  * date : Oct 22 2015
  *
@@ -12,10 +12,8 @@
 /*=====================================================================================*
  * Project Includes
  *=====================================================================================*/
-#include "hamatora_sched.h"
-#include "hamatora_sched_def.h"
-#include "hamatora_sched_ext.h"
 #include "hama_dbg_trace.h"
+#include "arduino_fwk_uart.h"
 /*=====================================================================================* 
  * Standard Includes
  *=====================================================================================*/
@@ -35,25 +33,11 @@
 /*=====================================================================================* 
  * Local Object Definitions
  *=====================================================================================*/
-static bool Stop_Hama_Sched = true;
-
-
-
-
-
-#undef HAMA_SCHED_APP
-#define HAMA_SCHED_APP(app, init, run, stop) const Pgm_Char_T Hama_Sched_##app[] PROGMEM = #app;
-
-HAMA_SCHED_APPS_TABLE
-
-#undef HAMA_SCHED_APP
-#define HAMA_SCHED_APP(app, init, run, stop) Hama_Sched_##app,
-
-const Pgm_Char_T * const Sched_Apps_Names[] PROGMEM =
+const Arduino_UART_T dbg::UART_Init =
 {
-      HAMA_SCHED_APPS_TABLE
+      ARDUINO_UART_CHANNEL_0,
+      19200
 };
-
 /*=====================================================================================* 
  * Exported Object Definitions
  *=====================================================================================*/
@@ -61,9 +45,7 @@ const Pgm_Char_T * const Sched_Apps_Names[] PROGMEM =
 /*=====================================================================================* 
  * Local Function Prototypes
  *=====================================================================================*/
-static void hamatora_sched_main(void);
-static void hamatora_sched_start(void);
-static void hamatora_sched_stop(void);
+
 /*=====================================================================================* 
  * Local Inline-Function Like Macros
  *=====================================================================================*/
@@ -71,62 +53,30 @@ static void hamatora_sched_stop(void);
 /*=====================================================================================* 
  * Local Function Definitions
  *=====================================================================================*/
-void hamatora_sched_main(void)
-{
-   while (Stop_Hama_Sched)
-   {
-      for(uint8_t app_id = 0; app_id < Num_Of_Scheduled_Apps; app_id++)
-      {
-         if(0 != Scheduled_Apps[app_id].run)
-         {
-            TR_INFO_1("Main - %s", Sched_Apps_Names[app_id]);
-            Scheduled_Apps[app_id].run();
-         }
-      }
-   }
-}
 
-static void hamatora_sched_start(void)
-{
-
-   for(uint8_t app_id = 0; app_id < Num_Of_Scheduled_Apps; app_id++)
-   {
-      if(0 != Scheduled_Apps[app_id].init)
-      {
-         TR_INFO_1("Init - %s", Sched_Apps_Names[app_id]);
-         Scheduled_Apps[app_id].init();
-      }
-   }
-}
-
-static void hamatora_sched_stop(void)
-{
-   for(uint8_t app_id = 0; app_id < Num_Of_Scheduled_Apps; app_id++)
-   {
-      if(0 != Scheduled_Apps[app_id].stop)
-      {
-         TR_INFO_1("Stop - %s", Sched_Apps_Names[app_id]);
-         Scheduled_Apps[app_id].stop();
-      }
-   }
-}
 /*=====================================================================================* 
  * Exported Function Definitions
  *=====================================================================================*/
-void hama::Run_All_Apps(void)
+void dbg::Init(void)
 {
-   Stop_Hama_Sched = true;
-   hamatora_sched_start();
-   hamatora_sched_main();
-   hamatora_sched_stop();
+   arduino::Init_UART(dbg::UART_Init);
 }
 
-void hama::Shut(void)
+bool dbg::Get_Stream(void)
 {
-   Stop_Hama_Sched = false;
+  return false;
+}
+
+void dbg::Release_Stream(void)
+{
+
+}
+void dbg::Shut(void)
+{
+   arduino::Stop_UART(dbg::UART_Init.channel);
 }
 /*=====================================================================================* 
- * arduino_fwk.cpp
+ * hama_dbg_trace.cpp
  *=====================================================================================*
  * Log History
  *
