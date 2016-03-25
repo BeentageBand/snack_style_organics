@@ -46,7 +46,7 @@ typedef struct
    pmode::Exit_##st   \
 },\
 
-const Change_Of_State_T PMode_SM[] PROGMEM =
+const Change_Of_State_T PMode_SM[] =
 {
    POWER_MODE_STATES_TB
 };

@@ -35,7 +35,7 @@
  * Local Object Definitions
  *=====================================================================================*/
 static uint8_t Output = 0;
-const ARDUINO_PWM_CHANNEL_T FAN_CTL_PWM_CHANNEL = ARDUINO_PWM_CHANNEL_0;
+const ARDUINO_PWM_CHANNEL_T FAN_CTL_PWM_CHANNEL PROGMEM = ARDUINO_PWM_CHANNEL_0;
 /*=====================================================================================* 
  * Exported Object Definitions
  *=====================================================================================*/

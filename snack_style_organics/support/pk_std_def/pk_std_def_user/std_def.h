@@ -33,6 +33,7 @@
 
 #else
 #define PROGMEM
+#define pgm_read_byte(b) *b
 #endif
 /*=====================================================================================* 
  * Exported Type Declarations

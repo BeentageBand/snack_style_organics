@@ -28,7 +28,6 @@ $(_build_)_$(_curr_)_src_dir=_src
  ##
 $(_build_)_$(_curr_)_lib_objs=\
    $($(_build_)_OBJ_DIR)/pid_ctl_frs$(_obj_ext_)          \
-   $($(_build_)_OBJ_DIR)/data_logger_frs$(_obj_ext_)      \
 
 ##
  # Library Requisites

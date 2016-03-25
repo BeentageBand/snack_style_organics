@@ -64,7 +64,6 @@ $(_build_)_$(_curr_)_bin_objs=\
    $($(_build_)_LIB_DIR)/$(_lprefix_)axial_fan_ctl$(_lib_ext_)          \
    $($(_build_)_LIB_DIR)/$(_lprefix_)heater_ctl$(_lib_ext_)             \
    $($(_build_)_LIB_DIR)/$(_lprefix_)daylight_monitor$(_lib_ext_)       \
-   $($(_build_)_LIB_DIR)/$(_lprefix_)data_logger$(_lib_ext_)            \
    $($(_build_)_LIB_DIR)/$(_lprefix_)snacky_dehyd_ctl$(_lib_ext_)       \
    $($(_build_)_LIB_DIR)/$(_lprefix_)chimney_ctl$(_lib_ext_)            \
    $($(_build_)_LIB_DIR)/$(_lprefix_)pid_ctl$(_lib_ext_)                \
@@ -83,7 +82,6 @@ $(_build_)_$(_curr_)_bin_objs=\
    $($(_build_)_LIB_DIR)/$(_lprefix_)axial_fan_ctl$(_lib_ext_)          \
    $($(_build_)_LIB_DIR)/$(_lprefix_)heater_ctl$(_lib_ext_)             \
    $($(_build_)_LIB_DIR)/$(_lprefix_)daylight_monitor$(_lib_ext_)       \
-   $($(_build_)_LIB_DIR)/$(_lprefix_)data_logger$(_lib_ext_)            \
    $($(_build_)_LIB_DIR)/$(_lprefix_)snacky_dehyd_ctl$(_lib_ext_)       \
    $($(_build_)_LIB_DIR)/$(_lprefix_)chimney_ctl$(_lib_ext_)            \
    $($(_build_)_LIB_DIR)/$(_lprefix_)pid_ctl$(_lib_ext_)                \

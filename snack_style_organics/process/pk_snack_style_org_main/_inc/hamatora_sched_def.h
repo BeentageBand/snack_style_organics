@@ -14,7 +14,6 @@
  * Project Includes
  *=====================================================================================*/
 #include "axial_fan_ctl.h"
-#include "data_logger.h"
 #include "daylight_monitor.h"
 #include "hamatora_sched_types.h"
 #include "heater_ctl.h"
@@ -34,7 +33,6 @@
                /* App id,                Init app,          Run app,            Stop app */\
    HAMA_SCHED_APP(HAMA_DBG_TRACE_ID,     dbg::Init,         0,                  dbg::Shut           ) \
    HAMA_SCHED_APP(SNACK_ORG_CTL_ID,      snack_dehyd::Init, snack_dehyd::Main,  snack_dehyd::Shut   ) \
-   HAMA_SCHED_APP(DATA_LOGGER_ID,        logger::Init,      logger::Main,       logger::Shut        ) \
    HAMA_SCHED_APP(SNACK_ORG_LCD_ID,      snack_lcd::Init,   snack_lcd::Main,    snack_lcd::Shut     ) \
    HAMA_SCHED_APP(SNACK_PMODE_ID,        pmode::Init,       pmode::Main,        pmode::Shut         ) \
    HAMA_SCHED_APP(HAMA_SCHED_ID,         0,                 0,                  hama::Shut          ) \

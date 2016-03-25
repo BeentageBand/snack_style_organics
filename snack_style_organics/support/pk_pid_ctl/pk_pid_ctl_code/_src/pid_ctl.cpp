@@ -71,7 +71,7 @@ static Pid_Ctl_Callback_T Pid_Callback[PID_CTL_MAX_CHANNELS] =
 #undef PID_CTL_LAWS
 #define PID_CTL_LAWS(ch, kp, ki) {kp,ki},
 
-const Pid_Ctl_T Pid_Laws_Coeff[PID_CTL_MAX_CHANNELS]=
+const Pid_Ctl_T Pid_Laws_Coeff[PID_CTL_MAX_CHANNELS] =
 {
    PID_CTL_LAW_COEFFS_TB
 };
@@ -123,7 +123,7 @@ void Pid_Ctl_Read_FeedBack(const uint8_t channel)
 bool Wait_For_Sample(void)
 {
    uint32_t time_now = pid::Get_Sample_Time();
-   TR_INFO_2("Waiting %d == %d", (long) time_now, (long) Sample_Tout);
+   TR_INFO_2("Waiting %d == %d", (int) time_now, (int) Sample_Tout);
    return ( (time_now -  Sample_Tout) >= PID_CTL_TAU_COEFF_MS);
 }
 /*=====================================================================================* 
@@ -148,7 +148,7 @@ void pid::Init(void)
 
 void pid::Set_Point(const PID_CHANNEL_T channel, const Fix32_T val)
 {
-   TR_INFO_3("%s pid_ch = %d, val %ld", __FUNCTION__,channel,(int32_t)val);
+   TR_INFO_2("pid::Set_Point pid_ch = %d, val %d", channel,(int32_t)val);
    Pid_Channels[channel].set_point = val;
 }
 
