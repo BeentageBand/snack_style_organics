@@ -41,12 +41,19 @@ typedef struct
  *=====================================================================================*/
 #undef PMODE_STATE
 #define PMODE_STATE(st) \
+const Change_Of_State_T st##_State PROGMEM = \
 {\
    pmode::Enter_##st, \
    pmode::Exit_##st   \
-},\
+};\
 
-const Change_Of_State_T PMode_SM[] =
+POWER_MODE_STATES_TB
+
+#undef PMODE_STATE
+#define PMODE_STATE(st) \
+&st##_State,\
+
+const Change_Of_State_T * const PMode_SM[] PROGMEM =
 {
    POWER_MODE_STATES_TB
 };
@@ -72,8 +79,14 @@ void pmode::Main(void)
 {
    if(New_State != Current_State)
    {
-      PMode_SM[Current_State].exit();
-      PMode_SM[New_State].enter();
+      const Change_Of_State_T * sm = reinterpret_cast<const Change_Of_State_T *>( pgm_read_ptr(PMode_SM + Current_State) );
+      void (*handler)(void) = reinterpret_cast< void (*)(void)>(pgm_read_ptr(&sm->exit));
+      handler();
+
+      sm = reinterpret_cast<const Change_Of_State_T *>( pgm_read_ptr(PMode_SM + New_State) );
+      handler = reinterpret_cast< void (*)(void)>(pgm_read_ptr(&sm->enter) );
+      handler();
+
       Current_State = New_State;
    }
 }

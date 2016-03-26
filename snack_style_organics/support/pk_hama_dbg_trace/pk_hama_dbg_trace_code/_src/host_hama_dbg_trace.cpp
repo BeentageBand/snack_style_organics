@@ -33,12 +33,12 @@
 /*=====================================================================================* 
  * Local Object Definitions
  *=====================================================================================*/
-static pthread_attr_t Attr = {0};
-static pid_t Process = 0;
-static pthread_t Thread = {0};
+//static pthread_attr_t Attr = {0};
+//static pid_t Process = 0;
+//static pthread_t Thread = {0};
 static bool Alive = false;
-static pthread_mutex_t Stream_Mutex = {0};
-static pthread_mutexattr_t Mutex_Attr = {0};
+//static pthread_mutex_t Stream_Mutex = {0};
+//static pthread_mutexattr_t Mutex_Attr = {0};
 /*=====================================================================================* 
  * Exported Object Definitions
  *=====================================================================================*/
@@ -46,7 +46,7 @@ static pthread_mutexattr_t Mutex_Attr = {0};
 /*=====================================================================================* 
  * Local Function Prototypes
  *=====================================================================================*/
-static void * Main(void * args);
+//static void * Main(void * args);
 /*=====================================================================================* 
  * Local Inline-Function Like Macros
  *=====================================================================================*/
@@ -54,43 +54,42 @@ static void * Main(void * args);
 /*=====================================================================================* 
  * Local Function Definitions
  *=====================================================================================*/
-void * Main(void * args)
-{
-   while(Alive)
-   {
-      if( 0 == pthread_mutex_lock(&Stream_Mutex) )
-      {
-         std::cout << "" << std::endl;//purge cout
-      }
-      pthread_mutex_unlock(&Stream_Mutex);
-   }
-
-   pthread_mutex_destroy(&Stream_Mutex);
-   pthread_attr_destroy(&Attr);
-   return 0;
-}
+//void * Main(void * args)
+//{
+//   while(Alive)
+//   {
+//      if( 0 == pthread_mutex_lock(&Stream_Mutex) )
+//      {
+//         std::cout << "" << std::endl;//purge cout
+//      }
+//      pthread_mutex_unlock(&Stream_Mutex);
+//   }
+//
+//   pthread_mutex_destroy(&Stream_Mutex);
+//   pthread_attr_destroy(&Attr);
+//   return 0;
+//}
 /*=====================================================================================* 
  * Exported Function Definitions
  *=====================================================================================*/
 void dbg::Init(void)
 {
    Alive = true;
-   pthread_mutexattr_init(&Mutex_Attr);
-   pthread_mutex_init(&Stream_Mutex, &Mutex_Attr);
-
-   pthread_attr_init(&Attr);
-   Process = pthread_create(&Thread, &Attr, Main, 0);
+   //pthread_mutexattr_init(&Mutex_Attr);
+   //pthread_mutex_init(&Stream_Mutex, &Mutex_Attr);
+   //
+   //pthread_attr_init(&Attr);
+   //Process = pthread_create(&Thread, &Attr, Main, 0);
 }
 
-bool dbg::Get_Stream(void)
-{
-  return 0 == pthread_mutex_lock(&Stream_Mutex);
-}
+//bool dbg::Get_Stream(void)
+//{
+//  return 0;//== pthread_mutex_lock(&Stream_Mutex);
+//}
 
-void dbg::Release_Stream(void)
-{
-   pthread_mutex_unlock(&Stream_Mutex);
-}
+//void dbg::Release_Stream(void)
+//{
+//}
 void dbg::Shut(void)
 {
    Alive = false;

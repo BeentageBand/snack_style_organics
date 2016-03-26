@@ -33,7 +33,11 @@
 
 #else
 #define PROGMEM
-#define pgm_read_byte(b) *b
+#define pgm_read_byte(b) *(b)
+#define pgm_read_word(b) *(b)
+#define pgm_read_dword(b) *(b)
+#define pgm_read_ptr(b) b
+#define memcpy_P(dest, src, size) memcpy(dest, src, size)
 #endif
 /*=====================================================================================* 
  * Exported Type Declarations

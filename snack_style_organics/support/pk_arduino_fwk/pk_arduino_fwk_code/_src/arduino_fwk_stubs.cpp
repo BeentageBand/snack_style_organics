@@ -29,6 +29,7 @@
  *=====================================================================================*/
 #include <iostream>
 #include <ctime>
+#include <unistd.h>
 /*=====================================================================================* 
  * Local X-Macros
  *=====================================================================================*/
@@ -56,7 +57,13 @@
 /*=====================================================================================* 
  * Local Type Definitions
  *=====================================================================================*/
-
+typedef struct
+{
+   pthread_t thread;
+   pthread_attr_t attr;
+   Arduino_ISR_T isr;
+   uint32_t tout;
+}ISR_Stub_T;
 /*=====================================================================================* 
  * Local Object Definitions
  *=====================================================================================*/
@@ -84,14 +91,26 @@ const char* Arduino_ISR_Threads_Names[] =
 {
       ARDUINO_ISR_THREADS_TABLE
 };
+
+#undef ARDUINO_ISR_THREAD_INDEX
+#define ARDUINO_ISR_THREAD_INDEX(ch) {0,0,0,0},
+ISR_Stub_T Isr_Threads[] =
+{
+      ARDUINO_ISR_THREADS_TABLE
+};
 /*=====================================================================================* 
  * Exported Object Definitions
  *=====================================================================================*/
-
+#undef ARDUINO_DIO_CHANNEL_INDEX
+#define ARDUINO_DIO_CHANNEL_INDEX(ch) 0,
+static uint8_t Dio_Channel_States[] =
+{
+   ARDUINO_DIO_CHANNELS_TABLE
+};
 /*=====================================================================================* 
  * Local Function Prototypes
  *=====================================================================================*/
-
+static void * Thread_Stub(void * args);
 /*=====================================================================================* 
  * Local Inline-Function Like Macros
  *=====================================================================================*/
@@ -116,11 +135,12 @@ void arduino::Init(void)
 //CLK
 void arduino::Init_Clk(void)
 {
-	TR_INFO(__FUNCTION__);
+   TR_INFO(__FUNCTION__);
 }
 uint32_t arduino::Get_Clk(void)
 {
    uint32_t cl = static_cast<uint32_t>( clock() )* 10;
+   TR_INFO_1(" get - clock = %d", cl);
    return cl;
 }
 
@@ -140,16 +160,62 @@ uint16_t arduino::Get_ADC(const ARDUINO_ADC_CHANNEL_T channel){TR_INFO(__FUNCTIO
 void arduino::Stop_ADC(const ARDUINO_ADC_CHANNEL_T channel){TR_INFO(__FUNCTION__);}
 
 //DIO Stubs
-void arduino::Init_DIO(const ARDUINO_DIO_CHANNEL_T pin, uint8_t mode){TR_INFO(__FUNCTION__);}
-void arduino::Set_DIO(const ARDUINO_DIO_CHANNEL_T pin,const uint8_t value){TR_INFO(__FUNCTION__);}
-uint8_t arduino::Get_DIO(const ARDUINO_DIO_CHANNEL_T pin){TR_INFO(__FUNCTION__); return 0;}
-void arduino::Shut_DIO(const ARDUINO_DIO_CHANNEL_T pin){TR_INFO(__FUNCTION__);}
+
+void arduino::Init_DIO(const ARDUINO_DIO_CHANNEL_T pin, uint8_t mode)
+{
+   TR_INFO_3("%s pin %d mode %d",__FUNCTION__,pin, mode);
+}
+void arduino::Set_DIO(const ARDUINO_DIO_CHANNEL_T pin,const uint8_t value)
+{
+   TR_INFO_3("%s pin %d state %x",__FUNCTION__,pin, value);
+   Dio_Channel_States[pin] = value;
+}
+uint8_t arduino::Get_DIO(const ARDUINO_DIO_CHANNEL_T pin)
+{
+   TR_INFO_3("%s pin %d state %x",__FUNCTION__,pin, Dio_Channel_States[pin]);
+   return Dio_Channel_States[pin];
+}
+void arduino::Shut_DIO(const ARDUINO_DIO_CHANNEL_T pin){TR_INFO_2("%s pin %d",__FUNCTION__, pin);}
 
 //ISR Stubs
-void arduino::Init_ISR(const ARDUINO_ISR_THREAD_T channel){}
-void arduino::Set_ISR(const ARDUINO_ISR_THREAD_T channel, Arduino_ISR_T isr, const uint32_t timer){TR_INFO(__FUNCTION__); isr();}
-void arduino::Run_ISR(const ARDUINO_ISR_THREAD_T channel){TR_INFO(__FUNCTION__);}
-void arduino::Stop_ISR(const ARDUINO_ISR_THREAD_T channel){TR_INFO(__FUNCTION__);}
+void arduino::Init_ISR(const ARDUINO_ISR_THREAD_T channel)
+{
+   TR_INFO_2("%s thread %d", __FUNCTION__, channel);
+   pthread_attr_init(&Isr_Threads[channel].attr);
+}
+void arduino::Set_ISR(const ARDUINO_ISR_THREAD_T channel, Arduino_ISR_T isr, const uint32_t timer)
+{
+   TR_INFO_2("%s thread %d", __FUNCTION__, channel);
+   Isr_Threads[channel].isr = isr;
+   Isr_Threads[channel].tout = timer;
+}
+void arduino::Run_ISR(const ARDUINO_ISR_THREAD_T channel)
+{
+   TR_INFO_2("%s thread %d", __FUNCTION__, channel);
+   pthread_create(&Isr_Threads[channel].thread, &Isr_Threads[channel].attr, Thread_Stub,
+         &Isr_Threads[channel]);
+}
+void arduino::Stop_ISR(const ARDUINO_ISR_THREAD_T channel)
+{
+   TR_INFO_2("%s thread %d", __FUNCTION__, channel);
+   pthread_join(Isr_Threads[channel].thread,0);
+}
+
+void * Thread_Stub(void * args)
+{
+   ISR_Stub_T stub_arg = *(ISR_Stub_T*)args;
+   TR_INFO(__FUNCTION__);
+   clock_t cl  = clock();
+   while(true)
+   {
+      if((clock() - cl) > stub_arg.tout )
+      {
+         cl  = clock();
+         stub_arg.isr();
+      }
+   }
+   return 0;
+}
 
 //LCD
 void arduino::Init_LCD(void){TR_INFO(__FUNCTION__);}

@@ -34,6 +34,8 @@
 #define PMODE_TICK_PERIOD_US    (500) // Tick 5 us
 #define PMODE_SOURCE_AC_60HZ_THREAD (ARDUINO_ISR_THREAD_0)
 #define PMODE_SOURCE_NEG_1kHZ_THREAD (ARDUINO_ISR_THREAD_1)
+
+#define OUTPUT_LINE (1)
 /*=====================================================================================* 
  * Local Type Definitions
  *=====================================================================================*/
@@ -118,11 +120,14 @@ void PMode_NEG_5V_Run(void)
 void pmode::PMODE_SOURCE_AC_init(void)
 {
    arduino::Init_ISR(PMODE_SOURCE_AC_60HZ_THREAD);
+   arduino::Init_DIO(SNACK_GPIO_AC_H_120HZ, OUTPUT_LINE);
+   arduino::Init_DIO(SNACK_GPIO_AC_L_120HZ, OUTPUT_LINE);
    arduino::Set_ISR(PMODE_SOURCE_AC_60HZ_THREAD, PMode_AC_Run, PMODE_SOURCE_AC_60HZ);
 }
 
 void pmode::PMODE_SOURCE_NEG_DC_init(void)
 {
+   arduino::Init_DIO(SNACK_GPIO_NEG_5V_1KHZ, OUTPUT_LINE);
    arduino::Set_ISR(PMODE_SOURCE_NEG_1kHZ_THREAD, PMode_NEG_5V_Run, PMODE_SOURCE_NEG_1KHZ);
 }
 

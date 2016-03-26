@@ -37,8 +37,8 @@
 /*=====================================================================================* 
  * Local Object Definitions
  *=====================================================================================*/
-const uint8_t LCD_0_Fmt[] PROGMEM = "Temp: __.__    ";
-const uint8_t  LCD_1_Fmt[] PROGMEM ="Time: 00:00-Day";
+const char LCD_0_Fmt[] PROGMEM = "Temp: __.__ Day";
+const char  LCD_1_Fmt[] PROGMEM ="Time: 00:00 00%";
 static uint8_t LCD_Data[16];
 
 static bool Daylight = false;
@@ -77,10 +77,7 @@ void Format_Time(void)
       LCD_Time[1] = (new_time/60);
       LCD_Time[0] = new_time%60;
 
-      for(uint8_t i = 0; i < sizeof(LCD_Data); ++i)
-      {
-         LCD_Data[i] = pgm_read_byte(LCD_1_Fmt + i);
-      }
+      memcpy_P(LCD_Data, LCD_1_Fmt, sizeof(LCD_Data));
    }
 
 }
@@ -93,10 +90,7 @@ void Format_Temp(void)
    {
       Temperature = temp;
 
-      for(uint8_t i = 0; i < sizeof(LCD_Data); ++i)
-      {
-         LCD_Data[i] = pgm_read_byte(LCD_1_Fmt + i);
-      }
+      memcpy_P(LCD_Data, LCD_0_Fmt, sizeof(LCD_Data));
       uint8_t ptr = LCD_TEMP_PTR;
       LCD_Data[ptr] = temp/1000;
       ptr++;
@@ -119,10 +113,7 @@ void Format_Day(void)
    {
       Daylight = day;
 
-      for(uint8_t i = 0; i < sizeof(LCD_Data); ++i)
-      {
-         LCD_Data[i] = pgm_read_byte(LCD_1_Fmt + i);
-      }
+      memcpy_P(LCD_Data, LCD_1_Fmt, sizeof(LCD_Data));
 
       uint8_t ptr = LCD_TIME_PTR;
       LCD_Data[ptr] = day/1000;

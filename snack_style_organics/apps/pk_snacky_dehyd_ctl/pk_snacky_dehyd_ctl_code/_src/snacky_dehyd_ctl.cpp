@@ -41,7 +41,7 @@
 /*=====================================================================================* 
  * Local Object Definitions
  *=====================================================================================*/
-const Fix32_T Dehydrator_Set_Point_Temp = 0U;
+
 /*=====================================================================================* 
  * Exported Object Definitions
  *=====================================================================================*/
@@ -64,8 +64,9 @@ const Fix32_T Dehydrator_Set_Point_Temp = 0U;
 void snack_dehyd::Init(void)
 {
    TR_INFO("snack_dehyd::Init");
-   pid::Set_Point(PID_CTL_CHANNEL_FAN_DOOR, Dehydrator_Set_Point_Temp);
-   pid::Set_Point(PID_CTL_CHANNEL_HEATER, Dehydrator_Set_Point_Temp);
+   pid::Set_Point(PID_CTL_CHANNEL_FAN_DOOR, SNACK_DEHYD_CTL_MAX_TEMP);
+   pid::Set_Point(PID_CTL_CHANNEL_HEATER, SNACK_DEHYD_CTL_MIN_TEMP);
+   pmode::Set_State(PMODE_ALL_ON);
 }
 
 void snack_dehyd::Main(void)
@@ -92,6 +93,7 @@ void snack_dehyd::Main(void)
 
 void snack_dehyd::Shut(void)
 {
+   pmode::Set_State(PMODE_AC_OFF);
    pid::Stop(PID_CTL_CHANNEL_FAN_DOOR);
    pid::Stop(PID_CTL_CHANNEL_HEATER);
 }

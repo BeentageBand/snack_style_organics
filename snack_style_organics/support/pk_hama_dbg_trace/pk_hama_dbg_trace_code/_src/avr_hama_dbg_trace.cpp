@@ -62,15 +62,6 @@ void dbg::Init(void)
    arduino::Init_UART(dbg::UART_Init);
 }
 
-bool dbg::Get_Stream(void)
-{
-  return false;
-}
-
-void dbg::Release_Stream(void)
-{
-
-}
 void dbg::Shut(void)
 {
    arduino::Stop_UART(dbg::UART_Init.channel);

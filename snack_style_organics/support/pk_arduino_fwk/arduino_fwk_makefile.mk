@@ -99,8 +99,8 @@ define Arduino_LIB_MAKE
 
 ifeq "$(_build_)" "avr"
 
-$($(_build_)_LIB_DIR)/$(_lprefix_)arduino_core$(_lib_ext_) : $($(_build_)_LIB_DIR) $(_path_)$($(_build_)_$(_curr_)_lib_dir)/$(_lprefix_)arduino_core$(_lib_ext_)
-	-cp -pf  $(_path_)$($(_build_)_$(_curr_)_lib_dir)/$(_lprefix_)arduino_core$(_lib_ext_) $$@
+$($(_build_)_LIB_DIR)/$(_lprefix_)arduino_core$(_lib_ext_) : $($(_build_)_LIB_DIR) /cygdrive/c/Dropbox/AVR/out/core.a
+	-cp -pf /cygdrive/c/Dropbox/AVR/out/core.a $$@
 
 endif
 
