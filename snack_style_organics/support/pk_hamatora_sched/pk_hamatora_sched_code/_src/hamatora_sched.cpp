@@ -73,7 +73,7 @@ void hamatora_sched_main(void)
 {
    while (Stop_Hama_Sched)
    {
-      for(uint8_t app_id = 0; app_id < Num_Of_Scheduled_Apps; app_id++)
+      for(uint8_t app_id = 0; app_id < pgm_read_byte(Num_Of_Scheduled_Apps); app_id++)
       {
          const Hama_Apps_T * app = reinterpret_cast<const Hama_Apps_T *>(pgm_read_ptr(Scheduled_Apps + app_id));
          void (*run)(void) = reinterpret_cast<void(*)(void)>(pgm_read_ptr(&app->run));
@@ -106,7 +106,7 @@ static void hamatora_sched_start(void)
 #if HOST
          TR_INFO_1("Init - %s", Sched_Apps_Names[app_id]);
 #else
-         TR_INFO_1("Init - ", app_id);
+         TR_INFO_1("Init - ", ((int)app_id) );
 #endif
          init();
       }
@@ -119,7 +119,7 @@ static void hamatora_sched_start(void)
 
 static void hamatora_sched_stop(void)
 {
-   for(uint8_t app_id = 0; app_id < Num_Of_Scheduled_Apps; app_id++)
+   for(uint8_t app_id = 0; app_id < pgm_read_byte(Num_Of_Scheduled_Apps); app_id++)
    {
       const Hama_Apps_T * app = reinterpret_cast<const Hama_Apps_T *>(pgm_read_ptr(Scheduled_Apps + app_id));
       void (*stop)(void) = reinterpret_cast<void(*)(void)>(pgm_read_ptr(&app->stop));

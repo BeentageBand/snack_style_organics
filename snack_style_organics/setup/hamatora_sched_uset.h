@@ -24,7 +24,6 @@
 #define HAMA_SCHED_APPS_ID_TABLE \
    HAMA_SCHED_APP_ID_INDEX(ARDUINO_ID)          \
    HAMA_SCHED_APP_ID_INDEX(AXIAL_FAN_CTL_ID)    \
-   HAMA_SCHED_APP_ID_INDEX(DATA_LOGGER_ID)      \
    HAMA_SCHED_APP_ID_INDEX(DAYLIGHT_MONITOR_ID) \
    HAMA_SCHED_APP_ID_INDEX(HAMA_SCHED_ID)       \
    HAMA_SCHED_APP_ID_INDEX(HEATER_CTL_ID)       \
@@ -34,6 +33,7 @@
    HAMA_SCHED_APP_ID_INDEX(SNACK_PMODE_ID)      \
    HAMA_SCHED_APP_ID_INDEX(TEMP_MONITOR_ID)     \
    HAMA_SCHED_APP_ID_INDEX(HAMA_DBG_TRACE_ID)   \
+   HAMA_SCHED_APP_ID_INDEX(TEST_ID)             \
 /*=====================================================================================* 
  * Exported Define Macros
  *=====================================================================================*/
