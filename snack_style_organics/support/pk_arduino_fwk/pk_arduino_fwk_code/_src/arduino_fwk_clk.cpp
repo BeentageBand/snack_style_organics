@@ -62,6 +62,16 @@ uint32_t arduino::Get_Clk( void)
    return millis();
 }
 
+void arduino::Sleep(const uint32_t ms)
+{
+	delay(ms);
+}
+
+void arduino::Usleep(const uint32_t us)
+{
+	delayMicroseconds(us);
+}
+
 void arduino::Init_Tone(const ARDUINO_DIO_CHANNEL_T pin)
 {
    pinMode(pin, OUTPUT);

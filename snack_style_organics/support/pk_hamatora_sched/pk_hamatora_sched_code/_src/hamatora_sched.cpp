@@ -37,10 +37,7 @@
  *=====================================================================================*/
 static bool Stop_Hama_Sched = true;
 
-
-
-
-
+#if HOST
 #undef HAMA_SCHED_APP
 #define HAMA_SCHED_APP(app, init, run, stop) const Pgm_Char_T Hama_Sched_##app[] PROGMEM = #app;
 
@@ -54,6 +51,7 @@ const Pgm_Char_T * const Sched_Apps_Names[] PROGMEM =
       HAMA_SCHED_APPS_TABLE
 };
 
+#endif
 /*=====================================================================================* 
  * Exported Object Definitions
  *=====================================================================================*/
@@ -77,10 +75,21 @@ void hamatora_sched_main(void)
    {
       for(uint8_t app_id = 0; app_id < Num_Of_Scheduled_Apps; app_id++)
       {
-         if(0 != Scheduled_Apps[app_id].run)
+         const Hama_Apps_T * app = reinterpret_cast<const Hama_Apps_T *>(pgm_read_ptr(Scheduled_Apps + app_id));
+         void (*run)(void) = reinterpret_cast<void(*)(void)>(pgm_read_ptr(&app->run));
+
+         if(0 != run)
          {
+#if HOST
             TR_INFO_1("Main - %s", Sched_Apps_Names[app_id]);
-            Scheduled_Apps[app_id].run();
+#else
+            TR_INFO_1("Main ", app_id);
+#endif
+            run();
+         }
+         else
+         {
+            TR_INFO("Null run");
          }
       }
    }
@@ -88,13 +97,22 @@ void hamatora_sched_main(void)
 
 static void hamatora_sched_start(void)
 {
-
-   for(uint8_t app_id = 0; app_id < Num_Of_Scheduled_Apps; app_id++)
+   for(uint8_t app_id = 0; app_id < pgm_read_byte(Num_Of_Scheduled_Apps); app_id++)
    {
-      if(0 != Scheduled_Apps[app_id].init)
+      const Hama_Apps_T * app = reinterpret_cast<const Hama_Apps_T *>(pgm_read_ptr(Scheduled_Apps + app_id));
+      void (*init)(void) = reinterpret_cast<void(*)(void)>(pgm_read_ptr(&app->init));
+      if(0 != init)
       {
+#if HOST
          TR_INFO_1("Init - %s", Sched_Apps_Names[app_id]);
-         Scheduled_Apps[app_id].init();
+#else
+         TR_INFO_1("Init - ", app_id);
+#endif
+         init();
+      }
+      else
+      {
+         TR_INFO("Null Init");
       }
    }
 }
@@ -103,10 +121,20 @@ static void hamatora_sched_stop(void)
 {
    for(uint8_t app_id = 0; app_id < Num_Of_Scheduled_Apps; app_id++)
    {
-      if(0 != Scheduled_Apps[app_id].stop)
+      const Hama_Apps_T * app = reinterpret_cast<const Hama_Apps_T *>(pgm_read_ptr(Scheduled_Apps + app_id));
+      void (*stop)(void) = reinterpret_cast<void(*)(void)>(pgm_read_ptr(&app->stop));
+      if(0 != stop)
       {
+#if HOST
          TR_INFO_1("Stop - %s", Sched_Apps_Names[app_id]);
-         Scheduled_Apps[app_id].stop();
+#else
+         TR_INFO_1("Stop - ", app_id);
+#endif
+         stop();
+      }
+      else
+      {
+         TR_INFO("NULL Stop");
       }
    }
 }

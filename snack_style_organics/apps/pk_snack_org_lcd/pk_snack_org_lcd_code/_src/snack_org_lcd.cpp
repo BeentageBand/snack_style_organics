@@ -38,7 +38,7 @@
  * Local Object Definitions
  *=====================================================================================*/
 const char LCD_0_Fmt[] PROGMEM = "Temp: __.__ Day";
-const char  LCD_1_Fmt[] PROGMEM ="Time: 00:00 00%";
+const char LCD_1_Fmt[] PROGMEM = "Time: 00:00 00%";
 static uint8_t LCD_Data[16];
 
 static bool Daylight = false;
@@ -77,7 +77,7 @@ void Format_Time(void)
       LCD_Time[1] = (new_time/60);
       LCD_Time[0] = new_time%60;
 
-      memcpy_P(LCD_Data, LCD_1_Fmt, sizeof(LCD_Data));
+      memcpy_P(LCD_Data, pgm_read_ptr(LCD_1_Fmt), sizeof(LCD_Data));
    }
 
 }
@@ -90,7 +90,7 @@ void Format_Temp(void)
    {
       Temperature = temp;
 
-      memcpy_P(LCD_Data, LCD_0_Fmt, sizeof(LCD_Data));
+      memcpy_P(LCD_Data, pgm_read_ptr(LCD_0_Fmt), sizeof(LCD_Data));
       uint8_t ptr = LCD_TEMP_PTR;
       LCD_Data[ptr] = temp/1000;
       ptr++;
@@ -113,7 +113,7 @@ void Format_Day(void)
    {
       Daylight = day;
 
-      memcpy_P(LCD_Data, LCD_1_Fmt, sizeof(LCD_Data));
+      memcpy_P(LCD_Data, pgm_read_ptr(LCD_1_Fmt), sizeof(LCD_Data));
 
       uint8_t ptr = LCD_TIME_PTR;
       LCD_Data[ptr] = day/1000;

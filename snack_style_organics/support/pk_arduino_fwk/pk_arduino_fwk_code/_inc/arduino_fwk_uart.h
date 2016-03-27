@@ -41,7 +41,7 @@ extern void Init_UART(Arduino_UART_T const & uart);
 extern void Put_UART(  const ARDUINO_UART_CHANNEL_T uart, const uint8_t c);
 extern void Print_UART(const ARDUINO_UART_CHANNEL_T uart, const char * printed);
 extern void Print_UART_P(const ARDUINO_UART_CHANNEL_T uart, const Pgm_Char_T const_c);
-extern void Print_UART_P(const ARDUINO_UART_CHANNEL_T uart, const Pgm_Char_T * const const_c);
+extern void Print_UART_P(const ARDUINO_UART_CHANNEL_T uart, const char * const_c);
 extern void Print_UART(const ARDUINO_UART_CHANNEL_T uart, int i);
 extern void Print_UART(const ARDUINO_UART_CHANNEL_T uart, long l);
 extern uint8_t Get_UART(const ARDUINO_UART_CHANNEL_T uart);

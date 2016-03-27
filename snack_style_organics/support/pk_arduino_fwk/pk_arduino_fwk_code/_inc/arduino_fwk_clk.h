@@ -35,7 +35,8 @@ namespace arduino{
  *=====================================================================================*/
 extern void Init_Clk(void);
 extern uint32_t Get_Clk(void);
-
+extern void Sleep(const uint32_t ms);
+extern void Usleep(const uint32_t us);
 extern void Init_Tone(const ARDUINO_DIO_CHANNEL_T pin);
 extern void Set_Tone(const ARDUINO_DIO_CHANNEL_T pin, uint16_t freq);
 extern void Stop_Tone(const ARDUINO_DIO_CHANNEL_T pin);

@@ -29,8 +29,8 @@
 /*=====================================================================================* 
  * Exported Object Declarations
  *=====================================================================================*/
-extern const Hama_Apps_T Scheduled_Apps[];
-extern const uint8_t Num_Of_Scheduled_Apps;
+extern const Hama_Apps_T * const Scheduled_Apps[] PROGMEM;
+extern const uint8_t Num_Of_Scheduled_Apps PROGMEM;
 /*=====================================================================================* 
  * Exported Function Prototypes
  *=====================================================================================*/

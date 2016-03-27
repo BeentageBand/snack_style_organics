@@ -13,6 +13,7 @@
 /*=====================================================================================*
  * Project Includes
  *=====================================================================================*/
+#include "arduino_fwk.h"
 #include "axial_fan_ctl.h"
 #include "daylight_monitor.h"
 #include "hamatora_sched_types.h"
@@ -31,6 +32,7 @@
  *=====================================================================================*/
 #define HAMA_SCHED_APPS_TABLE \
                /* App id,                Init app,          Run app,            Stop app */\
+   HAMA_SCHED_APP(ARDUINO_ID,            0,                 arduino::Main,      arduino::Shut       ) \
    HAMA_SCHED_APP(HAMA_DBG_TRACE_ID,     dbg::Init,         0,                  dbg::Shut           ) \
    HAMA_SCHED_APP(SNACK_ORG_CTL_ID,      snack_dehyd::Init, snack_dehyd::Main,  snack_dehyd::Shut   ) \
    HAMA_SCHED_APP(SNACK_ORG_LCD_ID,      snack_lcd::Init,   snack_lcd::Main,    snack_lcd::Shut     ) \

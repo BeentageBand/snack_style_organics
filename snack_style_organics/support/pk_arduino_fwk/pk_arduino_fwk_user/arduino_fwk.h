@@ -38,6 +38,7 @@ namespace arduino{
  * Exported Function Prototypes
  *=====================================================================================*/
 extern void Init(void);
+extern void Main(void);
 extern void Shut(void);
 /*=====================================================================================* 
  * Exported Function Like Macros

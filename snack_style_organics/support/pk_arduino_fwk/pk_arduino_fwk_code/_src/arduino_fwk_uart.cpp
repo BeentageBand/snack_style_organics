@@ -88,15 +88,13 @@ void arduino::Print_UART_P(const ARDUINO_UART_CHANNEL_T uart, const Pgm_Char_T c
    }
 }
 
-void arduino::Print_UART_P(const ARDUINO_UART_CHANNEL_T uart, const Pgm_Char_T * const_c)
+void arduino::Print_UART_P(const ARDUINO_UART_CHANNEL_T uart, const char * const_c)
 {
    if(uart < ARDUINO_UART_MAX_CHANNELS)
    {
-      char c =' ';
-      for(uint8_t i =0 ; 0 != pgm_read_byte(*const_c + i); ++i)
+      for(uint8_t i = 0 ; '\0' != pgm_read_byte(const_c + i); ++i)
       {
-         c = pgm_read_byte(*const_c + i);
-         UART_Channels_To_Ports[uart]->write(c);
+         UART_Channels_To_Ports[uart]->write(pgm_read_byte(const_c + i));
       }
    }
 }

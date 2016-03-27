@@ -53,7 +53,10 @@
 /*=====================================================================================* 
  * Exported Function Definitions
  *=====================================================================================*/
-void arduino::Init_LCD(void){}
+void arduino::Init_LCD(void)
+{
+
+}
 void arduino::Set_LCD(Arduino_LCD_T const & lcd)
 {
 
