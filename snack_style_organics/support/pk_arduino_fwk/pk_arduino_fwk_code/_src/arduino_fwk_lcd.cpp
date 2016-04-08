@@ -13,7 +13,7 @@
  * Project Includes
  *=====================================================================================*/
 #include "arduino_fwk_lcd.h"
-
+#include "arduino_fwk_uset.h"
 /*=====================================================================================* 
  * Standard Includes
  *=====================================================================================*/
@@ -33,7 +33,8 @@
 /*=====================================================================================* 
  * Local Object Definitions
  *=====================================================================================*/
-
+LiquidCrystal LCD(ARDUINO_LCD_RS, ARDUINO_LCD_EN, ARDUINO_LCD_D4, ARDUINO_LCD_D5,
+      ARDUINO_LCD_D6, ARDUINO_LCD_D7);
 /*=====================================================================================* 
  * Exported Object Definitions
  *=====================================================================================*/
@@ -55,17 +56,42 @@
  *=====================================================================================*/
 void arduino::Init_LCD(void)
 {
-
+   LCD.begin(ARDUINO_LCD_MAX_COLS, ARDUINO_LCD_MAX_ROWS);
 }
 void arduino::Set_LCD(Arduino_LCD_T const & lcd)
 {
-
+   if(lcd.line < ARDUINO_LCD_MAX_ROWS && lcd.ptr < ARDUINO_LCD_MAX_COLS)
+   {
+      LCD.setCursor(lcd.ptr, lcd.line);
+   }
 }
-void arduino::Print_LCD(Arduino_LCD_T & lcd, uint8_t * data_print, size_t lenght)
+void arduino::Print_LCD(const char * data_print)
 {
-
+   LCD.print(data_print);
 }
-void arduino::Stop_LCD(void){}
+
+void arduino::Print_LCD(Arduino_LCD_T const & lcd, int i)
+{
+   arduino::Set_LCD(lcd);
+   LCD.print(i);
+}
+
+void arduino::Print_LCD(Arduino_LCD_T const & lcd, long l)
+{
+   arduino::Set_LCD(lcd);
+   LCD.print(l);
+}
+
+void arduino::Print_LCD(Arduino_LCD_T const & lcd,const char * data_print)
+{
+   arduino::Set_LCD(lcd);
+   LCD.print(data_print);
+}
+
+void arduino::Stop_LCD(void)
+{
+   LCD.noDisplay();
+}
 /*=====================================================================================* 
  * arduino_fwk_lcd.cpp
  *=====================================================================================*

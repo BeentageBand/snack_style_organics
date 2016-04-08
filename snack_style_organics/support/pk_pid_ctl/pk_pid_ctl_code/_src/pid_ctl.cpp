@@ -160,6 +160,7 @@ bool Wait_For_Sample(void)
 void pid::Init(void)
 {
    memset(Pid_Channels, 0, sizeof(Pid_Channels) );
+   Sample_Tout = pid::Get_Sample_Time();
 }
 
 void pid::Set_Point(const PID_CHANNEL_T channel, const Fix32_T val)

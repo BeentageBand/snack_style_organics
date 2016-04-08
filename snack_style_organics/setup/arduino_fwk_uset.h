@@ -13,7 +13,7 @@
 /*=====================================================================================*
  * Project Includes
  *=====================================================================================*/
-
+#include "snack_style_gpio.h"
 /*=====================================================================================* 
  * Standard Includes
  *=====================================================================================*/
@@ -69,6 +69,18 @@
    ARDUINO_DIO_CHANNEL_INDEX(ARDUINO_DIO_CHANNEL_17) \
    ARDUINO_DIO_CHANNEL_INDEX(ARDUINO_DIO_CHANNEL_18) \
    ARDUINO_DIO_CHANNEL_INDEX(ARDUINO_DIO_CHANNEL_19) \
+
+//LCD
+#define ARDUINO_LCD_RS   SNACK_GPIO_LCD_RS
+#define ARDUINO_LCD_EN   SNACK_GPIO_LCD_EN
+#define ARDUINO_LCD_D4   SNACK_GPIO_LCD_D4
+#define ARDUINO_LCD_D5   SNACK_GPIO_LCD_D5
+#define ARDUINO_LCD_D6   SNACK_GPIO_LCD_D6
+#define ARDUINO_LCD_D7   SNACK_GPIO_LCD_D7
+
+#define ARDUINO_LCD_MAX_ROWS 2
+#define ARDUINO_LCD_MAX_COLS 16
+
 
 /*=====================================================================================* 
  * Exported Define Macros

@@ -14,9 +14,11 @@
  *=====================================================================================*/
 #include "snack_org_lcd.h"
 #include "arduino_fwk_lcd.h"
+#include "arduino_fwk_uset.h"
 #include "arduino_fwk_clk.h"
 #include "temp_monitor.h"
 #include "daylight_monitor.h"
+#include "hama_dbg_trace.h"
 /*=====================================================================================* 
  * Standard Includes
  *=====================================================================================*/
@@ -39,16 +41,12 @@
  *=====================================================================================*/
 const char LCD_0_Fmt[] PROGMEM = "Temp: __.__ Day";
 const char LCD_1_Fmt[] PROGMEM = "Time: 00:00 00%";
-static uint8_t LCD_Data[16];
+static char LCD_Data[ARDUINO_LCD_MAX_COLS+1];
 
 static bool Daylight = false;
 static uint16_t Temperature = 0;
 static uint8_t LCD_Time[] = {0,0};
 
-static Arduino_LCD_T LCD_Print =
-{
-   0x00, 0x00, LCD_Data, 0x00
-};
 const uint8_t LCD_TIME_PTR = 6;
 const uint8_t LCD_TEMP_PTR = 6;
 const uint8_t LCD_DAY_PTR = 12;
@@ -77,9 +75,15 @@ void Format_Time(void)
       LCD_Time[1] = (new_time/60);
       LCD_Time[0] = new_time%60;
 
-      memcpy_P(LCD_Data, pgm_read_ptr(LCD_1_Fmt), sizeof(LCD_Data));
+      memcpy_P(LCD_Data, LCD_1_Fmt, sizeof(LCD_Data));
+      LCD_Data[ARDUINO_LCD_MAX_COLS] = 0;
    }
-
+   Arduino_LCD_T lcd =
+   {
+      1, 0,
+   };
+   TR_INFO_2("Display : ", __FUNCTION__, LCD_Data);
+   arduino::Print_LCD(lcd, LCD_Data);
 }
 
 void Format_Temp(void)
@@ -90,7 +94,8 @@ void Format_Temp(void)
    {
       Temperature = temp;
 
-      memcpy_P(LCD_Data, pgm_read_ptr(LCD_0_Fmt), sizeof(LCD_Data));
+      memcpy_P(LCD_Data, LCD_0_Fmt, sizeof(LCD_Data));
+      LCD_Data[ARDUINO_LCD_MAX_COLS] = 0;
       uint8_t ptr = LCD_TEMP_PTR;
       LCD_Data[ptr] = temp/1000;
       ptr++;
@@ -98,11 +103,13 @@ void Format_Temp(void)
       ptr+=2;
       LCD_Data[ptr] = temp/10;
 
-      LCD_Print.line = 0;
-      LCD_Print.ptr = 0;
-      LCD_Print.lenght = 11U;
-
-      arduino::Set_LCD(LCD_Print);
+      Arduino_LCD_T lcd =
+      {
+         0,
+         0,
+      };
+      TR_INFO_2("Display : ", __FUNCTION__, LCD_Data);
+      arduino::Print_LCD(lcd, LCD_Data);
    }
 }
 void Format_Day(void)
@@ -113,7 +120,8 @@ void Format_Day(void)
    {
       Daylight = day;
 
-      memcpy_P(LCD_Data, pgm_read_ptr(LCD_1_Fmt), sizeof(LCD_Data));
+      memcpy_P(LCD_Data, LCD_1_Fmt, sizeof(LCD_Data));
+      LCD_Data[ARDUINO_LCD_MAX_COLS] = 0;
 
       uint8_t ptr = LCD_TIME_PTR;
       LCD_Data[ptr] = day/1000;
@@ -122,11 +130,13 @@ void Format_Day(void)
       ptr+=2;
       LCD_Data[ptr] = day/10;
 
-      LCD_Print.line = 0;
-      LCD_Print.ptr = 0;
-      LCD_Print.lenght = 11U;
-
-      arduino::Set_LCD(LCD_Print);
+      Arduino_LCD_T lcd =
+      {
+         1,
+         0,
+      };
+      TR_INFO_2("Display : ", __FUNCTION__, LCD_Data);
+      arduino::Print_LCD(lcd, LCD_Data);
    }
 }
 /*=====================================================================================* 
@@ -136,6 +146,7 @@ void snack_lcd::Init(void)
 {
    memset(LCD_Data, 0x00, sizeof(LCD_Data));
    arduino::Init_LCD();
+   TR_INFO_1(" ",__FUNCTION__);
 }
 
 void snack_lcd::Main(void)

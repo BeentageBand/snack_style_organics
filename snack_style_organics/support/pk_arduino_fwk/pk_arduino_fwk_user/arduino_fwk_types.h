@@ -60,8 +60,6 @@ typedef struct
 {
    uint8_t         line;
    uint8_t         ptr;
-   const uint8_t * data;
-   uint8_t         lenght;
 }Arduino_LCD_T;
 
 //UART types

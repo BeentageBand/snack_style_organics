@@ -39,7 +39,10 @@ namespace arduino{
  *=====================================================================================*/
 extern void Init_LCD(void);
 extern void Set_LCD(Arduino_LCD_T const & lcd);
-extern void Print_LCD(Arduino_LCD_T & lcd, uint8_t * data_print, size_t lenght);
+extern void Print_LCD(const char * data_print);
+extern void Print_LCD(Arduino_LCD_T const & lcd, const char * data_print);
+extern void Print_LCD(Arduino_LCD_T const & lcd, int i);
+extern void Print_LCD(Arduino_LCD_T const & lcd, long l);
 extern void Stop_LCD(void);
 /*=====================================================================================* 
  * Exported Function Like Macros
