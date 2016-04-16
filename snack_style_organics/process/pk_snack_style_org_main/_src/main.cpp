@@ -59,14 +59,16 @@ void Init_Test(void)
 
 void Main_Test(void)
 {
-   arduino::Sleep(500);
-   arduino::Set_DIO(ARDUINO_DIO_CHANNEL_13,0);
+   //arduino::Sleep(500);
+   //arduino::Set_DIO(ARDUINO_DIO_CHANNEL_13,0);
 
-   arduino::Sleep(500);
-   arduino::Set_DIO(ARDUINO_DIO_CHANNEL_5,1);
+   //arduino::Sleep(500);
+   //arduino::Set_DIO(ARDUINO_DIO_CHANNEL_5,1);
+
+#ifndef HOST
    arduino::Print_UART(dbg::UART_Init.channel, "Hello \n\r");
    arduino::Print_UART_P(dbg::UART_Init.channel, Hello_Test);
-
+#endif
    TR_INFO("Start Snack Style Organics");
 }
 /*================================================================================================*

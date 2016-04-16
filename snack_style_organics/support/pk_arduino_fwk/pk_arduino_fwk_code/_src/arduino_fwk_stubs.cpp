@@ -131,6 +131,10 @@ void arduino::Init(void)
 {
    TR_INFO(__FUNCTION__);
 }
+void arduino::Main(void)
+{
+   TR_INFO(__FUNCTION__);
+}
 
 //CLK
 void arduino::Init_Clk(void)
@@ -143,6 +147,10 @@ uint32_t arduino::Get_Clk(void)
    TR_INFO_1(" get - clock = %d", cl);
    return cl;
 }
+
+
+void arduino::Sleep(const uint32_t ms){usleep(ms*1000);}
+void arduino::Usleep(const uint32_t us){usleep(us);}
 
 void arduino::Init_Tone(const ARDUINO_DIO_CHANNEL_T pin)
 {
@@ -220,7 +228,7 @@ void * Thread_Stub(void * args)
 //LCD
 void arduino::Init_LCD(void){TR_INFO(__FUNCTION__);}
 void arduino::Set_LCD(Arduino_LCD_T const & lcd){TR_INFO(__FUNCTION__);}
-void arduino::Print_LCD(Arduino_LCD_T & lcd, uint8_t * data_print, size_t lenght){TR_INFO(__FUNCTION__);}
+void arduino::Print_LCD(Arduino_LCD_T const  & lcd, const char * data_print){TR_INFO(__FUNCTION__);}
 void arduino::Stop_LCD(void){TR_INFO(__FUNCTION__);}
 
 //PWM Stubs

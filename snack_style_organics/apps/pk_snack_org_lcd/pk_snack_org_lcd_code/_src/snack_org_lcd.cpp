@@ -82,7 +82,7 @@ void Format_Time(void)
    {
       1, 0,
    };
-   TR_INFO_2("Display : ", __FUNCTION__, LCD_Data);
+   TR_INFO_2("Display : %s, %s", __FUNCTION__, LCD_Data);
    arduino::Print_LCD(lcd, LCD_Data);
 }
 
@@ -108,7 +108,7 @@ void Format_Temp(void)
          0,
          0,
       };
-      TR_INFO_2("Display : ", __FUNCTION__, LCD_Data);
+      TR_INFO_2("Display : %s, %s", __FUNCTION__, LCD_Data);
       arduino::Print_LCD(lcd, LCD_Data);
    }
 }
@@ -135,7 +135,7 @@ void Format_Day(void)
          1,
          0,
       };
-      TR_INFO_2("Display : ", __FUNCTION__, LCD_Data);
+      TR_INFO_2("Display : %s, %s", __FUNCTION__, LCD_Data);
       arduino::Print_LCD(lcd, LCD_Data);
    }
 }
@@ -146,7 +146,7 @@ void snack_lcd::Init(void)
 {
    memset(LCD_Data, 0x00, sizeof(LCD_Data));
    arduino::Init_LCD();
-   TR_INFO_1(" ",__FUNCTION__);
+   TR_INFO_1("%s ",__FUNCTION__);
 }
 
 void snack_lcd::Main(void)

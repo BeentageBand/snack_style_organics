@@ -120,9 +120,9 @@ void Pid_Ctl_Calculate_Err(const uint8_t channel)
    const Pid_Ctl_T * pid_ptr = reinterpret_cast<const Pid_Ctl_T *>( pgm_read_ptr(Pid_Laws_Coeff + channel));
    Pid_Ctl_T pid_coeffs =
    {
-         static_cast<Fix32_T>( pgm_read_dword(&pid_ptr->a) ),
-         static_cast<Fix32_T>( pgm_read_dword(&pid_ptr->b) ),
-         static_cast<Fix32_T>( pgm_read_dword(&pid_ptr->c) )
+         static_cast<Fix32_T>( pgm_read_dword(pid_ptr->a) ),
+         static_cast<Fix32_T>( pgm_read_dword(pid_ptr->b) ),
+         static_cast<Fix32_T>( pgm_read_dword(pid_ptr->c) )
    };
 
    Pid_Channels[channel].err[0] =
@@ -151,7 +151,7 @@ void Pid_Ctl_Read_FeedBack(const uint8_t channel)
 bool Wait_For_Sample(void)
 {
    uint32_t time_now = pid::Get_Sample_Time();
-   TR_INFO_2("Waiting %d == %d", (long)time_now, (long)Sample_Tout);
+   TR_INFO_2("Waiting %ld == %ld", (long)time_now, (long)Sample_Tout);
    return ( (time_now -  Sample_Tout) >= PID_CTL_TAU_COEFF_MS);
 }
 /*=====================================================================================* 
