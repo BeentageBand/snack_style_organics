@@ -1,0 +1,3 @@
+[submodule "snack_style_organics/support/pk_hamatora_sched"]
+	path = snack_style_organics/support/pk_hamatora_sched
+	url = https://github.com/BeentageBand/pk_hamatora_sched.git
