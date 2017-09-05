@@ -36,6 +36,8 @@ typedef struct
    void(*enter)(void);
    void(*exit)(void);
 }Change_Of_State_T;
+
+CLASS_DEF(SSO_PMode)
 /*=====================================================================================* 
  * Local Object Definitions
  *=====================================================================================*/
@@ -118,7 +120,22 @@ void pmode::Shut(void)
 /*=====================================================================================* 
  * Exported Function Definitions
  *=====================================================================================*/
+void SSO_PMode_set_state(union SSO_PMode * const this, PMode_State_T const state)
+{
+   if(this->current_state < PMODE_MAX_STATES)
+   {
+	   this->current_state = state;
+   }
+}
 
+PMode_State_TSSO_PMode_get_state(union SSO_PMode * const this)
+{
+   return this->current_state;
+}
+void pmode::Shut(void)
+{
+   pmode::Set_State(PMODE_ALL_OFF_STATE);
+}
 /*=====================================================================================* 
  * snack_power_mode.cpp
  *=====================================================================================*
