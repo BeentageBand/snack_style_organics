@@ -8,37 +8,19 @@
 #=======================================================================================#
 # DEFINE PACKAGE RULE
 #=======================================================================================#
-define $(_build_)_$(_curr_)_MAKE
+define $(_flavor_)_$(_feat_)_MAKE
 #=======================================================================================#
 # OBJECTS DIRECTORY
 # e.g: 
-#     $(_build_)_$(_curr_)_src_dir=pk_module_N_code/_src
+#     $(_flavor_)_$(_feat_)_src_dir=pk_module_N_code/_src
 #     or
-#     $(_build_)_$(_curr_)_src_dir=_src
+#     $(_flavor_)_$(_feat_)_src_dir=_src
 #=======================================================================================#
-$(_build_)_$(_curr_)_src_dir=_src
+$(_flavor_)_$(_feat_)_dir=_src
 
 #=======================================================================================#
 # LIB REQUISITES
 #=======================================================================================#
-
-##
- # Object Requisites
- # e.g: $(_build_)_$(_curr_)_lib_objs=$($(_build_)_OBJ_DIR)/my_lib_obj$(_obj_ext_) \
- ##
-$(_build_)_$(_curr_)_lib_objs=
-
-##
- # Library Requisites
- # e.g: $(_build_)_$(_curr_)_lib_libs=$($(_build_)_LIB_DIR)/$(_lprefix_)my_lib_lib$(_lib_ext_) \
- ##
-$(_build_)_$(_curr_)_lib_libs=
-
-##
- # Target Library
- # e.g: $(_build_)_$(_curr_)_lib_name=my_lib_name
- ##
-$(_build_)_$(_curr_)_lib_name=
 
 #=======================================================================================#
 # BIN REQUISITES
@@ -46,59 +28,29 @@ $(_build_)_$(_curr_)_lib_name=
 
 ##
  # Object Requisites
- # e.g: $(_build_)_$(_curr_)_bin_objs=$($(_build_)_OBJ_DIR)/my_bin_obj$(_obj_ext_) \
+ # e.g: $(_flavor_)_$(_feat_)_bin_objs=$($(_flavor_)_OBJ_DIR)/my_bin_obj$(_obj_ext_) \
  ##
-$(_build_)_$(_curr_)_bin_objs=\
-   $($(_build_)_OBJ_DIR)/main$(_obj_ext_)                 \
+$(_flavor_)_$(_feat_)_bin_objs=snack_style_organics_launcher \
    # \
 
-##
- # Library Requisites
- # e.g: $(_build_)_$(_curr_)_bin_libs=$($(_build_)_LIB_DIR)/$(_lprefix_)my_bin_lib$(_lib_ext_) \
- ##
- ifeq "$(_build_)" "avr"
- $(_build_)_$(_curr_)_bin_libs=\
-   $($(_build_)_LIB_DIR)/$(_lprefix_)hamatora_sched$(_lib_ext_)         \
-   $($(_build_)_LIB_DIR)/$(_lprefix_)snack_org_lcd$(_lib_ext_)          \
-   $($(_build_)_LIB_DIR)/$(_lprefix_)temp_monitor$(_lib_ext_)           \
-   $($(_build_)_LIB_DIR)/$(_lprefix_)axial_fan_ctl$(_lib_ext_)          \
-   $($(_build_)_LIB_DIR)/$(_lprefix_)heater_ctl$(_lib_ext_)             \
-   $($(_build_)_LIB_DIR)/$(_lprefix_)daylight_monitor$(_lib_ext_)       \
-   $($(_build_)_LIB_DIR)/$(_lprefix_)snacky_dehyd_ctl$(_lib_ext_)       \
-   $($(_build_)_LIB_DIR)/$(_lprefix_)chimney_ctl$(_lib_ext_)            \
-   $($(_build_)_LIB_DIR)/$(_lprefix_)pid_ctl$(_lib_ext_)                \
-   $($(_build_)_LIB_DIR)/$(_lprefix_)snack_power_mode$(_lib_ext_)       \
-   $($(_build_)_LIB_DIR)/$(_lprefix_)snack_org_friends$(_lib_ext_)      \
-   $($(_build_)_LIB_DIR)/$(_lprefix_)arduino_fwk$(_lib_ext_)            \
-   $($(_build_)_LIB_DIR)/$(_lprefix_)arduino_core$(_lib_ext_)           \
-   $($(_build_)_LIB_DIR)/$(_lprefix_)hama_dbg_trace$(_lib_ext_)         \
+ $(_flavor_)_$(_feat_)_bin_libs=\
+   hamatora_sched         \
+   snack_org_lcd          \
+   temp_monitor           \
+   axial_fan_ctl          \
+   heater_ctl             \
+   daylight_monitor       \
+   snacky_dehyd_ctl       \
+   chimney_ctl            \
+   pid_ctl                \
+   snack_power_mode       \
+   snack_org_friends      \
+   arduino_fwk            \
+   hama_dbg_trace         \
 #\
- 
- else
- $(_build_)_$(_curr_)_bin_libs=\
-   $($(_build_)_LIB_DIR)/$(_lprefix_)hamatora_sched$(_lib_ext_)         \
-   $($(_build_)_LIB_DIR)/$(_lprefix_)snack_org_lcd$(_lib_ext_)          \
-   $($(_build_)_LIB_DIR)/$(_lprefix_)temp_monitor$(_lib_ext_)           \
-   $($(_build_)_LIB_DIR)/$(_lprefix_)axial_fan_ctl$(_lib_ext_)          \
-   $($(_build_)_LIB_DIR)/$(_lprefix_)heater_ctl$(_lib_ext_)             \
-   $($(_build_)_LIB_DIR)/$(_lprefix_)daylight_monitor$(_lib_ext_)       \
-   $($(_build_)_LIB_DIR)/$(_lprefix_)snacky_dehyd_ctl$(_lib_ext_)       \
-   $($(_build_)_LIB_DIR)/$(_lprefix_)chimney_ctl$(_lib_ext_)            \
-   $($(_build_)_LIB_DIR)/$(_lprefix_)pid_ctl$(_lib_ext_)                \
-   $($(_build_)_LIB_DIR)/$(_lprefix_)snack_power_mode$(_lib_ext_)       \
-   $($(_build_)_LIB_DIR)/$(_lprefix_)snack_org_friends$(_lib_ext_)      \
-   $($(_build_)_LIB_DIR)/$(_lprefix_)arduino_fwk$(_lib_ext_)            \
-   $($(_build_)_LIB_DIR)/$(_lprefix_)hama_dbg_trace$(_lib_ext_)         \
-#\
-   $($(_build_)_LIB_DIR)/$(_lprefix_)power_mode$(_lib_ext_)             \
+   power_mode             \
     
- endif
-
-##
- # Target Binary
- # e.g: $(_build_)_$(_curr_)_bin_name=my_bin_name
- ##
-$(_build_)_$(_curr_)_bin_name=snack_style_org_launcher
+$(_flavor_)_$(_feat_)_bin=snack_style_org_launcher
 #=======================================================================================#
 # END PACKAGE RULE
 #=======================================================================================#
@@ -122,7 +74,7 @@ endef
 #=======================================================================================#
 # INCLUDE PK PROJECT UTILITY
 #=======================================================================================#
-include $($(_build_)_PROJECT_DIR)/$($(_build_)_MAK_DIR)/epilog.mk
+include $($(_flavor_)_PROJECT_DIR)/$($(_flavor_)_MAK_DIR)/epilog.mk
 #=======================================================================================#
 # api_makefile.mk
 #=======================================================================================#

@@ -13,8 +13,9 @@
  * Project Includes
  *=====================================================================================*/
 #include "pid_ctl.h"
+
+#include "../../../../include/pid_ctl_set.h"
 #include "pid_ctl_ext.h"
-#include "pid_ctl_set.h"
 #include "hama_dbg_trace.h"
 #include "std_def.h"
 /*=====================================================================================* 

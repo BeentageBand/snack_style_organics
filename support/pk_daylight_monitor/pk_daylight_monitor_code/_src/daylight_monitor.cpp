@@ -14,9 +14,10 @@
  *=====================================================================================*/
 #include "arduino_fwk_adc.h"
 #include "daylight_monitor.h"
+
+#include "../../../../include/daylight_monitor_set.h"
+#include "../../../../include/snack_style_gpio.h"
 #include "daylight_monitor_ext.h"
-#include "daylight_monitor_set.h"
-#include "snack_style_gpio.h"
 /*=====================================================================================* 
  * Standard Includes
  *=====================================================================================*/

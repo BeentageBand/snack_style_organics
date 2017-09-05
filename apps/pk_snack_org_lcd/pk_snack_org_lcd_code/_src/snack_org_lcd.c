@@ -8,13 +8,12 @@
  *
  */
 /*=====================================================================================*/
-
+#define OBJECT_IMPLEMENTATION SSO_LCD_WN
 /*=====================================================================================*
  * Project Includes
  *=====================================================================================*/
 #include "snack_org_lcd.h"
 #include "arduino_fwk_lcd.h"
-#include "arduino_fwk_uset.h"
 #include "arduino_fwk_clk.h"
 #include "temp_monitor.h"
 #include "daylight_monitor.h"
@@ -22,8 +21,7 @@
 /*=====================================================================================* 
  * Standard Includes
  *=====================================================================================*/
-#include <stdint.h>
-#include <string.h>
+#include "arduino_fwk_uset.h"
 /*=====================================================================================* 
  * Local X-Macros
  *=====================================================================================*/
@@ -35,6 +33,7 @@
 /*=====================================================================================* 
  * Local Type Definitions
  *=====================================================================================*/
+CLASS_DEF(SSO_LCD_WN)
 
 /*=====================================================================================* 
  * Local Object Definitions
@@ -57,16 +56,14 @@ const uint8_t LCD_DAY_PTR = 12;
 /*=====================================================================================* 
  * Local Function Prototypes
  *=====================================================================================*/
-static void Format_Time(void);
-static void Format_Temp(void);
-static void Format_Day(void);
+
 /*=====================================================================================* 
  * Local Inline-Function Like Macros
  *=====================================================================================*/
 /*=====================================================================================* 
  * Local Function Definitions
  *=====================================================================================*/
-void Format_Time(void)
+void SSO_LCD_WN_Format_Time(void)
 {
    uint32_t time = LCD_Time[1]*10 + LCD_Time[0];
    uint32_t new_time = arduino::Get_Clk();
@@ -82,11 +79,11 @@ void Format_Time(void)
    {
       1, 0,
    };
-   TR_INFO_2("Display : %s, %s", __FUNCTION__, LCD_Data);
-   arduino::Print_LCD(lcd, LCD_Data);
+   TR_Info("Display : %s, %s", __func__, LCD_Data);
+   //arduino::Print_LCD(lcd, LCD_Data);
 }
 
-void Format_Temp(void)
+void SSO_LCD_WN_Format_Temp(void)
 {
    uint16_t temp = temp_mon::Get_Temperature();
 
@@ -112,7 +109,7 @@ void Format_Temp(void)
       arduino::Print_LCD(lcd, LCD_Data);
    }
 }
-void Format_Day(void)
+void SSO_LCD_WN_Format_Day(void)
 {
    bool day = day_mon::Get_Daylight_Presence();
 
@@ -142,23 +139,47 @@ void Format_Day(void)
 /*=====================================================================================* 
  * Exported Function Definitions
  *=====================================================================================*/
-void snack_lcd::Init(void)
+void SSO_LCD_WN_on_start(union Worker_Node * const super)
 {
+	SSO_LCD_WN * const this = _dynamic_cast(SSO_LCD_WN, super);
    memset(LCD_Data, 0x00, sizeof(LCD_Data));
-   arduino::Init_LCD();
-   TR_INFO_1("%s ",__FUNCTION__);
+   //arduino::Init_LCD();
+
+	for(Node * it = SSO_LCD_WN_SNodes; it != SSO_LCD_WN_SNodes+1; ++it)
+	{
+		super.vtbl->subscribe(super, it);
+	}
+
+	Isnt_Nullptr(this,);
+
+	this->vtbl->Worker_Node_on_start(&this->Worker_Node);
+   TR_Info("%s ",__func__);
 }
 
-void snack_lcd::Main(void)
+void SSO_LCD_WN_on_message(union Worker_Node * const super, union Mail * const mail)
 {
-   Format_Time();
-   Format_Temp();
-   Format_Day();
+	this->vtbl->Worker_Node_on_message(&this->Worker_Node);
 }
 
-void snack_lcd::Shut(void)
+void SSO_LCD_WN_on_periodic(union SSO_LCD_WN * const super)
 {
-   arduino::Stop_LCD();
+	this->vtbl->Worker_Node_on_periodic(&this->Worker_Node);
+   SSO_LCD_WN_Format_Time();
+   SSO_LCD_WN_Format_Temp();
+   SSO_LCD_WN_Format_Day();
+}
+
+void SSO_LCD_WN_on_stop(union Worker_Node * const super)
+{
+	this->vtbl->Worker_Node_on_stop(&this->Worker_Node);
+
+	for(Node * it = SSO_LCD_WN_SNodes; it != SSO_LCD_WN_SNodes+1; ++it)
+	{
+		super.vtbl->unsubscribe(super, it);
+	}
+
+
+   //arduino::Stop_LCD();
 }
 /*=====================================================================================* 
  * snack_power_mode.cpp

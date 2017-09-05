@@ -15,9 +15,10 @@
 #include "arduino_fwk_clk.h"
 #include "daylight_monitor.h"
 #include "pid_ctl.h"
-#include "pid_ctl_set.h"
 #include "snack_power_mode.h"
 #include "snacky_dehyd_ctl.h"
+
+#include "../../../../include/pid_ctl_set.h"
 #include "temp_monitor.h"
 #include "hama_dbg_trace.h"
 #include "chimney_ctl.h"

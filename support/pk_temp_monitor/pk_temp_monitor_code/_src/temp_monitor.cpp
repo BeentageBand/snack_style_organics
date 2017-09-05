@@ -14,8 +14,9 @@
  *=====================================================================================*/
 #include "arduino_fwk_adc.h"
 #include "temp_monitor.h"
-#include "temp_monitor_set.h"
-#include "snack_style_gpio.h"
+
+#include "../../../../include/snack_style_gpio.h"
+#include "../../../../include/temp_monitor_set.h"
 /*=====================================================================================* 
  * Standard Includes
  *=====================================================================================*/

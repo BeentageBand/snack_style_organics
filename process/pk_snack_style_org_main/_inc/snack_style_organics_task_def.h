@@ -1,6 +1,6 @@
 /*=====================================================================================*/
 /**
- * api_uset.h
+ * snack_style_organics_task_def.h
  * author : puch
  * date : Oct 22 2015
  *
@@ -8,8 +8,8 @@
  *
  */
 /*=====================================================================================*/
-#ifndef HAMATORA_SCHED_DEF_H_
-#define HAMATORA_SCHED_DEF_H_
+#ifndef SNACK_STYLE_ORGANICS_TASK_DEF_H_
+#define SNACK_STYLE_ORGANICS_TASK_DEF_H_
 /*=====================================================================================*
  * Project Includes
  *=====================================================================================*/
@@ -30,20 +30,19 @@
 /*=====================================================================================* 
  * Exported X-Macros
  *=====================================================================================*/
-#define HAMA_SCHED_APPS_TABLE \
-               /* App id,                Init app,          Run app,            Stop app */\
-   HAMA_SCHED_APP(ARDUINO_ID,            0,                 arduino::Main,      arduino::Shut       ) \
-   HAMA_SCHED_APP(HAMA_DBG_TRACE_ID,     0,                 0,                  dbg::Shut           ) \
-   HAMA_SCHED_APP(TEST_ID,               Init_Test,         Main_Test,          0                   ) \
-   HAMA_SCHED_APP(SNACK_ORG_CTL_ID,      snack_dehyd::Init, snack_dehyd::Main,  snack_dehyd::Shut   ) \
-   HAMA_SCHED_APP(SNACK_ORG_LCD_ID,      snack_lcd::Init,   snack_lcd::Main,    snack_lcd::Shut     ) \
-   HAMA_SCHED_APP(SNACK_PMODE_ID,        pmode::Init,       pmode::Main,        pmode::Shut         ) \
-   HAMA_SCHED_APP(HAMA_SCHED_ID,         0,                 0,                  hama::Shut          ) \
-   HAMA_SCHED_APP(DAYLIGHT_MONITOR_ID,   day_mon::Init,     day_mon::Main,      day_mon::Shut       ) \
-   HAMA_SCHED_APP(TEMP_MONITOR_ID,       temp_mon::Init,    temp_mon::Main,     temp_mon::Shut      ) \
-   HAMA_SCHED_APP(HEATER_CTL_ID,         heater::Init,      0,                  heater::Shut        ) \
-   HAMA_SCHED_APP(AXIAL_FAN_CTL_ID,      fan::Init,         0,                  fan::Shut           ) \
-   HAMA_SCHED_APP(PID_CTL_ID,            pid::Init,         pid::Main,          0                   ) \
+#define SSO_TASKS_TABLE(SSO_TASK) \
+         /* Task name,              Task Id */\
+   SSO_TASK(Arduino_WN,             ARDUINO_ID,            ""  ) \
+   SSO_TASK(Test_WN,                TEST_ID,               ""  ) \
+   SSO_TASK(SSO_Ctl_WN,             SNACK_ORG_CTL_ID,      ""  ) \
+   SSO_TASK(SSO_LCD_WN,             SNACK_ORG_LCD_ID,      ""  ) \
+   SSO_TASK(Heater_Ctl_WN,          HEATER_CTL_ID,         ""  ) \
+   SSO_TASK(Fan_Ctl_WN,             AXIAL_FAN_CTL_ID,      ""  ) \
+   SSO_TASK(PID_Ctl_WN,             PID_CTL_ID,            ""  ) \
+   SSO_TASK(Hama_Dbg_Trace_WN,      HAMA_DBG_TRACE_ID,     ""  ) \
+   SSO_TASK(SSO_Power_Mode_WN,      SNACK_PMODE_ID,        ""  ) \
+   SSO_TASK(Daylight_Monitor_WN,    DAYLIGHT_MONITOR_ID,   ""  ) \
+   SSO_TASK(Temperature_Monitor_WN, TEMP_MONITOR_ID,       ""  ) \
    /*
    */
 
@@ -56,10 +55,10 @@
  *=====================================================================================*/
 
 /*=====================================================================================* 
- * api_uset.h
+ * snack_style_organics_task_def.h
  *=====================================================================================*
  * Log History
  *
  *=====================================================================================*/
 
-#endif /*HAMATORA_SCHED_DEF_H_*/
+#endif /*SNACK_STYLE_ORGANICS_TASK_DEF_H_*/

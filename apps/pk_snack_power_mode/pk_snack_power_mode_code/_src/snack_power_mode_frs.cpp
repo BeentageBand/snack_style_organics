@@ -12,12 +12,12 @@
 /*=====================================================================================*
  * Project Includes
  *=====================================================================================*/
+#include "../../../../include/snack_style_gpio.h"
 #include "arduino_fwk_dio.h"
 #include "arduino_fwk_isr.h"
 #include "arduino_fwk_clk.h"
 #include "snack_power_mode_ext.h"
 #include "snack_power_mode_types.h"
-#include "snack_style_gpio.h"
 /*=====================================================================================* 
  * Standard Includes
  *=====================================================================================*/
