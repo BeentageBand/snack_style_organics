@@ -12,7 +12,7 @@
 /*=====================================================================================*
  * Project Includes
  *=====================================================================================*/
-#include "../../../../include/snack_style_gpio.h"
+#include "snack_style_gpio.h"
 #include "arduino_fwk_dio.h"
 #include "arduino_fwk_isr.h"
 #include "arduino_fwk_clk.h"

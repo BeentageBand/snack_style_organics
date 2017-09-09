@@ -13,7 +13,7 @@
 /*=====================================================================================*
  * Project Includes
  *=====================================================================================*/
-#include "mail_node.h"
+#include "st_machine.h"
 #include "snack_power_mode_types.h"
 /*=====================================================================================* 
  * Standard Includes
@@ -26,14 +26,14 @@
 /*=====================================================================================*
  * Exported Define Macros
  *=====================================================================================*/
-#define SSO_PMode_INHERITS Mail_Node
+#define SSO_PMode_INHERITS BASE_CLASS
 
 #define SSO_PMode_MEMBERS(_member, _class) \
-	_member(PMode_State_T _private, curr_state)
+	_member(union State_Machine _private, hsm)
 
 #define SSO_PMode_METHODS(_method, _class) \
-_method(void, set_state, PMode_State_T const) \
-_method(PMode_State_T, get_state, void)
+_method(void, _class, set_state, PMode_State_T const) \
+_method(PMode_State_T, _class, get_state, void)
 
 /*=====================================================================================* 
  * Exported Type Declarations
