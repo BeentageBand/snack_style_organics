@@ -1,6 +1,5 @@
-/*=====================================================================================*/
 /**
- * snack_power_mode_ext.h
+ * snack_power_mode.h
  * author : puch
  * date : Oct 22 2015
  *
@@ -8,52 +7,60 @@
  *
  */
 /*=====================================================================================*/
-#ifndef SNACK_POWER_MODE_EXT_H_
-#define SNACK_POWER_MODE_EXT_H_
+#ifndef SNACK_POWER_MODE_PROXYH_
+#define SNACK_POWER_MODE_PROXYH_
 /*=====================================================================================*
  * Project Includes
  *=====================================================================================*/
-#include "snack_power_mode_uset.h"
+#include "mail_node.h"
 #include "snack_power_mode_types.h"
 /*=====================================================================================* 
  * Standard Includes
  *=====================================================================================*/
 
 /*=====================================================================================* 
+ * Exported X-Macros
+ *=====================================================================================*/
+
+/*=====================================================================================*
  * Exported Define Macros
  *=====================================================================================*/
-namespace pmode{
+#define SSO_PMode_Proxy_INHERITS Mail_Node
+
+#define SSO_PMode_Proxy_MEMBERS(_member, _class) \
+	_member(PMode_State_T _private, curr_state) \
+	_member(t_Map(Mail_Node_Subscription_Handler) _private, handler)
+
+#define SSO_PMode_METHODS(_method, _class) \
+_method(void, set_state, PMode_State_T const) \
+_method(PMode_State_T, get_state, void)
+
 /*=====================================================================================* 
  * Exported Type Declarations
  *=====================================================================================*/
-#undef PMODE_SOURCE
-#define PMODE_SOURCE(src, osc) \
-   extern void src##_init(void);
-
-POWER_MODE_SOURCES_TB
-
-#undef PMODE_STATE
-#define PMODE_STATE(st) \
-   extern void Enter_##st(void); \
-   extern void Exit_##st(void);  \
-
-POWER_MODE_STATES_TB
-/*=====================================================================================*
+#ifdef __cplusplus
+extern "C"
+{
+#endif
+/*=====================================================================================* 
  * Exported Object Declarations
  *=====================================================================================*/
-
+CLASS_DECL(SSO_PMode)
 /*=====================================================================================* 
  * Exported Function Prototypes
  *=====================================================================================*/
-}/*end of namespace*/
+extern union SSO_PMode SSO_PMode_Proxy(void);
+extern union SSO_PMode * SSO_PMode_Proxy_New(void);
 /*=====================================================================================* 
  * Exported Function Like Macros
  *=====================================================================================*/
-
+#ifdef __cplusplus
+}/*extern "C"*/
+#endif
 /*=====================================================================================* 
- * snack_power_mode_ext.h
+ * snack_power_mode.h
  *=====================================================================================*
  * Log History
  *
  *=====================================================================================*/
-#endif /*SNACK_POWER_MODE_EXT_H_*/
+#endif /*SNACK_POWER_MODE_PROXYH_*/

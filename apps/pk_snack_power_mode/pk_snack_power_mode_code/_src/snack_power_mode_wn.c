@@ -1,6 +1,6 @@
 /*=====================================================================================*/
 /**
- * snack_power_mode.cpp
+ * snack_power_mode_wn.c
  * author : puch
  * date : Oct 22 2015
  *
@@ -12,7 +12,7 @@
 /*=====================================================================================*
  * Project Includes
  *=====================================================================================*/
-#include "snack_power_mode.h"
+#include "snack_power_mode_wn.h"
 #include "snack_power_mode_types.h"
 #include "snack_power_mode_ext.h"
 #include "arduino_fwk_pwm.h"
@@ -37,7 +37,7 @@ typedef struct
    void(*exit)(void);
 }Change_Of_State_T;
 
-CLASS_DEF(SSO_PMode)
+CLASS_DEF(SSO_PMode_WN)
 /*=====================================================================================* 
  * Local Object Definitions
  *=====================================================================================*/
@@ -116,53 +116,35 @@ void pmode::Shut(void)
 /*=====================================================================================* 
  * Local Function Definitions
  *=====================================================================================*/
-void SSO_PMode_Init(void)
+void SSO_PMode_WN_Init(void)
 {
+
 }
 
-void SSO_PMode_Delete(struct Object * const obj)
+void SSO_PMode_WN_Delete(struct Object * const obj)
 {}
-
-union SSO_PMode SSO_PMode_Default(void)
-{
-	union SSO_PMode sso_pmode;
-	if(!SSO_PMode_Class)
-	{
-		SSO_PMode_Init();
-		SSO_PMode_Obj.vbtl = &SSO_PMode_Class;
-	}
-	return sso_pmode;
-}
 
 /*=====================================================================================* 
  * Exported Function Definitions
  *=====================================================================================*/
-union SSO_PMode SSO_PMode(void)
+union SSO_PMode_WN SSO_PMode_WN(void)
 {
-	union SSO_PMode this = SSO_PMode_Default();
+	union SSO_PMode_WN this = SSO_PMode_WN_Default();
+
+	Object_Update_Info(&this.Object,
+			&Worker_Node_Tid(SSO_PMODE_TID, NULL, 0).Object,
+			sizeof(this), sizeof(this.Worker_Node));
 
 	return this;
 }
-union SSO_PMode * SSO_PMode_New(void)
+
+union SSO_PMode_WN * SSO_PMode_WN_New(void)
 {
-	union SSO_PMode * const _new = malloc(sizeof(SSO_PMode_Default()));
+	union SSO_PMode * const _new = malloc(sizeof(SSO_PMode_WN_Default()));
 	Isnt_Nullptr(_new, NULL);
 
-	memcpy(_new, &SSO_PMode_Obj, sizeof(SSO_PMode_Obj));
+	memcpy(_new, &SSO_PMode_WN_Obj, sizeof(SSO_PMode_WN_Obj));
 	return _new;
-}
-
-void SSO_PMode_set_state(union SSO_PMode * const this, PMode_State_T const state)
-{
-   if(this->current_state < PMODE_MAX_STATES)
-   {
-	   this->hsm->vtbl->dispatch(&this->hsm, state, NULL);
-   }
-}
-
-PMode_State_T SSO_PMode_get_state(union SSO_PMode * const this)
-{
-   return this->hsm->vtbl->state;
 }
 
 void pmode::Shut(void)
@@ -170,7 +152,7 @@ void pmode::Shut(void)
    pmode::Set_State(PMODE_ALL_OFF_STATE);
 }
 /*=====================================================================================* 
- * snack_power_mode.cpp
+ * snack_power_mode.c
  *=====================================================================================*
  * Log History
  *

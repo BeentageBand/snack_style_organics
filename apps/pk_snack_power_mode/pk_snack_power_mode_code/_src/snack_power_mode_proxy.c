@@ -12,10 +12,10 @@
 /*=====================================================================================*
  * Project Includes
  *=====================================================================================*/
-#include "snack_power_mode.h"
+#include "snack_power_mode_proxy.h"
 #include "snack_power_mode_types.h"
 #include "snack_power_mode_ext.h"
-#include "arduino_fwk_pwm.h"
+#include "ipc.h"
 /*=====================================================================================* 
  * Standard Includes
  *=====================================================================================*/
@@ -31,37 +31,14 @@
 /*=====================================================================================* 
  * Local Type Definitions
  *=====================================================================================*/
-typedef struct
-{
-   void(*enter)(void);
-   void(*exit)(void);
-}Change_Of_State_T;
-
-CLASS_DEF(SSO_PMode)
+CLASS_DEF(SSO_PMode_Proxy)
 /*=====================================================================================* 
  * Local Object Definitions
  *=====================================================================================*/
-#undef PMODE_STATE
-#define PMODE_STATE(st) \
-const Change_Of_State_T st##_State PROGMEM = \
-{\
-   pmode::Enter_##st, \
-   pmode::Exit_##st   \
-};\
-
-POWER_MODE_STATES_TB
-
-#undef PMODE_STATE
-#define PMODE_STATE(st) \
-&st##_State,\
-
-const Change_Of_State_T * const PMode_SM[] PROGMEM =
+static struct Mail_Node_Subcription_Handler SSO_PMode_Mail_Handle[] =
 {
-   POWER_MODE_STATES_TB
+	SSO_PMODE_PROC_MESSAGE_LIST(MAIL_NODE_POPULATE)
 };
-
-static PMode_State_T Current_State = 0;
-static PMode_State_T New_State = 0;
 /*=====================================================================================* 
  * Exported Object Definitions
  *=====================================================================================*/
@@ -69,46 +46,7 @@ static PMode_State_T New_State = 0;
 /*=====================================================================================* 
  * Local Function Prototypes
  *=====================================================================================*/
-#undef PMODE_SOURCE
-#define PMODE_SOURCE(src, osc) \
-   src##_init();
 
-void pmode::Init(void)
-{
-   POWER_MODE_SOURCES_TB
-}
-void pmode::Main(void)
-{
-   if(New_State != Current_State)
-   {
-      const Change_Of_State_T * sm = reinterpret_cast<const Change_Of_State_T *>( pgm_read_ptr(PMode_SM + Current_State) );
-      void (*handler)(void) = reinterpret_cast< void (*)(void)>(pgm_read_ptr(&sm->exit));
-      handler();
-
-      sm = reinterpret_cast<const Change_Of_State_T *>( pgm_read_ptr(PMode_SM + New_State) );
-      handler = reinterpret_cast< void (*)(void)>(pgm_read_ptr(&sm->enter) );
-      handler();
-
-      Current_State = New_State;
-   }
-}
-
-void pmode::Set_State(PMode_State_T state)
-{
-   if(New_State < PMODE_MAX_STATES)
-   {
-      New_State = state;
-   }
-}
-
-PMode_State_T pmode::Get_State(void)
-{
-   return Current_State;
-}
-void pmode::Shut(void)
-{
-   pmode::Set_State(PMODE_ALL_OFF_STATE);
-}
 /*=====================================================================================* 
  * Local Inline-Function Like Macros
  *=====================================================================================*/
@@ -116,58 +54,42 @@ void pmode::Shut(void)
 /*=====================================================================================* 
  * Local Function Definitions
  *=====================================================================================*/
-void SSO_PMode_Init(void)
+void SSO_PMode_Proxy_Init(void)
 {
+
 }
-
-void SSO_PMode_Delete(struct Object * const obj)
-{}
-
-union SSO_PMode SSO_PMode_Default(void)
-{
-	union SSO_PMode sso_pmode;
-	if(!SSO_PMode_Class)
-	{
-		SSO_PMode_Init();
-		SSO_PMode_Obj.vbtl = &SSO_PMode_Class;
-	}
-	return sso_pmode;
-}
-
-/*=====================================================================================* 
- * Exported Function Definitions
- *=====================================================================================*/
 union SSO_PMode SSO_PMode(void)
 {
-	union SSO_PMode this = SSO_PMode_Default();
-
-	return this;
+	union Mail_Node super = Mail_Node_Subscription(SSO_PMODE_TID, SSO_PMode_Mail_Handle, Num_Elems(SSO_PMode_Mail_Handle));
 }
 union SSO_PMode * SSO_PMode_New(void)
 {
-	union SSO_PMode * const _new = malloc(sizeof(SSO_PMode_Default()));
-	Isnt_Nullptr(_new, NULL);
-
-	memcpy(_new, &SSO_PMode_Obj, sizeof(SSO_PMode_Obj));
-	return _new;
+	return NULL;
 }
-
+/*=====================================================================================* 
+ * Exported Function Definitions
+ *=====================================================================================*/
 void SSO_PMode_set_state(union SSO_PMode * const this, PMode_State_T const state)
 {
-   if(this->current_state < PMODE_MAX_STATES)
-   {
-	   this->hsm->vtbl->dispatch(&this->hsm, state, NULL);
-   }
+	if(state < PMODE_MAX_STATES)
+	{
+		IPC_Send(SSO_PMODE_INT_CHANGE_STATE, SSO_PMODE_TID, &state, sizeof(state));
+	}
 }
 
 PMode_State_T SSO_PMode_get_state(union SSO_PMode * const this)
 {
-   return this->hsm->vtbl->state;
+	union SSO_PMode_Proxy * const this = _dynamic_cast(SSO_PMode_Proxy, super);
+	return this->current_state;
 }
 
-void pmode::Shut(void)
+void SSO_PMode_Proxy_SSO_PMode_On_State_Change(union SSO_PMode * const super, union Mail * const mail)
 {
-   pmode::Set_State(PMODE_ALL_OFF_STATE);
+	union SSO_PMode_Proxy * const this = _dynamic_cast(SSO_PMode_Proxy, super);
+	Isnt_Nullptr(this,);
+	Isnt_Nullptr(mail,);
+	Isnt_Nullptr(mail->data,);
+	this->current_state = *(PMode_State_T * const) mail->data;
 }
 /*=====================================================================================* 
  * snack_power_mode.cpp
