@@ -16,7 +16,6 @@ define $(_flavor_)_$(_feat_)_MAKE
 #     or
 #     $(_flavor_)_$(_feat_)_src_dir=_src
 #=======================================================================================#
-$(_flavor_)_$(_feat_)_dir=_src
 
 #=======================================================================================#
 # LIB REQUISITES
@@ -30,7 +29,7 @@ $(_flavor_)_$(_feat_)_dir=_src
  # Object Requisites
  # e.g: $(_flavor_)_$(_feat_)_bin_objs=$($(_flavor_)_OBJ_DIR)/my_bin_obj$(_obj_ext_) \
  ##
-$(_flavor_)_$(_feat_)_bin_objs=snack_style_organics_launcher \
+$(_flavor_)_$(_feat_)_bin_objs=sso_launcher \
    # \
 
  $(_flavor_)_$(_feat_)_bin_libs=\
@@ -50,7 +49,7 @@ $(_flavor_)_$(_feat_)_bin_objs=snack_style_organics_launcher \
 #\
    power_mode             \
     
-$(_flavor_)_$(_feat_)_bin=snack_style_org_launcher
+$(_flavor_)_$(_feat_)_bin=sso_launcher
 #=======================================================================================#
 # END PACKAGE RULE
 #=======================================================================================#
@@ -74,7 +73,7 @@ endef
 #=======================================================================================#
 # INCLUDE PK PROJECT UTILITY
 #=======================================================================================#
-include $($(_flavor_)_PROJECT_DIR)/$($(_flavor_)_MAK_DIR)/epilog.mk
+include $(PROJ_MAK_DIR)/epilog.mk
 #=======================================================================================#
 # api_makefile.mk
 #=======================================================================================#
