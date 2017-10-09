@@ -1,6 +1,6 @@
-/*=====================================================================================*/
+/*==========NA===========================================================================*/
 /**
- * pid_ctl_frs.cpp
+ * chimney_ctl.cpp
  * author : puch
  * date : Oct 22 2015
  *
@@ -12,11 +12,10 @@
 /*=====================================================================================*
  * Project Includes
  *=====================================================================================*/
-#include "../../../support/atmel_asf/pk_arduino_fwk_code/_inc/arduino_fwk_clk.h"
-#include "../../../support/axial_fan_ctl/pk_axial_fan_ctl_user/axial_fan_ctl.h"
-#include "../../../support/heater_resistor_ctl/pk_heater_ctl_user/heater_ctl.h"
-#include "../../../support/pid_controller/pk_pid_ctl_code/_inc/pid_ctl_ext.h"
-#include "../../../support/temp_sensor/pk_temp_monitor_user/temp_monitor.h"
+#include "../../../chimney_ctl/pk_chimney_ctl_user/chimney_ctl.h"
+
+#include "../../../../include/snack_style_gpio.h"
+#include "../../../atmel_asf/pk_arduino_fwk_code/_inc/arduino_fwk_dio.h"
 /*=====================================================================================* 
  * Standard Includes
  *=====================================================================================*/
@@ -36,7 +35,7 @@
 /*=====================================================================================* 
  * Local Object Definitions
  *=====================================================================================*/
-
+static Chimney_State_T Chim_State = CHIMNEY_OPEN;
 /*=====================================================================================* 
  * Exported Object Definitions
  *=====================================================================================*/
@@ -56,37 +55,45 @@
 /*=====================================================================================* 
  * Exported Function Definitions
  *=====================================================================================*/
-Fix32_T pid::Get_PID_CTL_CHANNEL_FAN_DOOR()
+void chim::Init(void)
 {
-   return static_cast<Fix32_T>(PID_CTL_FIX32_PARSE_FACTOR*temp_mon::Get_Temperature() );
+   arduino::Init_DIO(SNACK_GPIO_DC_MOTOR_H, ARDUINO_DIO_OUTPUT_MODE);
+   arduino::Init_DIO(SNACK_GPIO_DC_MOTOR_L, ARDUINO_DIO_OUTPUT_MODE);
+   chim::Set_State(Chim_State);
 }
-Fix32_T pid::Get_PID_CTL_CHANNEL_HEATER()
+void chim::Set_State(Chimney_State_T state)
 {
-   return static_cast<Fix32_T>(PID_CTL_FIX32_PARSE_FACTOR*temp_mon::Get_Temperature() );
+   switch(state)
+   {
+   case CHIMNEY_OPEN:
+      Chim_State = state;
+      arduino::Set_DIO(SNACK_GPIO_DC_MOTOR_H, true );
+      arduino::Set_DIO(SNACK_GPIO_DC_MOTOR_L, false);
+      break;
+
+   case CHIMNEY_CLOSED:
+      Chim_State = state;
+      arduino::Set_DIO(SNACK_GPIO_DC_MOTOR_H, false);
+      arduino::Set_DIO(SNACK_GPIO_DC_MOTOR_L, true );
+      break;
+
+   default: break;
+   }
 }
 
-void pid::Put_PID_CTL_CHANNEL_FAN_DOOR(const Fix32_T uout)
+Chimney_State_T chim::Get_State(void)
 {
-   uint8_t fan_out = (uout/PID_CTL_FIX32_PARSE_FACTOR);
-   fan::Set_Output(fan_out);
+   return Chim_State;
 }
-
-void pid::Put_PID_CTL_CHANNEL_HEATER(const Fix32_T uout)
+void chim::Shut(void)
 {
-   uint8_t pwm_out = (uout/PID_CTL_FIX32_PARSE_FACTOR);
-   heater::Set_Output(pwm_out);
-}
-
-
-uint32_t pid::Get_Sample_Time(void)
-{
-   return arduino::Get_Clk();
+   chim::Set_State(CHIMNEY_OPEN);
+   arduino::Init_DIO(SNACK_GPIO_DC_MOTOR_H, ARDUINO_DIO_INPUT_MODE);
+   arduino::Init_DIO(SNACK_GPIO_DC_MOTOR_L, ARDUINO_DIO_INPUT_MODE);
 }
 /*=====================================================================================* 
- * pid_ctl_frs.cpp
+ * chimney_ctl.cpp
  *=====================================================================================*
  * Log History
  *
  *=====================================================================================*/
-
-

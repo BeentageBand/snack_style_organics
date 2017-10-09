@@ -1,6 +1,6 @@
 /*=====================================================================================*/
 /**
- * snack_power_mode_uset.h
+ * arduino_fwk_lcd.h
  * author : puch
  * date : Oct 22 2015
  *
@@ -8,28 +8,18 @@
  *
  */
 /*=====================================================================================*/
-#ifndef SNACK_POWER_MODE_USET_H_
-#define SNACK_POWER_MODE_USET_H_
+#ifndef ARDUINO_FWK_LCD_H_
+#define ARDUINO_FWK_LCD_H_
 /*=====================================================================================*
  * Project Includes
  *=====================================================================================*/
-#include "../support/avr_framework/pk_arduino_fwk_user/arduino_fwk_types.h"
-/*=====================================================================================* 
- * Standard Includes
- *=====================================================================================*/
+#include <stdint.h>
 
+#include "../../../avr_framework/pk_arduino_fwk_user/arduino_fwk_types.h"
 /*=====================================================================================* 
  * Exported X-Macros
  *=====================================================================================*/
-#define POWER_MODE_SOURCES_TB \
-   /*            CHANNEL,               OSC VALUE */ \
-   PMODE_SOURCE(PMODE_SOURCE_AC,        60       ) \
-   PMODE_SOURCE(PMODE_SOURCE_NEG_DC,    1000     ) \
 
-#define POWER_MODE_STATES_TB \
-   PMODE_STATE(PMODE_ALL_OFF_STATE) /*No source is on*/             \
-   PMODE_STATE(PMODE_AC_OFF       ) /*Just Neg DC is on*/           \
-   PMODE_STATE(PMODE_ALL_ON       ) /*AC and Neg DC sources are on*/\
 /*=====================================================================================* 
  * Exported Define Macros
  *=====================================================================================*/
@@ -37,11 +27,29 @@
 /*=====================================================================================* 
  * Exported Type Declarations
  *=====================================================================================*/
+namespace arduino{
+/*=====================================================================================* 
+ * Exported Object Declarations
+ *=====================================================================================*/
 
 /*=====================================================================================* 
- * snack_power_mode_uset.h
+ * Exported Function Prototypes
+ *=====================================================================================*/
+extern void Init_LCD(void);
+extern void Set_LCD(Arduino_LCD_T const & lcd);
+extern void Print_LCD(const char * data_print);
+extern void Print_LCD(Arduino_LCD_T const & lcd, const char * data_print);
+extern void Print_LCD(Arduino_LCD_T const & lcd, int i);
+extern void Print_LCD(Arduino_LCD_T const & lcd, long l);
+extern void Stop_LCD(void);
+/*=====================================================================================* 
+ * Exported Function Like Macros
+ *=====================================================================================*/
+}/*namespace arduino*/
+/*=====================================================================================* 
+ * arduino_fwk_lcd.h
  *=====================================================================================*
  * Log History
  *
  *=====================================================================================*/
-#endif /*SNACK_POWER_MODE_USET_H_*/
+#endif /*ARDUINO_FWK_LCD_H_*/

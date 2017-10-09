@@ -1,6 +1,6 @@
 /*=====================================================================================*/
 /**
- * pid_ctl_frs.cpp
+ * arduino_fwk.cpp
  * author : puch
  * date : Oct 22 2015
  *
@@ -12,11 +12,11 @@
 /*=====================================================================================*
  * Project Includes
  *=====================================================================================*/
-#include "../../../support/atmel_asf/pk_arduino_fwk_code/_inc/arduino_fwk_clk.h"
-#include "../../../support/axial_fan_ctl/pk_axial_fan_ctl_user/axial_fan_ctl.h"
-#include "../../../support/heater_resistor_ctl/pk_heater_ctl_user/heater_ctl.h"
-#include "../../../support/pid_controller/pk_pid_ctl_code/_inc/pid_ctl_ext.h"
-#include "../../../support/temp_sensor/pk_temp_monitor_user/temp_monitor.h"
+#include "../../../temp_sensor/pk_temp_monitor_user/temp_monitor.h"
+
+#include "../../../../include/snack_style_gpio.h"
+#include "../../../../include/temp_monitor_set.h"
+#include "../../../atmel_asf/pk_arduino_fwk_code/_inc/arduino_fwk_adc.h"
 /*=====================================================================================* 
  * Standard Includes
  *=====================================================================================*/
@@ -36,7 +36,7 @@
 /*=====================================================================================* 
  * Local Object Definitions
  *=====================================================================================*/
-
+static uint16_t Temp_Channel_Readings[TEMP_MONITOR_AVG_SIZE] = {0};
 /*=====================================================================================* 
  * Exported Object Definitions
  *=====================================================================================*/
@@ -52,38 +52,41 @@
 /*=====================================================================================* 
  * Local Function Definitions
  *=====================================================================================*/
-
+uint16_t Get_Average(void)
+{
+   uint16_t avg = 0;
+   for(uint8_t i = 0; i < TEMP_MONITOR_AVG_SIZE; ++i)
+   {
+      avg += Temp_Channel_Readings[i];
+   }
+   return (avg/TEMP_MONITOR_AVG_SIZE);
+}
 /*=====================================================================================* 
  * Exported Function Definitions
  *=====================================================================================*/
-Fix32_T pid::Get_PID_CTL_CHANNEL_FAN_DOOR()
+void temp_mon::Init(void)
 {
-   return static_cast<Fix32_T>(PID_CTL_FIX32_PARSE_FACTOR*temp_mon::Get_Temperature() );
-}
-Fix32_T pid::Get_PID_CTL_CHANNEL_HEATER()
-{
-   return static_cast<Fix32_T>(PID_CTL_FIX32_PARSE_FACTOR*temp_mon::Get_Temperature() );
+   arduino::Init_ADC( SNACK_GPIO_ADC_TEMP_AVG );
 }
 
-void pid::Put_PID_CTL_CHANNEL_FAN_DOOR(const Fix32_T uout)
+uint16_t temp_mon::Get_Temperature(void)
 {
-   uint8_t fan_out = (uout/PID_CTL_FIX32_PARSE_FACTOR);
-   fan::Set_Output(fan_out);
+   return Get_Average();
 }
 
-void pid::Put_PID_CTL_CHANNEL_HEATER(const Fix32_T uout)
+void temp_mon::Main(void)
 {
-   uint8_t pwm_out = (uout/PID_CTL_FIX32_PARSE_FACTOR);
-   heater::Set_Output(pwm_out);
+   uint16_t temp = TEMPERATURE_CONVERSION_COEFF*arduino::Get_ADC( SNACK_GPIO_ADC_TEMP_AVG );
+   memcpy( Temp_Channel_Readings, &Temp_Channel_Readings[1], sizeof(Temp_Channel_Readings) );
+   Temp_Channel_Readings[TEMP_MONITOR_AVG_SIZE-1] = temp;
 }
 
-
-uint32_t pid::Get_Sample_Time(void)
+void temp_mon::Shut(void)
 {
-   return arduino::Get_Clk();
+   arduino::Stop_ADC( SNACK_GPIO_ADC_TEMP_AVG );
 }
 /*=====================================================================================* 
- * pid_ctl_frs.cpp
+ * arduino_fwk.cpp
  *=====================================================================================*
  * Log History
  *

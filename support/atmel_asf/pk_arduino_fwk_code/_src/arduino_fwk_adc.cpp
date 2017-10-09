@@ -1,6 +1,6 @@
 /*=====================================================================================*/
 /**
- * pid_ctl_frs.cpp
+ * arduino_fwk_adc.cpp
  * author : puch
  * date : Oct 22 2015
  *
@@ -12,15 +12,10 @@
 /*=====================================================================================*
  * Project Includes
  *=====================================================================================*/
-#include "../../../support/atmel_asf/pk_arduino_fwk_code/_inc/arduino_fwk_clk.h"
-#include "../../../support/axial_fan_ctl/pk_axial_fan_ctl_user/axial_fan_ctl.h"
-#include "../../../support/heater_resistor_ctl/pk_heater_ctl_user/heater_ctl.h"
-#include "../../../support/pid_controller/pk_pid_ctl_code/_inc/pid_ctl_ext.h"
-#include "../../../support/temp_sensor/pk_temp_monitor_user/temp_monitor.h"
-/*=====================================================================================* 
- * Standard Includes
- *=====================================================================================*/
+#include "../../../atmel_asf/pk_arduino_fwk_code/_inc/arduino_fwk_adc.h"
 
+#include "Arduino.h"
+#include <avr/pgmspace.h>
 /*=====================================================================================* 
  * Local X-Macros
  *=====================================================================================*/
@@ -44,7 +39,15 @@
 /*=====================================================================================* 
  * Local Function Prototypes
  *=====================================================================================*/
-
+const uint8_t ADC_Channel_To_Pin[] PROGMEM =
+{
+   ARDUINO_DIO_CHANNEL_14,/*ARDUINO_ADC_CHANNEL_0*/
+   ARDUINO_DIO_CHANNEL_15,/*ARDUINO_ADC_CHANNEL_1*/
+   ARDUINO_DIO_CHANNEL_16,/*ARDUINO_ADC_CHANNEL_2*/
+   ARDUINO_DIO_CHANNEL_17,/*ARDUINO_ADC_CHANNEL_3*/
+   ARDUINO_DIO_CHANNEL_18,/*ARDUINO_ADC_CHANNEL_4*/
+   ARDUINO_DIO_CHANNEL_19,/*ARDUINO_ADC_CHANNEL_5*/
+};
 /*=====================================================================================* 
  * Local Inline-Function Like Macros
  *=====================================================================================*/
@@ -56,37 +59,33 @@
 /*=====================================================================================* 
  * Exported Function Definitions
  *=====================================================================================*/
-Fix32_T pid::Get_PID_CTL_CHANNEL_FAN_DOOR()
+void arduino::Init_ADC(const ARDUINO_ADC_CHANNEL_T channel)
 {
-   return static_cast<Fix32_T>(PID_CTL_FIX32_PARSE_FACTOR*temp_mon::Get_Temperature() );
+   if(channel < ARDUINO_ADC_MAX_CHANNELS)
+   {
+       pinMode(pgm_read_byte(ADC_Channel_To_Pin + channel), INPUT);
+   }
 }
-Fix32_T pid::Get_PID_CTL_CHANNEL_HEATER()
+uint16_t arduino::Get_ADC(const ARDUINO_ADC_CHANNEL_T channel)
 {
-   return static_cast<Fix32_T>(PID_CTL_FIX32_PARSE_FACTOR*temp_mon::Get_Temperature() );
-}
-
-void pid::Put_PID_CTL_CHANNEL_FAN_DOOR(const Fix32_T uout)
-{
-   uint8_t fan_out = (uout/PID_CTL_FIX32_PARSE_FACTOR);
-   fan::Set_Output(fan_out);
-}
-
-void pid::Put_PID_CTL_CHANNEL_HEATER(const Fix32_T uout)
-{
-   uint8_t pwm_out = (uout/PID_CTL_FIX32_PARSE_FACTOR);
-   heater::Set_Output(pwm_out);
+   uint16_t read = 0xFFFFU;
+   if(channel < ARDUINO_ADC_MAX_CHANNELS)
+   {
+      read = analogRead(pgm_read_byte(ADC_Channel_To_Pin + channel));
+   }
+   return read;
 }
 
-
-uint32_t pid::Get_Sample_Time(void)
+void arduino::Stop_ADC(const ARDUINO_ADC_CHANNEL_T channel)
 {
-   return arduino::Get_Clk();
+   if(channel < ARDUINO_ADC_MAX_CHANNELS)
+   {
+      analogWrite(pgm_read_byte(ADC_Channel_To_Pin + channel), INPUT);
+   }
 }
 /*=====================================================================================* 
- * pid_ctl_frs.cpp
+ * arduino_fwk_adc.cpp
  *=====================================================================================*
  * Log History
  *
  *=====================================================================================*/
-
-

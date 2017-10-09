@@ -1,6 +1,6 @@
 /*=====================================================================================*/
 /**
- * snack_power_mode_uset.h
+ * arduino_fwk_dio.h
  * author : puch
  * date : Oct 22 2015
  *
@@ -8,40 +8,46 @@
  *
  */
 /*=====================================================================================*/
-#ifndef SNACK_POWER_MODE_USET_H_
-#define SNACK_POWER_MODE_USET_H_
+#ifndef ARDUINO_FWK_DIO_H_
+#define ARDUINO_FWK_DIO_H_
 /*=====================================================================================*
  * Project Includes
  *=====================================================================================*/
-#include "../support/avr_framework/pk_arduino_fwk_user/arduino_fwk_types.h"
-/*=====================================================================================* 
- * Standard Includes
- *=====================================================================================*/
+#include <stdint.h>
 
+#include "../../../avr_framework/pk_arduino_fwk_user/arduino_fwk_types.h"
 /*=====================================================================================* 
  * Exported X-Macros
  *=====================================================================================*/
-#define POWER_MODE_SOURCES_TB \
-   /*            CHANNEL,               OSC VALUE */ \
-   PMODE_SOURCE(PMODE_SOURCE_AC,        60       ) \
-   PMODE_SOURCE(PMODE_SOURCE_NEG_DC,    1000     ) \
 
-#define POWER_MODE_STATES_TB \
-   PMODE_STATE(PMODE_ALL_OFF_STATE) /*No source is on*/             \
-   PMODE_STATE(PMODE_AC_OFF       ) /*Just Neg DC is on*/           \
-   PMODE_STATE(PMODE_ALL_ON       ) /*AC and Neg DC sources are on*/\
 /*=====================================================================================* 
  * Exported Define Macros
  *=====================================================================================*/
-
+#define ARDUINO_DIO_OUTPUT_MODE (1)
+#define ARDUINO_DIO_INPUT_MODE  (0)
 /*=====================================================================================* 
  * Exported Type Declarations
  *=====================================================================================*/
+namespace arduino{
+/*=====================================================================================* 
+ * Exported Object Declarations
+ *=====================================================================================*/
 
 /*=====================================================================================* 
- * snack_power_mode_uset.h
+ * Exported Function Prototypes
+ *=====================================================================================*/
+extern void Init_DIO(const ARDUINO_DIO_CHANNEL_T pin, uint8_t mode);
+extern void Set_DIO(const ARDUINO_DIO_CHANNEL_T pin,const uint8_t value);
+extern uint8_t Get_DIO(const ARDUINO_DIO_CHANNEL_T pin);
+extern void Shut_DIO(const ARDUINO_DIO_CHANNEL_T pin);
+/*=====================================================================================* 
+ * Exported Function Like Macros
+ *=====================================================================================*/
+} /*namespace arduino*/
+/*=====================================================================================* 
+ * arduino_fwk_dio.h
  *=====================================================================================*
  * Log History
  *
  *=====================================================================================*/
-#endif /*SNACK_POWER_MODE_USET_H_*/
+#endif /*ARDUINO_FWK_DIO_H_*/

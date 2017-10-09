@@ -1,6 +1,6 @@
 /*=====================================================================================*/
 /**
- * pid_ctl_frs.cpp
+ * snack_power_mode_wn.c
  * author : puch
  * date : Oct 22 2015
  *
@@ -12,11 +12,11 @@
 /*=====================================================================================*
  * Project Includes
  *=====================================================================================*/
-#include "../../../support/atmel_asf/pk_arduino_fwk_code/_inc/arduino_fwk_clk.h"
-#include "../../../support/axial_fan_ctl/pk_axial_fan_ctl_user/axial_fan_ctl.h"
-#include "../../../support/heater_resistor_ctl/pk_heater_ctl_user/heater_ctl.h"
-#include "../../../support/pid_controller/pk_pid_ctl_code/_inc/pid_ctl_ext.h"
-#include "../../../support/temp_sensor/pk_temp_monitor_user/temp_monitor.h"
+#include "snack_power_mode_wn.h"
+
+#include "pwm.h"
+#include "snack_power_mode_types.h"
+#include "snack_power_mode_ext.h"
 /*=====================================================================================* 
  * Standard Includes
  *=====================================================================================*/
@@ -32,11 +32,37 @@
 /*=====================================================================================* 
  * Local Type Definitions
  *=====================================================================================*/
+typedef struct
+{
+   void(*enter)(void);
+   void(*exit)(void);
+}Change_Of_State_T;
 
+CLASS_DEF(SSO_PMode_WN)
 /*=====================================================================================* 
  * Local Object Definitions
  *=====================================================================================*/
+#undef PMODE_STATE
+#define PMODE_STATE(st) \
+const Change_Of_State_T st##_State PROGMEM = \
+{\
+   pmode::Enter_##st, \
+   pmode::Exit_##st   \
+};\
 
+POWER_MODE_STATES_TB
+
+#undef PMODE_STATE
+#define PMODE_STATE(st) \
+&st##_State,\
+
+const Change_Of_State_T * const PMode_SM[] PROGMEM =
+{
+   POWER_MODE_STATES_TB
+};
+
+static PMode_State_T Current_State = 0;
+static PMode_State_T New_State = 0;
 /*=====================================================================================* 
  * Exported Object Definitions
  *=====================================================================================*/
@@ -44,7 +70,46 @@
 /*=====================================================================================* 
  * Local Function Prototypes
  *=====================================================================================*/
+#undef PMODE_SOURCE
+#define PMODE_SOURCE(src, osc) \
+   src##_init();
 
+void pmode::Init(void)
+{
+   POWER_MODE_SOURCES_TB
+}
+void pmode::Main(void)
+{
+   if(New_State != Current_State)
+   {
+      const Change_Of_State_T * sm = reinterpret_cast<const Change_Of_State_T *>( pgm_read_ptr(PMode_SM + Current_State) );
+      void (*handler)(void) = reinterpret_cast< void (*)(void)>(pgm_read_ptr(&sm->exit));
+      handler();
+
+      sm = reinterpret_cast<const Change_Of_State_T *>( pgm_read_ptr(PMode_SM + New_State) );
+      handler = reinterpret_cast< void (*)(void)>(pgm_read_ptr(&sm->enter) );
+      handler();
+
+      Current_State = New_State;
+   }
+}
+
+void pmode::Set_State(PMode_State_T state)
+{
+   if(New_State < PMODE_MAX_STATES)
+   {
+      New_State = state;
+   }
+}
+
+PMode_State_T pmode::Get_State(void)
+{
+   return Current_State;
+}
+void pmode::Shut(void)
+{
+   pmode::Set_State(PMODE_ALL_OFF_STATE);
+}
 /*=====================================================================================* 
  * Local Inline-Function Like Macros
  *=====================================================================================*/
@@ -52,41 +117,44 @@
 /*=====================================================================================* 
  * Local Function Definitions
  *=====================================================================================*/
+void SSO_PMode_WN_Init(void)
+{
+
+}
+
+void SSO_PMode_WN_Delete(struct Object * const obj)
+{}
 
 /*=====================================================================================* 
  * Exported Function Definitions
  *=====================================================================================*/
-Fix32_T pid::Get_PID_CTL_CHANNEL_FAN_DOOR()
+union SSO_PMode_WN SSO_PMode_WN(void)
 {
-   return static_cast<Fix32_T>(PID_CTL_FIX32_PARSE_FACTOR*temp_mon::Get_Temperature() );
-}
-Fix32_T pid::Get_PID_CTL_CHANNEL_HEATER()
-{
-   return static_cast<Fix32_T>(PID_CTL_FIX32_PARSE_FACTOR*temp_mon::Get_Temperature() );
-}
+	union SSO_PMode_WN this = SSO_PMode_WN_Default();
 
-void pid::Put_PID_CTL_CHANNEL_FAN_DOOR(const Fix32_T uout)
-{
-   uint8_t fan_out = (uout/PID_CTL_FIX32_PARSE_FACTOR);
-   fan::Set_Output(fan_out);
+	Object_Update_Info(&this.Object,
+			&Worker_Node_Tid(SSO_PMODE_TID, NULL, 0).Object,
+			sizeof(this), sizeof(this.Worker_Node));
+
+	return this;
 }
 
-void pid::Put_PID_CTL_CHANNEL_HEATER(const Fix32_T uout)
+union SSO_PMode_WN * SSO_PMode_WN_New(void)
 {
-   uint8_t pwm_out = (uout/PID_CTL_FIX32_PARSE_FACTOR);
-   heater::Set_Output(pwm_out);
+	union SSO_PMode * const _new = malloc(sizeof(SSO_PMode_WN_Default()));
+	Isnt_Nullptr(_new, NULL);
+
+	memcpy(_new, &SSO_PMode_WN_Obj, sizeof(SSO_PMode_WN_Obj));
+	return _new;
 }
 
-
-uint32_t pid::Get_Sample_Time(void)
+void pmode::Shut(void)
 {
-   return arduino::Get_Clk();
+   pmode::Set_State(PMODE_ALL_OFF_STATE);
 }
 /*=====================================================================================* 
- * pid_ctl_frs.cpp
+ * snack_power_mode.c
  *=====================================================================================*
  * Log History
  *
  *=====================================================================================*/
-
-

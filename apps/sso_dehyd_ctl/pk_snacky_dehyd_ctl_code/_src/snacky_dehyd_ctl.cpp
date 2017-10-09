@@ -1,6 +1,6 @@
 /*=====================================================================================*/
 /**
- * pid_ctl_frs.cpp
+ * snack_power_mode.cpp
  * author : puch
  * date : Oct 22 2015
  *
@@ -12,11 +12,16 @@
 /*=====================================================================================*
  * Project Includes
  *=====================================================================================*/
-#include "../../../support/atmel_asf/pk_arduino_fwk_code/_inc/arduino_fwk_clk.h"
-#include "../../../support/axial_fan_ctl/pk_axial_fan_ctl_user/axial_fan_ctl.h"
-#include "../../../support/heater_resistor_ctl/pk_heater_ctl_user/heater_ctl.h"
-#include "../../../support/pid_controller/pk_pid_ctl_code/_inc/pid_ctl_ext.h"
-#include "../../../support/temp_sensor/pk_temp_monitor_user/temp_monitor.h"
+#include "snack_power_mode.h"
+#include "snacky_dehyd_ctl.h"
+
+#include "pid_ctl_set.h"
+#include "clk.h"
+#include "chimney_ctl.h"
+#include "daylight_monitor.h"
+#include "pid_ctl.h"
+#include "temp_monitor.h"
+#include "dbg_log.h"
 /*=====================================================================================* 
  * Standard Includes
  *=====================================================================================*/
@@ -28,7 +33,8 @@
 /*=====================================================================================* 
  * Local Define Macros
  *=====================================================================================*/
-
+#define SNACK_DEHYD_CTL_MIN_TEMP (110000)
+#define SNACK_DEHYD_CTL_MAX_TEMP (118000)
 /*=====================================================================================* 
  * Local Type Definitions
  *=====================================================================================*/
@@ -56,37 +62,48 @@
 /*=====================================================================================* 
  * Exported Function Definitions
  *=====================================================================================*/
-Fix32_T pid::Get_PID_CTL_CHANNEL_FAN_DOOR()
+void snack_dehyd::Init(void)
 {
-   return static_cast<Fix32_T>(PID_CTL_FIX32_PARSE_FACTOR*temp_mon::Get_Temperature() );
-}
-Fix32_T pid::Get_PID_CTL_CHANNEL_HEATER()
-{
-   return static_cast<Fix32_T>(PID_CTL_FIX32_PARSE_FACTOR*temp_mon::Get_Temperature() );
-}
-
-void pid::Put_PID_CTL_CHANNEL_FAN_DOOR(const Fix32_T uout)
-{
-   uint8_t fan_out = (uout/PID_CTL_FIX32_PARSE_FACTOR);
-   fan::Set_Output(fan_out);
+   TR_INFO("snack_dehyd::Init");
+   pid::Set_Point(PID_CTL_CHANNEL_FAN_DOOR, SNACK_DEHYD_CTL_MAX_TEMP);
+   pid::Set_Point(PID_CTL_CHANNEL_HEATER, SNACK_DEHYD_CTL_MIN_TEMP);
+   pmode::Set_State(PMODE_ALL_ON);
 }
 
-void pid::Put_PID_CTL_CHANNEL_HEATER(const Fix32_T uout)
+void snack_dehyd::Main(void)
 {
-   uint8_t pwm_out = (uout/PID_CTL_FIX32_PARSE_FACTOR);
-   heater::Set_Output(pwm_out);
+   if(SNACK_DEHYD_CTL_MIN_TEMP < temp_mon::Get_Temperature())
+   {
+      pid::Run(PID_CTL_CHANNEL_HEATER);
+      chim::Set_State(CHIMNEY_CLOSED);
+
+      pid::Stop(PID_CTL_CHANNEL_FAN_DOOR);
+   }
+   else if(SNACK_DEHYD_CTL_MAX_TEMP < temp_mon::Get_Temperature())
+   {
+      pid::Run(PID_CTL_CHANNEL_FAN_DOOR);
+      chim::Set_State(CHIMNEY_OPEN);
+      pid::Stop(PID_CTL_CHANNEL_HEATER);
+   }
+   else
+   {
+      pid::Run(PID_CTL_CHANNEL_HEATER);
+      pid::Run(PID_CTL_CHANNEL_FAN_DOOR);
+   }
 }
 
-
-uint32_t pid::Get_Sample_Time(void)
+void snack_dehyd::Shut(void)
 {
-   return arduino::Get_Clk();
+   pmode::Set_State(PMODE_AC_OFF);
+   pid::Stop(PID_CTL_CHANNEL_FAN_DOOR);
+   pid::Stop(PID_CTL_CHANNEL_HEATER);
 }
 /*=====================================================================================* 
- * pid_ctl_frs.cpp
+ * snack_power_mode.cpp
  *=====================================================================================*
  * Log History
  *
  *=====================================================================================*/
+
 
 

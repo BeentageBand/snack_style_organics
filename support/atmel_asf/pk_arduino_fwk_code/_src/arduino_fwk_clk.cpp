@@ -1,6 +1,6 @@
 /*=====================================================================================*/
 /**
- * pid_ctl_frs.cpp
+ * arduino_fwk_clk.cpp
  * author : puch
  * date : Oct 22 2015
  *
@@ -12,15 +12,9 @@
 /*=====================================================================================*
  * Project Includes
  *=====================================================================================*/
-#include "../../../support/atmel_asf/pk_arduino_fwk_code/_inc/arduino_fwk_clk.h"
-#include "../../../support/axial_fan_ctl/pk_axial_fan_ctl_user/axial_fan_ctl.h"
-#include "../../../support/heater_resistor_ctl/pk_heater_ctl_user/heater_ctl.h"
-#include "../../../support/pid_controller/pk_pid_ctl_code/_inc/pid_ctl_ext.h"
-#include "../../../support/temp_sensor/pk_temp_monitor_user/temp_monitor.h"
-/*=====================================================================================* 
- * Standard Includes
- *=====================================================================================*/
+#include "../../../atmel_asf/pk_arduino_fwk_code/_inc/arduino_fwk_clk.h"
 
+#include "Arduino.h"
 /*=====================================================================================* 
  * Local X-Macros
  *=====================================================================================*/
@@ -56,37 +50,43 @@
 /*=====================================================================================* 
  * Exported Function Definitions
  *=====================================================================================*/
-Fix32_T pid::Get_PID_CTL_CHANNEL_FAN_DOOR()
+void arduino::Init_Clk(void)
 {
-   return static_cast<Fix32_T>(PID_CTL_FIX32_PARSE_FACTOR*temp_mon::Get_Temperature() );
-}
-Fix32_T pid::Get_PID_CTL_CHANNEL_HEATER()
-{
-   return static_cast<Fix32_T>(PID_CTL_FIX32_PARSE_FACTOR*temp_mon::Get_Temperature() );
+   init();
 }
 
-void pid::Put_PID_CTL_CHANNEL_FAN_DOOR(const Fix32_T uout)
+uint32_t arduino::Get_Clk( void)
 {
-   uint8_t fan_out = (uout/PID_CTL_FIX32_PARSE_FACTOR);
-   fan::Set_Output(fan_out);
+   return millis();
 }
 
-void pid::Put_PID_CTL_CHANNEL_HEATER(const Fix32_T uout)
+void arduino::Sleep(const uint32_t ms)
 {
-   uint8_t pwm_out = (uout/PID_CTL_FIX32_PARSE_FACTOR);
-   heater::Set_Output(pwm_out);
+	delay(ms);
 }
 
-
-uint32_t pid::Get_Sample_Time(void)
+void arduino::Usleep(const uint32_t us)
 {
-   return arduino::Get_Clk();
+	delayMicroseconds(us);
+}
+
+void arduino::Init_Tone(const ARDUINO_DIO_CHANNEL_T pin)
+{
+   pinMode(pin, OUTPUT);
+}
+
+void arduino::Set_Tone(const ARDUINO_DIO_CHANNEL_T pin, uint16_t freq)
+{
+   tone(pin,freq);
+}
+
+void arduino::Stop_Tone(const ARDUINO_DIO_CHANNEL_T pin)
+{
+   noTone(pin);
 }
 /*=====================================================================================* 
- * pid_ctl_frs.cpp
+ * arduino_fwk_clk.cpp
  *=====================================================================================*
  * Log History
  *
  *=====================================================================================*/
-
-
