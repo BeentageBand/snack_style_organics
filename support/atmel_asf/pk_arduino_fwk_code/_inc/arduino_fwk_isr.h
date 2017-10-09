@@ -1,6 +1,6 @@
 /*=====================================================================================*/
 /**
- * snack_power_mode_uset.h
+ * arduino_fwk_isr.h
  * author : puch
  * date : Oct 22 2015
  *
@@ -8,28 +8,18 @@
  *
  */
 /*=====================================================================================*/
-#ifndef SNACK_POWER_MODE_USET_H_
-#define SNACK_POWER_MODE_USET_H_
+#ifndef ARDUINO_FWK_ISR_H_
+#define ARDUINO_FWK_ISR_H_
 /*=====================================================================================*
  * Project Includes
  *=====================================================================================*/
-#include "../support/avr_framework/pk_arduino_fwk_user/arduino_fwk_types.h"
-/*=====================================================================================* 
- * Standard Includes
- *=====================================================================================*/
+#include <stdint.h>
 
+#include "../../../avr_framework/pk_arduino_fwk_user/arduino_fwk_types.h"
 /*=====================================================================================* 
  * Exported X-Macros
  *=====================================================================================*/
-#define POWER_MODE_SOURCES_TB \
-   /*            CHANNEL,               OSC VALUE */ \
-   PMODE_SOURCE(PMODE_SOURCE_AC,        60       ) \
-   PMODE_SOURCE(PMODE_SOURCE_NEG_DC,    1000     ) \
 
-#define POWER_MODE_STATES_TB \
-   PMODE_STATE(PMODE_ALL_OFF_STATE) /*No source is on*/             \
-   PMODE_STATE(PMODE_AC_OFF       ) /*Just Neg DC is on*/           \
-   PMODE_STATE(PMODE_ALL_ON       ) /*AC and Neg DC sources are on*/\
 /*=====================================================================================* 
  * Exported Define Macros
  *=====================================================================================*/
@@ -37,11 +27,26 @@
 /*=====================================================================================* 
  * Exported Type Declarations
  *=====================================================================================*/
+namespace arduino{
+/*=====================================================================================* 
+ * Exported Object Declarations
+ *=====================================================================================*/
 
 /*=====================================================================================* 
- * snack_power_mode_uset.h
+ * Exported Function Prototypes
+ *=====================================================================================*/
+extern void Init_ISR(const ARDUINO_ISR_THREAD_T channel);
+extern void Set_ISR(const ARDUINO_ISR_THREAD_T channel, Arduino_ISR_T isr, const uint32_t timer);
+extern void Run_ISR(const ARDUINO_ISR_THREAD_T channel);
+extern void Stop_ISR(const ARDUINO_ISR_THREAD_T channel);
+/*=====================================================================================* 
+ * Exported Function Like Macros
+ *=====================================================================================*/
+}/*namespace arduino*/
+/*=====================================================================================* 
+ * arduino_fwk_isr.h
  *=====================================================================================*
  * Log History
  *
  *=====================================================================================*/
-#endif /*SNACK_POWER_MODE_USET_H_*/
+#endif /*ARDUINO_FWK_ISR_H_*/

@@ -13,16 +13,16 @@
 /*=====================================================================================*
  * Project Includes
  *=====================================================================================*/
-#include "arduino_fwk.h"
-#include "axial_fan_ctl.h"
-#include "daylight_monitor.h"
+#include "../../../support/avr_framework/pk_arduino_fwk_user/arduino_fwk.h"
+#include "../../../support/axial_fan_ctl/pk_axial_fan_ctl_user/axial_fan_ctl.h"
+#include "../../../support/heater_resistor_ctl/pk_daylight_monitor/pk_daylight_monitor_user/daylight_monitor.h"
+#include "../../../support/heater_resistor_ctl/pk_heater_ctl_user/heater_ctl.h"
+#include "../../../support/pid_controller/pk_pid_ctl_user/pid_ctl.h"
+#include "../../../support/temp_sensor/pk_temp_monitor_user/temp_monitor.h"
 #include "hamatora_sched_types.h"
-#include "heater_ctl.h"
-#include "pid_ctl.h"
 #include "snacky_dehyd_ctl.h"
 #include "snack_org_lcd.h"
 #include "snack_power_mode.h"
-#include "temp_monitor.h"
 /*=====================================================================================* 
  * Standard Includes
  *=====================================================================================*/

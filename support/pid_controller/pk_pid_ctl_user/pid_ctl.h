@@ -1,6 +1,6 @@
 /*=====================================================================================*/
 /**
- * snack_power_mode_uset.h
+ * arduino_fwk.h
  * author : puch
  * date : Oct 22 2015
  *
@@ -8,12 +8,13 @@
  *
  */
 /*=====================================================================================*/
-#ifndef SNACK_POWER_MODE_USET_H_
-#define SNACK_POWER_MODE_USET_H_
+#ifndef PID_CTL_H_
+#define PID_CTL_H_
 /*=====================================================================================*
  * Project Includes
  *=====================================================================================*/
-#include "../support/avr_framework/pk_arduino_fwk_user/arduino_fwk_types.h"
+#include "../../../include/pid_ctl_uset.h"
+#include "../../pid_controller/pk_pid_ctl_user/pid_ctl_types.h"
 /*=====================================================================================* 
  * Standard Includes
  *=====================================================================================*/
@@ -21,15 +22,7 @@
 /*=====================================================================================* 
  * Exported X-Macros
  *=====================================================================================*/
-#define POWER_MODE_SOURCES_TB \
-   /*            CHANNEL,               OSC VALUE */ \
-   PMODE_SOURCE(PMODE_SOURCE_AC,        60       ) \
-   PMODE_SOURCE(PMODE_SOURCE_NEG_DC,    1000     ) \
 
-#define POWER_MODE_STATES_TB \
-   PMODE_STATE(PMODE_ALL_OFF_STATE) /*No source is on*/             \
-   PMODE_STATE(PMODE_AC_OFF       ) /*Just Neg DC is on*/           \
-   PMODE_STATE(PMODE_ALL_ON       ) /*AC and Neg DC sources are on*/\
 /*=====================================================================================* 
  * Exported Define Macros
  *=====================================================================================*/
@@ -37,11 +30,29 @@
 /*=====================================================================================* 
  * Exported Type Declarations
  *=====================================================================================*/
+namespace pid{
+/*=====================================================================================* 
+ * Exported Object Declarations
+ *=====================================================================================*/
 
 /*=====================================================================================* 
- * snack_power_mode_uset.h
+ * Exported Function Prototypes
+ *=====================================================================================*/
+
+/*=====================================================================================* 
+ * Exported Function Like Macros
+ *=====================================================================================*/
+extern void Init(void);
+extern void Set_Point(const PID_CHANNEL_T channel, const Fix32_T val);
+extern Fix32_T Get_Feedback(const PID_CHANNEL_T channel);
+extern void Run(const PID_CHANNEL_T channel);
+extern void Stop(const PID_CHANNEL_T channel);
+extern void Main(void);
+}
+/*=====================================================================================* 
+ * arduino_fwk.h
  *=====================================================================================*
  * Log History
  *
  *=====================================================================================*/
-#endif /*SNACK_POWER_MODE_USET_H_*/
+#endif /*PID_CTL_H_*/

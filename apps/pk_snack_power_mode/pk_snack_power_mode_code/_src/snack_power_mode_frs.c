@@ -12,10 +12,10 @@
 /*=====================================================================================*
  * Project Includes
  *=====================================================================================*/
+#include "../../../../support/atmel_asf/pk_arduino_fwk_code/_inc/arduino_fwk_clk.h"
+#include "../../../../support/atmel_asf/pk_arduino_fwk_code/_inc/arduino_fwk_dio.h"
+#include "../../../../support/atmel_asf/pk_arduino_fwk_code/_inc/arduino_fwk_isr.h"
 #include "snack_style_gpio.h"
-#include "arduino_fwk_dio.h"
-#include "arduino_fwk_isr.h"
-#include "arduino_fwk_clk.h"
 #include "snack_power_mode_ext.h"
 #include "snack_power_mode_types.h"
 /*=====================================================================================* 

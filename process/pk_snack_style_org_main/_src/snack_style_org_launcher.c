@@ -8,8 +8,8 @@
 /*================================================================================================*
  * Project Includes
  *================================================================================================*/
-#include "arduino_fwk_dio.h"
-#include "arduino_fwk_clk.h"
+#include "../../../support/atmel_asf/pk_arduino_fwk_code/_inc/arduino_fwk_clk.h"
+#include "../../../support/atmel_asf/pk_arduino_fwk_code/_inc/arduino_fwk_dio.h"
 #include "hamatora_sched.h"
 #include "hamatora_sched_ext.h"
 #include "hama_dbg_trace.h"

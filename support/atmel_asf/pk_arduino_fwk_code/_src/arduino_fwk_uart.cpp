@@ -1,6 +1,6 @@
 /*=====================================================================================*/
 /**
- * snack_power_mode.cpp
+ * arduino_fwk_uart.cpp
  * author : puch
  * date : Oct 22 2015
  *
@@ -12,20 +12,10 @@
 /*=====================================================================================*
  * Project Includes
  *=====================================================================================*/
-#include "snack_power_mode.h"
-#include "snacky_dehyd_ctl.h"
+#include "../../../atmel_asf/pk_arduino_fwk_code/_inc/arduino_fwk_uart.h"
 
-#include "../../../../include/pid_ctl_set.h"
-#include "../../../../support/atmel_asf/pk_arduino_fwk_code/_inc/arduino_fwk_clk.h"
-#include "../../../../support/chimney_ctl/pk_chimney_ctl_user/chimney_ctl.h"
-#include "../../../../support/heater_resistor_ctl/pk_daylight_monitor/pk_daylight_monitor_user/daylight_monitor.h"
-#include "../../../../support/pid_controller/pk_pid_ctl_user/pid_ctl.h"
-#include "../../../../support/temp_sensor/pk_temp_monitor_user/temp_monitor.h"
-#include "hama_dbg_trace.h"
-/*=====================================================================================* 
- * Standard Includes
- *=====================================================================================*/
-
+#include "../../../../include/arduino_fwk_uset.h"
+#include "Arduino.h"
 /*=====================================================================================* 
  * Local X-Macros
  *=====================================================================================*/
@@ -33,8 +23,7 @@
 /*=====================================================================================* 
  * Local Define Macros
  *=====================================================================================*/
-#define SNACK_DEHYD_CTL_MIN_TEMP (110000)
-#define SNACK_DEHYD_CTL_MAX_TEMP (118000)
+
 /*=====================================================================================* 
  * Local Type Definitions
  *=====================================================================================*/
@@ -42,7 +31,10 @@
 /*=====================================================================================* 
  * Local Object Definitions
  *=====================================================================================*/
-
+static HardwareSerial* UART_Channels_To_Ports[] =
+{
+      &Serial,
+};
 /*=====================================================================================* 
  * Exported Object Definitions
  *=====================================================================================*/
@@ -62,48 +54,103 @@
 /*=====================================================================================* 
  * Exported Function Definitions
  *=====================================================================================*/
-void snack_dehyd::Init(void)
+void arduino::Init_UART(Arduino_UART_T const & uart)
 {
-   TR_INFO("snack_dehyd::Init");
-   pid::Set_Point(PID_CTL_CHANNEL_FAN_DOOR, SNACK_DEHYD_CTL_MAX_TEMP);
-   pid::Set_Point(PID_CTL_CHANNEL_HEATER, SNACK_DEHYD_CTL_MIN_TEMP);
-   pmode::Set_State(PMODE_ALL_ON);
+   if(uart.channel < ARDUINO_UART_MAX_CHANNELS)
+   {
+      UART_Channels_To_Ports[uart.channel]->begin(uart.baud);
+   }
 }
-
-void snack_dehyd::Main(void)
+void arduino::Put_UART(const ARDUINO_UART_CHANNEL_T uart, const uint8_t c)
 {
-   if(SNACK_DEHYD_CTL_MIN_TEMP < temp_mon::Get_Temperature())
+   if(uart < ARDUINO_UART_MAX_CHANNELS)
    {
-      pid::Run(PID_CTL_CHANNEL_HEATER);
-      chim::Set_State(CHIMNEY_CLOSED);
-
-      pid::Stop(PID_CTL_CHANNEL_FAN_DOOR);
-   }
-   else if(SNACK_DEHYD_CTL_MAX_TEMP < temp_mon::Get_Temperature())
-   {
-      pid::Run(PID_CTL_CHANNEL_FAN_DOOR);
-      chim::Set_State(CHIMNEY_OPEN);
-      pid::Stop(PID_CTL_CHANNEL_HEATER);
-   }
-   else
-   {
-      pid::Run(PID_CTL_CHANNEL_HEATER);
-      pid::Run(PID_CTL_CHANNEL_FAN_DOOR);
+      UART_Channels_To_Ports[uart]->write(c);
    }
 }
 
-void snack_dehyd::Shut(void)
+void arduino::Print_UART(const ARDUINO_UART_CHANNEL_T uart, const char * printed)
 {
-   pmode::Set_State(PMODE_AC_OFF);
-   pid::Stop(PID_CTL_CHANNEL_FAN_DOOR);
-   pid::Stop(PID_CTL_CHANNEL_HEATER);
+   if(uart < ARDUINO_UART_MAX_CHANNELS)
+   {
+      UART_Channels_To_Ports[uart]->write(printed);
+   }
+}
+
+void arduino::Print_UART_P(const ARDUINO_UART_CHANNEL_T uart, const Pgm_Char_T const_c)
+{
+   if(uart < ARDUINO_UART_MAX_CHANNELS)
+   {
+      const char c = pgm_read_byte(const_c);
+      UART_Channels_To_Ports[uart]->write(c);
+   }
+}
+
+void arduino::Print_UART_P(const ARDUINO_UART_CHANNEL_T uart, const char * const_c)
+{
+   if(uart < ARDUINO_UART_MAX_CHANNELS)
+   {
+      for(uint8_t i = 0 ; '\0' != pgm_read_byte(const_c + i); ++i)
+      {
+         UART_Channels_To_Ports[uart]->write(pgm_read_byte(const_c + i));
+      }
+   }
+}
+
+void arduino::Print_UART(const ARDUINO_UART_CHANNEL_T uart, int d)
+{
+   if(uart < ARDUINO_UART_MAX_CHANNELS)
+   {
+      UART_Channels_To_Ports[uart]->print(d, DEC);
+   }
+}
+
+void arduino::Print_UART(const ARDUINO_UART_CHANNEL_T uart, long l)
+{
+   if(uart < ARDUINO_UART_MAX_CHANNELS)
+   {
+      UART_Channels_To_Ports[uart]->print(l, DEC);
+   }
+}
+uint8_t arduino::Get_UART(const ARDUINO_UART_CHANNEL_T uart)
+{
+   uint8_t read = 0xFFU;
+
+   if(uart < ARDUINO_UART_MAX_CHANNELS &&
+     (UART_Channels_To_Ports[uart]->available() > 0))
+   {
+      read = UART_Channels_To_Ports[uart]->read();
+   }
+   return read;
+}
+uint16_t arduino::Get_Available_UART(const ARDUINO_UART_CHANNEL_T uart)
+{
+   uint16_t available = 0;
+
+   if(uart < ARDUINO_UART_MAX_CHANNELS)
+   {
+      available = UART_Channels_To_Ports[uart]->available();
+   }
+   return available;
+}
+void arduino::Flush_UART(const ARDUINO_UART_CHANNEL_T uart)
+{
+   if(uart < ARDUINO_UART_MAX_CHANNELS)
+   {
+      UART_Channels_To_Ports[uart]->flush();
+   }
+}
+
+void arduino::Stop_UART(const ARDUINO_UART_CHANNEL_T uart)
+{
+   if(uart < ARDUINO_UART_MAX_CHANNELS)
+   {
+      UART_Channels_To_Ports[uart]->end();
+   }
 }
 /*=====================================================================================* 
- * snack_power_mode.cpp
+ * arduino_fwk_uart.cpp
  *=====================================================================================*
  * Log History
  *
  *=====================================================================================*/
-
-
-

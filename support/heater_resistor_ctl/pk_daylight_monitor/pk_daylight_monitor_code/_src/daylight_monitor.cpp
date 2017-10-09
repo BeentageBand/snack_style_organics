@@ -1,6 +1,6 @@
 /*=====================================================================================*/
 /**
- * snack_power_mode_wn.c
+ * arduino_fwk.cpp
  * author : puch
  * date : Oct 22 2015
  *
@@ -12,11 +12,12 @@
 /*=====================================================================================*
  * Project Includes
  *=====================================================================================*/
-#include "snack_power_mode_wn.h"
+#include "../../../../heater_resistor_ctl/pk_daylight_monitor/pk_daylight_monitor_user/daylight_monitor.h"
 
-#include "../../../../support/atmel_asf/pk_arduino_fwk_code/_inc/arduino_fwk_pwm.h"
-#include "snack_power_mode_types.h"
-#include "snack_power_mode_ext.h"
+#include "../../../../atmel_asf/pk_arduino_fwk_code/_inc/arduino_fwk_adc.h"
+#include "../../../../heater_resistor_ctl/pk_daylight_monitor/pk_daylight_monitor_code/_inc/daylight_monitor_ext.h"
+#include "../../../../include/daylight_monitor_set.h"
+#include "../../../../include/snack_style_gpio.h"
 /*=====================================================================================* 
  * Standard Includes
  *=====================================================================================*/
@@ -28,41 +29,21 @@
 /*=====================================================================================* 
  * Local Define Macros
  *=====================================================================================*/
-
+//#ifdef  ( DAYLIGHT_MON_DAYLIGHT_READING < DAYLIGHT_MON_HYSTHERESIS )
+//#error  "DAYLIGHT_MON_DAYLIGHT_READING >= DAYLIGHT_MON_HYSTHERESIS"
+//#endif
 /*=====================================================================================* 
  * Local Type Definitions
  *=====================================================================================*/
-typedef struct
-{
-   void(*enter)(void);
-   void(*exit)(void);
-}Change_Of_State_T;
 
-CLASS_DEF(SSO_PMode_WN)
 /*=====================================================================================* 
  * Local Object Definitions
  *=====================================================================================*/
-#undef PMODE_STATE
-#define PMODE_STATE(st) \
-const Change_Of_State_T st##_State PROGMEM = \
-{\
-   pmode::Enter_##st, \
-   pmode::Exit_##st   \
-};\
+const uint16_t  Light_Sensitivity_No_Day = DAYLIGHT_MON_DAYLIGHT_READING + DAYLIGHT_MON_HYSTHERESIS;
+const uint16_t  Light_Sensitivity_Day =  DAYLIGHT_MON_DAYLIGHT_READING - DAYLIGHT_MON_HYSTHERESIS;
+static bool Is_Day_Present = false;
 
-POWER_MODE_STATES_TB
-
-#undef PMODE_STATE
-#define PMODE_STATE(st) \
-&st##_State,\
-
-const Change_Of_State_T * const PMode_SM[] PROGMEM =
-{
-   POWER_MODE_STATES_TB
-};
-
-static PMode_State_T Current_State = 0;
-static PMode_State_T New_State = 0;
+static uint16_t Light_Channel_Readings[DAYLIGHT_MON_AVG_SIZE] = {0};
 /*=====================================================================================* 
  * Exported Object Definitions
  *=====================================================================================*/
@@ -70,46 +51,7 @@ static PMode_State_T New_State = 0;
 /*=====================================================================================* 
  * Local Function Prototypes
  *=====================================================================================*/
-#undef PMODE_SOURCE
-#define PMODE_SOURCE(src, osc) \
-   src##_init();
-
-void pmode::Init(void)
-{
-   POWER_MODE_SOURCES_TB
-}
-void pmode::Main(void)
-{
-   if(New_State != Current_State)
-   {
-      const Change_Of_State_T * sm = reinterpret_cast<const Change_Of_State_T *>( pgm_read_ptr(PMode_SM + Current_State) );
-      void (*handler)(void) = reinterpret_cast< void (*)(void)>(pgm_read_ptr(&sm->exit));
-      handler();
-
-      sm = reinterpret_cast<const Change_Of_State_T *>( pgm_read_ptr(PMode_SM + New_State) );
-      handler = reinterpret_cast< void (*)(void)>(pgm_read_ptr(&sm->enter) );
-      handler();
-
-      Current_State = New_State;
-   }
-}
-
-void pmode::Set_State(PMode_State_T state)
-{
-   if(New_State < PMODE_MAX_STATES)
-   {
-      New_State = state;
-   }
-}
-
-PMode_State_T pmode::Get_State(void)
-{
-   return Current_State;
-}
-void pmode::Shut(void)
-{
-   pmode::Set_State(PMODE_ALL_OFF_STATE);
-}
+static uint16_t Get_Average(void);
 /*=====================================================================================* 
  * Local Inline-Function Like Macros
  *=====================================================================================*/
@@ -117,44 +59,57 @@ void pmode::Shut(void)
 /*=====================================================================================* 
  * Local Function Definitions
  *=====================================================================================*/
-void SSO_PMode_WN_Init(void)
+uint16_t Get_Average(void)
 {
-
+   uint16_t avg = 0;
+   for(uint8_t i = 0; i < DAYLIGHT_MON_AVG_SIZE; ++i)
+   {
+      avg += Light_Channel_Readings[i];
+   }
+   return (avg/DAYLIGHT_MON_AVG_SIZE);
 }
-
-void SSO_PMode_WN_Delete(struct Object * const obj)
-{}
-
 /*=====================================================================================* 
  * Exported Function Definitions
  *=====================================================================================*/
-union SSO_PMode_WN SSO_PMode_WN(void)
+void day_mon::Init(void)
 {
-	union SSO_PMode_WN this = SSO_PMode_WN_Default();
-
-	Object_Update_Info(&this.Object,
-			&Worker_Node_Tid(SSO_PMODE_TID, NULL, 0).Object,
-			sizeof(this), sizeof(this.Worker_Node));
-
-	return this;
+   arduino::Init_ADC(SNACK_GPIO_ADC_LIGHT_AVG);
 }
 
-union SSO_PMode_WN * SSO_PMode_WN_New(void)
+bool day_mon::Get_Daylight_Presence(void)
 {
-	union SSO_PMode * const _new = malloc(sizeof(SSO_PMode_WN_Default()));
-	Isnt_Nullptr(_new, NULL);
-
-	memcpy(_new, &SSO_PMode_WN_Obj, sizeof(SSO_PMode_WN_Obj));
-	return _new;
+   if(Is_Day_Present)
+   {
+      Is_Day_Present = Light_Sensitivity_Day > day_mon::Get_Daylight_Percentage();
+   }
+   else
+   {
+      Is_Day_Present = Light_Sensitivity_No_Day < day_mon::Get_Daylight_Percentage();
+   }
+   return (Is_Day_Present);
 }
 
-void pmode::Shut(void)
+uint16_t day_mon::Get_Daylight_Percentage(void)
 {
-   pmode::Set_State(PMODE_ALL_OFF_STATE);
+	return Get_Average();
+}
+
+void day_mon::Main(void)
+{
+	uint16_t light = DAYLIGHT_CONVERSION_COEFF*arduino::Get_ADC( SNACK_GPIO_ADC_LIGHT_AVG );
+	memcpy( Light_Channel_Readings, &Light_Channel_Readings[1], sizeof(Light_Channel_Readings) );
+	Light_Channel_Readings[DAYLIGHT_MON_AVG_SIZE-1] = light;
+}
+
+void day_mon::Shut(void)
+{
+   arduino::Stop_ADC(SNACK_GPIO_ADC_LIGHT_AVG);
 }
 /*=====================================================================================* 
- * snack_power_mode.c
+ * arduino_fwk.cpp
  *=====================================================================================*
  * Log History
  *
  *=====================================================================================*/
+
+

@@ -12,11 +12,11 @@
 /*=====================================================================================*
  * Project Includes
  *=====================================================================================*/
-#include "pid_ctl_ext.h"
-#include "axial_fan_ctl.h"
-#include "heater_ctl.h"
-#include "temp_monitor.h"
-#include "arduino_fwk_clk.h"
+#include "../../../support/atmel_asf/pk_arduino_fwk_code/_inc/arduino_fwk_clk.h"
+#include "../../../support/axial_fan_ctl/pk_axial_fan_ctl_user/axial_fan_ctl.h"
+#include "../../../support/heater_resistor_ctl/pk_heater_ctl_user/heater_ctl.h"
+#include "../../../support/pid_controller/pk_pid_ctl_code/_inc/pid_ctl_ext.h"
+#include "../../../support/temp_sensor/pk_temp_monitor_user/temp_monitor.h"
 /*=====================================================================================* 
  * Standard Includes
  *=====================================================================================*/

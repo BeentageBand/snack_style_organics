@@ -13,10 +13,10 @@
  * Project Includes
  *=====================================================================================*/
 #include "snack_org_lcd.h"
-#include "arduino_fwk_lcd.h"
-#include "arduino_fwk_clk.h"
-#include "temp_monitor.h"
-#include "daylight_monitor.h"
+#include "../../../../support/atmel_asf/pk_arduino_fwk_code/_inc/arduino_fwk_lcd.h"
+#include "../../../../support/atmel_asf/pk_arduino_fwk_code/_inc/arduino_fwk_clk.h"
+#include "../../../../support/temp_sensor/pk_temp_monitor_user/temp_monitor.h"
+#include "../../../../support/heater_resistor_ctl/pk_daylight_monitor/pk_daylight_monitor_user/daylight_monitor.h"
 #include "hama_dbg_trace.h"
 /*=====================================================================================* 
  * Standard Includes
