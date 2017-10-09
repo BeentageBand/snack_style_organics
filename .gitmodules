@@ -13,3 +13,6 @@
 [submodule "support/application"]
 	path = support/application
 	url = https://github.com/BeentageBand/application
+[submodule "support/dbg_log"]
+	path = support/dbg_log
+	url = https://github.com/BeentageBand/dbg_log
