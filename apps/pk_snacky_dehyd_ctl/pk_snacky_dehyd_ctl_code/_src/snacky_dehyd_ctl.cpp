@@ -15,13 +15,13 @@
 #include "snack_power_mode.h"
 #include "snacky_dehyd_ctl.h"
 
-#include "../../../../include/pid_ctl_set.h"
-#include "../../../../support/atmel_asf/pk_arduino_fwk_code/_inc/arduino_fwk_clk.h"
-#include "../../../../support/chimney_ctl/pk_chimney_ctl_user/chimney_ctl.h"
-#include "../../../../support/heater_resistor_ctl/pk_daylight_monitor/pk_daylight_monitor_user/daylight_monitor.h"
-#include "../../../../support/pid_controller/pk_pid_ctl_user/pid_ctl.h"
-#include "../../../../support/temp_sensor/pk_temp_monitor_user/temp_monitor.h"
-#include "hama_dbg_trace.h"
+#include "pid_ctl_set.h"
+#include "clk.h"
+#include "chimney_ctl.h"
+#include "daylight_monitor.h"
+#include "pid_ctl.h"
+#include "temp_monitor.h"
+#include "dbg_log.h"
 /*=====================================================================================* 
  * Standard Includes
  *=====================================================================================*/

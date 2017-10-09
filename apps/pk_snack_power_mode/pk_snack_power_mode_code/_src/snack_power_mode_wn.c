@@ -14,7 +14,7 @@
  *=====================================================================================*/
 #include "snack_power_mode_wn.h"
 
-#include "../../../../support/atmel_asf/pk_arduino_fwk_code/_inc/arduino_fwk_pwm.h"
+#include "pwm.h"
 #include "snack_power_mode_types.h"
 #include "snack_power_mode_ext.h"
 /*=====================================================================================* 

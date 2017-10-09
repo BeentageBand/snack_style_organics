@@ -1,5 +1,5 @@
 #=======================================================================================#
-# snack_power_mode_makefile.mk
+# api_makefile.mk
 #=======================================================================================#
 #  Created on: Oct 3, 2015
 #      Author: puch
@@ -8,38 +8,18 @@
 #=======================================================================================#
 # DEFINE PACKAGE RULE
 #=======================================================================================#
-define $(_build_)_$(_curr_)_MAKE
+define $(_flavor_)_$(_feat_)_MAKE
 #=======================================================================================#
 # OBJECTS DIRECTORY
 # e.g: 
-#     $(_build_)_$(_curr_)_src_dir=pk_module_N_code/_src
+#     $(_flavor_)_$(_feat_)_src_dir=pk_module_N_code/_src
 #     or
-#     $(_build_)_$(_curr_)_src_dir=_src
+#     $(_flavor_)_$(_feat_)_src_dir=_src
 #=======================================================================================#
-$(_build_)_$(_curr_)_src_dir=pk_snacky_dehyd_ctl_code/_src
 
 #=======================================================================================#
 # LIB REQUISITES
 #=======================================================================================#
-
-##
- # Object Requisites
- # e.g: $(_build_)_$(_curr_)_lib_objs=$($(_build_)_OBJ_DIR)/my_lib_obj$(_obj_ext_) \
- ##
-$(_build_)_$(_curr_)_lib_objs=\
-   $($(_build_)_OBJ_DIR)/snacky_dehyd_ctl$(_obj_ext_) \
-
-##
- # Library Requisites
- # e.g: $(_build_)_$(_curr_)_lib_libs=$($(_build_)_LIB_DIR)/$(_lprefix_)my_lib_lib$(_lib_ext_) \
- ##
-$(_build_)_$(_curr_)_lib_libs=
-
-##
- # Target Library
- # e.g: $(_build_)_$(_curr_)_lib_name=my_lib_name
- ##
-$(_build_)_$(_curr_)_lib_name=snacky_dehyd_ctl
 
 #=======================================================================================#
 # BIN REQUISITES
@@ -47,21 +27,29 @@ $(_build_)_$(_curr_)_lib_name=snacky_dehyd_ctl
 
 ##
  # Object Requisites
- # e.g: $(_build_)_$(_curr_)_bin_objs=$($(_build_)_OBJ_DIR)/my_bin_obj$(_obj_ext_) \
+ # e.g: $(_flavor_)_$(_feat_)_bin_objs=$($(_flavor_)_OBJ_DIR)/my_bin_obj$(_obj_ext_) \
  ##
-$(_build_)_$(_curr_)_bin_objs=
+$(_flavor_)_$(_feat_)_bin_objs=sso_launcher \
+   # \
 
-##
- # Library Requisites
- # e.g: $(_build_)_$(_curr_)_bin_libs=$($(_build_)_LIB_DIR)/$(_lprefix_)my_bin_lib$(_lib_ext_) \
- ##
-$(_build_)_$(_curr_)_bin_libs=
-
-##
- # Target Binary
- # e.g: $(_build_)_$(_curr_)_bin_name=my_bin_name
- ##
-$(_build_)_$(_curr_)_bin_name=
+ $(_flavor_)_$(_feat_)_bin_libs=\
+   hamatora_sched         \
+   snack_org_lcd          \
+   temp_monitor           \
+   axial_fan_ctl          \
+   heater_ctl             \
+   daylight_monitor       \
+   snacky_dehyd_ctl       \
+   chimney_ctl            \
+   pid_ctl                \
+   snack_power_mode       \
+   snack_org_friends      \
+   arduino_fwk            \
+   hama_dbg_trace         \
+#\
+   power_mode             \
+    
+$(_flavor_)_$(_feat_)_bin=sso_launcher
 #=======================================================================================#
 # END PACKAGE RULE
 #=======================================================================================#
@@ -85,11 +73,12 @@ endef
 #=======================================================================================#
 # INCLUDE PK PROJECT UTILITY
 #=======================================================================================#
-include $($(_build_)_PROJECT_DIR)/$($(_build_)_MAK_DIR)/epilog.mk
+include $(PROJ_MAK_DIR)/epilog.mk
 #=======================================================================================#
-# snack_power_mode_makefile.mk
+# api_makefile.mk
 #=======================================================================================#
 # Changes Log
 #
 #
 #=======================================================================================#
+

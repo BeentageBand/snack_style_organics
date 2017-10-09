@@ -1,9 +1,15 @@
-[submodule "snack_style_organics/support/pk_hamatora_sched"]
-	path = snack_style_organics/support/pk_hamatora_sched
-	url = https://github.com/BeentageBand/pk_hamatora_sched.git
-[submodule "snack_style_organics/pk_project"]
-	path = snack_style_organics/pk_project
-	url = https://github.com/BeentageBand/pk_project.git
 [submodule "project_make"]
 	path = project_make
 	url = https://github.com/BeentageBand/project_make
+[submodule "support/object"]
+	path = support/object
+	url = https://github.com/BeentageBand/object
+[submodule "support/template"]
+	path = support/template
+	url = https://github.com/BeentageBand/template
+[submodule "support/ipc"]
+	path = support/ipc
+	url = https://github.com/BeentageBand/ipc
+[submodule "support/application"]
+	path = support/application
+	url = https://github.com/BeentageBand/application
