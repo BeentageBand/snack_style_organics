@@ -11,6 +11,10 @@
 PROJ_DIR=.
 PROJ_MAK_DIR=$(PROJ_DIR)/project_make
 
+#OUT_DIR=$(HOME)/projects/suite_object_out
+
+include $(PROJ_MAK_DIR)/prolog.mk 
+
 #=======================================================================================#
 # PROJECT DEFINES 
 #=======================================================================================#
@@ -21,7 +25,7 @@ define Project_Make
 #======================================================#
 PROJ_DIR=.
 PROJ_MAK_DIR=$(PROJ_DIR)/project_make
-
+#OUT_DIR=$(HOME)/projects/suite_object_out
 #======================================================#
 # BUILD_LIST
 #======================================================#
@@ -38,7 +42,7 @@ linux_build=linux
 #======================================================#
 # PROJECT INCLUDES SEARCH PATHS
 #======================================================#
-host_PROJ_INC=include 
+host_PROJ_INC=include
 linux_PROJ_INC=include
 
 endef
@@ -61,5 +65,4 @@ include $(PROJ_MAK_DIR)/project.mk
 # Changes Log
 #
 #
-#=======================================================================================#
 #=======================================================================================#

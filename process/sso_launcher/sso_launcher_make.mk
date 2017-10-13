@@ -20,20 +20,12 @@ define $(_flavor_)_$(_feat_)_MAKE
 #=======================================================================================#
 # LIB REQUISITES
 #=======================================================================================#
-
+$(_flavor_)_$(_feat_)_inc+=sso_app_task_def.h
 #=======================================================================================#
 # BIN REQUISITES
 #=======================================================================================#
-
-##
- # Object Requisites
- # e.g: $(_flavor_)_$(_feat_)_bin_objs=$($(_flavor_)_OBJ_DIR)/my_bin_obj$(_obj_ext_) \
- ##
-$(_flavor_)_$(_feat_)_bin_objs=sso_launcher \
-   # \
-
  $(_flavor_)_$(_feat_)_bin_libs=\
-   hamatora_sched         \
+   application \
    snack_org_lcd          \
    temp_monitor           \
    axial_fan_ctl          \
