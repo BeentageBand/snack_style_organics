@@ -20,12 +20,13 @@ define $(_flavor_)_$(_feat_)_MAKE
 #=======================================================================================#
 # LIB REQUISITES
 #=======================================================================================#
-$(_flavor_)_$(_feat_)_inc+=sso_app_task_def.h
+$(_flavor_)_$(_feat_)_inc=sso_task_def.h
 #=======================================================================================#
 # BIN REQUISITES
 #=======================================================================================#
  $(_flavor_)_$(_feat_)_bin_libs=\
-   application \
+   app \
+#\
    snack_org_lcd          \
    temp_monitor           \
    axial_fan_ctl          \
@@ -38,7 +39,6 @@ $(_flavor_)_$(_feat_)_inc+=sso_app_task_def.h
    snack_org_friends      \
    arduino_fwk            \
    hama_dbg_trace         \
-#\
    power_mode             \
     
 $(_flavor_)_$(_feat_)_bin=sso_launcher

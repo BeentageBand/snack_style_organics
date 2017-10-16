@@ -11,7 +11,7 @@
 # Executables
 
 # Output Dir
-*/out/*
+out
 
 # Eclipse Bullsh#t
 .settings
