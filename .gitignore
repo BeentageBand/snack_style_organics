@@ -12,6 +12,7 @@
 
 # Output Dir
 out
+*.swp
 
 # Eclipse Bullsh#t
 .settings
