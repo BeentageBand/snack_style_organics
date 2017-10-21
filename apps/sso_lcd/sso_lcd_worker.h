@@ -1,17 +1,10 @@
 #ifndef SSO_LCD_H_
 #define SSO_LCD_H_
 
-#include "worker.h"
+#include "dispatcher.h"
 
-#define SSO_LCD_Worker_INHERITS Worker
+extern union Dispatcher_Class SSO_LCD_Worker_Class;
 
-#define SSO_LC_Worker_MEMBERS(_member, _class) \
-
-#define SSO_LC_Worker_METHODS(_method, _class) \
-
-extern union SSO_LCD_Worker SSO_LCD_Worker(void);
-
-extern union SSO_LCD_Worker * SSO_LCD_Worker_New(void);
+extern void Alloc_SSO_LCD_Worker(union Dispatcher ** const this);
 
 #endif /*SSO_LCD_H_*/
-

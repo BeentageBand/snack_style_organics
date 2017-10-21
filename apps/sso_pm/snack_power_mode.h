@@ -29,7 +29,7 @@
 #define SSO_PMode_INHERITS BASE_CLASS
 
 #define SSO_PMode_MEMBERS(_member, _class) \
-_member(uint8_t _private, handle)
+_member(uint8_t _private, handle) \
 _member(uint8_t _private, 
 
 #define SSO_PMode_METHODS(_method, _class) \

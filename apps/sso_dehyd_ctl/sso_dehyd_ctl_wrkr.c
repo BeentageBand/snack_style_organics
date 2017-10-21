@@ -1,6 +1,6 @@
 /*=====================================================================================*/
 /**
- * sso_dehyd_ctl_wrkr.cpp
+ * sso_dehyd_ctl_wrkr.c
  * author : puch
  * date : Oct 22 2015
  *
@@ -46,10 +46,10 @@
  *=====================================================================================*/
 static void sso_dehyd_ctl_init(void);
 static void sso_dehyd_ctl_wrkr_delete(struct Object * const obj);
-static void sso_dehyd_ctl_wrkr_on_start(union Dispatcher * const this);
-static void sso_dehyd_ctl_wrkr_on_loop(union Dispatcher * const this);
-static void sso_dehyd_ctl_wrkr_on_stop(union Dispatcher * const this);
-static void sso_dehyd_ctl_wrkr_on_mail(union Dispatcher * const this, union Mail * const mail);
+static void sso_dehyd_ctl_wrkr_on_start(union Worker * const this);
+static void sso_dehyd_ctl_wrkr_on_loop(union Worker * const this);
+static void sso_dehyd_ctl_wrkr_on_stop(union Worker * const this);
+static void sso_dehyd_ctl_wrkr_on_mail(union Worker * const this, union Mail * const mail);
 
 /*=====================================================================================* 
  * Local Object Definitions
@@ -92,7 +92,7 @@ void sso_dehyd_ctl_wrkr_delete(struct Object * const obj)
    _delete(&Heater_Ctl);
 }
 
-void sso_dehyd_ctl_wrkr_on_start(union Dispatcher * const this)
+void sso_dehyd_ctl_wrkr_on_start(union Worker * const this)
 {
    TR_INFO("%s",__func__);
    Fan_Door_Ctl.vtbl->set_point(&Fan_Door_Ctl, SNACK_DEHYD_CTL_MAX_TEMP);
@@ -100,7 +100,7 @@ void sso_dehyd_ctl_wrkr_on_start(union Dispatcher * const this)
    PM.vtbl->power_req(&PM, Power_Mode_ON);
 }
 
-void sso_dehyd_ctl_wrkr_on_loop(union Dispatcher * const this)
+void sso_dehyd_ctl_wrkr_on_loop(union Worker * const this)
 {
    if(SNACK_DEHYD_CTL_MIN_TEMP < temp_mon::Get_Temperature())
    {
@@ -121,14 +121,14 @@ void sso_dehyd_ctl_wrkr_on_loop(union Dispatcher * const this)
    }
 }
 
-void sso_dehyd_ctl_wrkr_on_stop(union Dispatcher * const this)
+void sso_dehyd_ctl_wrkr_on_stop(union Worker * const this)
 {
    PM.vtbl->power_rel(&PM, Power_Mode_ON);
    Fan_Door_Ctl.vtbl->stop(&Fan_Door_Ctl);
    Heater_Ctl.vtbl->stop(&Heater_Ctl);
 }
 
-void sso_dehyd_ctl_wrkr_on_mail(union Dispatcher * const this, union Mail * const mail)
+void sso_dehyd_ctl_wrkr_on_mail(union Worker * const this, union Mail * const mail)
 {
    /** handle events **/
    _using(Dispatcher, &SSO_Dehyd_Ctl, on_mail, mail);
@@ -149,7 +149,7 @@ void Alloc_SSO_Dehyd_Ctl_Wrkr(union Dispatcher ** const this)
    *this = &SSO_Dehyd_Ctl_Wrkr;
 }
 /*=====================================================================================* 
- * sso_dehyd_ctl_wrkr.cpp
+ * sso_dehyd_ctl_wrkr.c
  *=====================================================================================*
  * Log History
  *
