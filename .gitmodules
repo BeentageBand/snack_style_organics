@@ -1,18 +1,18 @@
 [submodule "project_make"]
 	path = project_make
-	url = https://github.com/BeentageBand/project_make
+	url = git@github.com:BeentageBand/project_make
 [submodule "support/object"]
 	path = support/object
-	url = https://github.com/BeentageBand/object
+	url = git@github.com:BeentageBand/object
 [submodule "support/template"]
 	path = support/template
-	url = https://github.com/BeentageBand/template
+	url = git@github.com:BeentageBand/template
 [submodule "support/ipc"]
 	path = support/ipc
-	url = https://github.com/BeentageBand/ipc
+	url = git@github.com:BeentageBand/ipc
 [submodule "support/application"]
 	path = support/application
-	url = https://github.com/BeentageBand/application
+	url = git@github.com:BeentageBand/application
 [submodule "support/dbg_log"]
 	path = support/dbg_log
-	url = https://github.com/BeentageBand/dbg_log
+	url = git@github.com:BeentageBand/dbg_log
