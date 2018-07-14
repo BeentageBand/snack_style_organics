@@ -43,10 +43,27 @@ _method(PMode_State_T, _class, get_state, void)
 extern "C"
 {
 #endif
+
+typedef union SSO_PM
+{
+    struct SSO_PM_Class _private * _private vtbl;
+    struct
+    {
+        struct Object Object;
+        uint8_t _private handle;
+        
+    };
+}SSO_PM_T;
+
+typedef struct SSO_PM_Class
+{
+    struct Class Class;
+    void (* _private set_state)
+}SSO_PM_Class_T;
 /*=====================================================================================* 
  * Exported Object Declarations
  *=====================================================================================*/
-CLASS_DECL(SSO_PMode)
+extern struct SSO_PMode_Class SSO_PMode_Class; 
 /*=====================================================================================* 
  * Exported Function Prototypes
  *=====================================================================================*/

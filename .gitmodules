@@ -1,9 +1,6 @@
 [submodule "project_make"]
 	path = project_make
 	url = git@github.com:BeentageBand/project_make
-[submodule "support/object"]
-	path = support/object
-	url = git@github.com:BeentageBand/object
 [submodule "support/template"]
 	path = support/template
 	url = git@github.com:BeentageBand/template
@@ -16,3 +13,6 @@
 [submodule "support/dbg_log"]
 	path = support/dbg_log
 	url = git@github.com:BeentageBand/dbg_log
+[submodule "support/state_machine"]
+	path = support/state_machine
+	url = git@github.com:BeentageBand/state_machine

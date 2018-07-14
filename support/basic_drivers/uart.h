@@ -10,7 +10,7 @@
 
 #include "uart_setup.h"
 #include "dio.h"
-#include "object.h"
+#include "cobject.h"
 #include <stdio.h>
 
 #define UART_INHERITS BASE_CLASS
