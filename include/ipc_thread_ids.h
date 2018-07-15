@@ -3,6 +3,6 @@
  
 #define IPC_THREAD_LIST(TASK_ID) \
 TASK_ID(APP_WORKER_TID,         "Application Manager ") \
-TASK_ID(IPC_GTEST_2_WORKER_TID ," desc") \
+TASK_ID(SSO_PM_TID,             "Power Mode") \
 
 #endif /*IPC_USET_H_*/

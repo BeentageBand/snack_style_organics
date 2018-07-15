@@ -2,8 +2,9 @@ define $(_flavor_)_$(_feat_)_MAKE
 $(_flavor_)_$(_feat_)_inc=sso_task_def.h
 $(_flavor_)_$(_feat_)_bin_libs=\
    app \
-   dbg_log \
    cobject \
+   dbg_log \
+   fsm \
    ipc \
    snack_org_friends \
    state_machine \
