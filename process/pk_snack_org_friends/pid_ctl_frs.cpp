@@ -56,6 +56,11 @@
 /*=====================================================================================* 
  * Exported Function Definitions
  *=====================================================================================*/
+void Snack_Style_Organics_Init(void)
+{
+
+}
+
 Fix32_T pid::Get_PID_CTL_CHANNEL_FAN_DOOR()
 {
    return static_cast<Fix32_T>(PID_CTL_FIX32_PARSE_FACTOR*temp_mon::Get_Temperature() );

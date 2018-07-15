@@ -16,3 +16,6 @@
 [submodule "support/state_machine"]
 	path = support/state_machine
 	url = git@github.com:BeentageBand/state_machine
+[submodule "support/cobject"]
+	path = support/cobject
+	url = git@github.com:BeentageBand/cobject

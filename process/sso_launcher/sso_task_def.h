@@ -24,7 +24,9 @@
  * Exported X-Macros
  *=====================================================================================*/
 #define SSO_TASKS_TABLE(SSO_TASK) \
-         /* Task name,              Task Id */\
+         /* Class, Worker Id,  Dependencies*/\
+   SSO_TASK(SSO_PM, SSO_PM_TID, APP_NO_DEPS) \
+   /*
    SSO_TASK(Arduino_WN,             ARDUINO_TID,            ""  ) \
    SSO_TASK(Test_WN,                TEST_TID,               ""  ) \
    SSO_TASK(SSO_Ctl_WN,             SNACK_ORG_CTL_TID,      ""  ) \
@@ -36,7 +38,6 @@
    SSO_TASK(SSO_Power_Mode_WN,      SNACK_PMODE_TID,        ""  ) \
    SSO_TASK(Daylight_Monitor_WN,    DAYLIGHT_MONITOR_TID,   ""  ) \
    SSO_TASK(Temperature_Monitor_WN, TEMP_MONITOR_TID,       ""  ) \
-   /*
    */
 
 /*=====================================================================================* 

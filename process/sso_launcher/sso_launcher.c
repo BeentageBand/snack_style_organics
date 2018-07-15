@@ -5,6 +5,7 @@
  * Author : ASUS
  */ 
 #include "sso_app_task_def.h"
+#include "snack_org_friends.h"
 #include "application.h"
 #include "sso_lcd.h"
 #include "sso_dehyd_ctl.h"
@@ -12,21 +13,25 @@
 
 #define SSO_APP_TASK_SWITCH(name, id, desc) \
 case id: \
-   static union name name = name(); \
-   task = &name; \
+   static union name name = {{NULL}}; \
+   if (NULL == name.vtbl) \
+   { \
+    Method_Name(Populate, name)(&name, id); \
+    worker = &name; \
+   } \
    break; 
 
-static union Task * SSO_App_Task_Def(uint8_t const tid);
+static union Worker * SSO_App_Factory_Method(IPC_TID_T const tid);
 
-union Task * SSO_App_Task_Def(uint8_t const tid)
+union Worker * SSO_App_Factory_Method(IPC_TID_T const tid)
 {
-   union Task * task = NULL;
+   union Worker * worker = NULL;
    switch(tid)
    {
       SSO_APP_TASK_DEF(SSO_APP_TASK_SWITCH)
       default: break;
    }
-   return task;
+   return worker;
 }
 
 /*================================================================================================*
@@ -35,11 +40,10 @@ union Task * SSO_App_Task_Def(uint8_t const tid)
 
 int main(void)
 {
-   union Application sso_application = Application(0);
-   sso_application->vtbl->append_table(&sso_application, SSO_App_Task_Def);
-
-   sso_application->vtbl->startup(&sso_application);
-   int rc = sso_application->vtbl->run(&sso_application, 10000);
+   Snack_Style_Organics_Init();
+   union Application sso_application;
+   Populate_Application(&sso_application, SSO_App_Factory_Method);
+   rc = sso_application->vtbl->startup(&sso_application);
    if(0 == rc)
    {
       _delete(&sso_application);

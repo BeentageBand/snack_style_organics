@@ -17,7 +17,8 @@ linux_build=linux
 
 #MACRO
 arduino_PROJ_INC=include
-linux_PROJ_INC=include
+linux_PROJ_INC=include \
+include/linux
 
 endef
 
