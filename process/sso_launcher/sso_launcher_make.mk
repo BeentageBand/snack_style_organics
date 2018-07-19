@@ -4,7 +4,6 @@ $(_flavor_)_$(_feat_)_bin_libs=\
    app \
    cobject \
    dbg_log \
-   fsm \
    ipc \
    snack_org_friends \
    state_machine \
