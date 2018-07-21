@@ -13,7 +13,7 @@
 /*=====================================================================================*
  * Project Includes
  *=====================================================================================*/
-#include "st_machine.h"
+#include "state_machine.h"
 #include "snack_power_mode_types.h"
 /*=====================================================================================* 
  * Standard Includes
@@ -26,16 +26,10 @@
 /*=====================================================================================*
  * Exported Define Macros
  *=====================================================================================*/
-#define SSO_PMode_INHERITS BASE_CLASS
-
-#define SSO_PMode_MEMBERS(_member, _class) \
-_member(uint8_t _private, handle) \
-_member(uint8_t _private, 
-
-#define SSO_PMode_METHODS(_method, _class) \
-_method(void, _class, set_state, PMode_State_T const) \
-_method(PMode_State_T, _class, get_state, void)
-
+#define POWER_MODE_STATES_TB \
+   PMODE_STATE(PMODE_ALL_OFF_STATE) /*No source is on*/             \
+   PMODE_STATE(PMODE_AC_OFF       ) /*Just Neg DC is on*/           \
+   PMODE_STATE(PMODE_ALL_ON       ) /*AC and Neg DC sources are on*/\
 /*=====================================================================================* 
  * Exported Type Declarations
  *=====================================================================================*/

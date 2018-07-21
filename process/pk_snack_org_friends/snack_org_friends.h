@@ -3,7 +3,9 @@
 #ifdef __cplusplus
 extern "C"{
 #endif
-void Snack_Style_Organics_Init(void)
+
+extern void Snack_Style_Organics_Init(void);
+
 #ifdef __cplusplus
 }
 #endif

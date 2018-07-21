@@ -13,9 +13,11 @@
 /*=====================================================================================*
  * Project Includes
  *=====================================================================================*/
+#ifdef ENABLE_SSO
 #include "snacky_dehyd_ctl.h"
 #include "snack_org_lcd.h"
-#include "snack_power_mode.h"
+#include "sso_power_mode.h"
+#endif
 /*=====================================================================================* 
  * Standard Includes
  *=====================================================================================*/
@@ -25,8 +27,8 @@
  *=====================================================================================*/
 #define SSO_TASKS_TABLE(SSO_TASK) \
          /* Class, Worker Id,  Dependencies*/\
-   SSO_TASK(SSO_PM, SSO_PM_TID, APP_NO_DEPS) \
    /*
+   SSO_TASK(SSO_PM, SSO_PM_TID, APP_NO_DEPS) \
    SSO_TASK(Arduino_WN,             ARDUINO_TID,            ""  ) \
    SSO_TASK(Test_WN,                TEST_TID,               ""  ) \
    SSO_TASK(SSO_Ctl_WN,             SNACK_ORG_CTL_TID,      ""  ) \

@@ -13,9 +13,7 @@
  * Project Includes
  *=====================================================================================*/
 #include "snack_power_mode_wn.h"
-
 #include "pwm.h"
-#include "snack_power_mode_types.h"
 #include "snack_power_mode_ext.h"
 /*=====================================================================================* 
  * Standard Includes
@@ -32,13 +30,16 @@
 /*=====================================================================================* 
  * Local Type Definitions
  *=====================================================================================*/
-typedef struct
-{
-   void(*enter)(void);
-   void(*exit)(void);
-}Change_Of_State_T;
 
-CLASS_DEF(SSO_PMode_WN)
+/*=====================================================================================* 
+ * Local Function Prototypes
+ *=====================================================================================*/
+static void sso_pm_worker_delete(struct Object * const obj);
+static void sso_pm_worker_on_mail(union Worker * const worker, union Mail * const mail);
+static void sso_pm_worker_on_start(union Worker * const worker);
+static void sso_pm_worker_on_loop(union Worker * const worker);
+static void sso_pm_worker_on_stop(union Worker * const worker);
+
 /*=====================================================================================* 
  * Local Object Definitions
  *=====================================================================================*/
@@ -63,53 +64,15 @@ const Change_Of_State_T * const PMode_SM[] PROGMEM =
 
 static PMode_State_T Current_State = 0;
 static PMode_State_T New_State = 0;
+static union SSO_PM_Worker SSO_PM_Worker = {{NULL}};
+static union Mail SSO_PM_Mail_Buff[64] = {{NULL}};
 /*=====================================================================================* 
  * Exported Object Definitions
  *=====================================================================================*/
-
-/*=====================================================================================* 
- * Local Function Prototypes
- *=====================================================================================*/
-#undef PMODE_SOURCE
-#define PMODE_SOURCE(src, osc) \
-   src##_init();
-
-void pmode::Init(void)
-{
-   POWER_MODE_SOURCES_TB
-}
-void pmode::Main(void)
-{
-   if(New_State != Current_State)
-   {
-      const Change_Of_State_T * sm = reinterpret_cast<const Change_Of_State_T *>( pgm_read_ptr(PMode_SM + Current_State) );
-      void (*handler)(void) = reinterpret_cast< void (*)(void)>(pgm_read_ptr(&sm->exit));
-      handler();
-
-      sm = reinterpret_cast<const Change_Of_State_T *>( pgm_read_ptr(PMode_SM + New_State) );
-      handler = reinterpret_cast< void (*)(void)>(pgm_read_ptr(&sm->enter) );
-      handler();
-
-      Current_State = New_State;
-   }
-}
-
-void pmode::Set_State(PMode_State_T state)
-{
-   if(New_State < PMODE_MAX_STATES)
-   {
-      New_State = state;
-   }
-}
-
-PMode_State_T pmode::Get_State(void)
-{
-   return Current_State;
-}
-void pmode::Shut(void)
-{
-   pmode::Set_State(PMODE_ALL_OFF_STATE);
-}
+SSO_PM_Worker_Class_T SSO_PM_Worker_Class = 
+{{
+    {sso_pm_worker_delete, NULL},
+}};
 /*=====================================================================================* 
  * Local Inline-Function Like Macros
  *=====================================================================================*/
@@ -117,41 +80,57 @@ void pmode::Shut(void)
 /*=====================================================================================* 
  * Local Function Definitions
  *=====================================================================================*/
-void SSO_PMode_WN_Init(void)
+void sso_pm_worker_delete(struct Object * const obj)
 {
+}
+
+void sso_pm_worker_on_mail(union Worker * const worker, union Mail * const mail)
+{
+
 
 }
 
-void SSO_PMode_WN_Delete(struct Object * const obj)
-{}
-
-/*=====================================================================================* 
- * Exported Function Definitions
- *=====================================================================================*/
-union SSO_PMode_WN SSO_PMode_WN(void)
+#undef PMODE_SOURCE
+#define PMODE_SOURCE(src, osc) \
+   src##_init();
+void sso_pm_worker_on_start(union Worker * const worker)
 {
-	union SSO_PMode_WN this = SSO_PMode_WN_Default();
-
-	Object_Update_Info(&this.Object,
-			&Worker_Node_Tid(SSO_PMODE_TID, NULL, 0).Object,
-			sizeof(this), sizeof(this.Worker_Node));
-
-	return this;
+   POWER_MODE_SOURCES_TB
 }
 
-union SSO_PMode_WN * SSO_PMode_WN_New(void)
+void sso_pm_worker_on_loop(union Worker * const worker)
 {
-	union SSO_PMode * const _new = malloc(sizeof(SSO_PMode_WN_Default()));
-	Isnt_Nullptr(_new, NULL);
-
-	memcpy(_new, &SSO_PMode_WN_Obj, sizeof(SSO_PMode_WN_Obj));
-	return _new;
 }
 
-void pmode::Shut(void)
+void sso_pm_worker_on_stop(union Worker * const worker)
 {
    pmode::Set_State(PMODE_ALL_OFF_STATE);
 }
+/*=====================================================================================* 
+ * Exported Function Definitions
+ *=====================================================================================*/
+void Populate_SSO_PM_Worker(union SSO_PM_Worker * const this)
+{
+    if(NULL == SSO_PM_Worker.vtbl)
+    {
+        Populate_Worker(&SSO_PM_Worker.Worker,
+                        SSO_PM_WORKER_TID, 
+                        SSO_PM_Mail_Buff,
+                        Num_Elems(SSO_PM_Mail_Buff));
+
+        Object_Init(&this.Object,
+            &SSO_PM_Worker_Class.Class,
+			sizeof(this), sizeof(SSO_PM_Worker_Class.Worker));
+        SSO_PM_Worker.vtbl = &SSO_PM_Worker_Class;
+
+        SSO_PM_Worker_Class.on_mail = sso_pm_worker_on_mail;
+        SSO_PM_Worker_Class.on_start = sso_pm_worker_on_start;
+        SSO_PM_Worker_Class.on_loop = sso_pm_worker_on_loop;
+        SSO_PM_Worker_Class.on_stop = sso_pm_worker_on_stop;
+    }
+    memcpy(this, &SSO_PM_Worker, sizeof(SSO_PM_Worker));
+}
+
 /*=====================================================================================* 
  * snack_power_mode.c
  *=====================================================================================*

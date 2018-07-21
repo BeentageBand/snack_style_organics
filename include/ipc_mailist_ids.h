@@ -1,7 +1,7 @@
 #ifndef IPC_MAIL_LIST_H_
 #define IPC_MAIL_LIST_H_
  
-#include "app_evs.h"
+#include "application_evs.h"
 #include "worker_evs.h"
 
 #define IPC_INTERNAL_MAILIST(X) \

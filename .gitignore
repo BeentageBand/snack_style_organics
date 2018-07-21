@@ -20,6 +20,9 @@ out
 .project
 out.txt
 
+# Visual Studio
+.vscode
+
 # Atmel Studio 7 >
 *.componentinfo.xml
 *.cppproj

@@ -15,7 +15,7 @@
  *=====================================================================================*/
 #include "snack_power_mode_uset.h"
 #include "snack_power_mode_types.h"
-#include "worker_node.h"
+#include "worker.h"
 /*=====================================================================================* 
  * Standard Includes
  *=====================================================================================*/
@@ -35,6 +35,21 @@ extern "C"
 /*=====================================================================================* 
  * Exported Type Declarations
  *=====================================================================================*/
+typedef union Worker_Class SSO_PM_Worker_Class_T;
+
+typedef union SSO_PM_Worker
+{
+    SSO_PM_Worker_Class_T _private * private vtbl;
+    union Worker Worker;
+    struct Object Object;
+}SSO_PM_Worker_T;
+/*=====================================================================================*
+ * Exported Object Declarations
+ *=====================================================================================*/
+extern SSO_PM_Worker_Class_T _private SSO_PM_Worker_Class;
+/*=====================================================================================* 
+ * Exported Function Prototypes
+ *=====================================================================================*/
 #undef PMODE_SOURCE
 #define PMODE_SOURCE(src, osc) \
    extern void src##_init(void);
@@ -47,15 +62,8 @@ POWER_MODE_SOURCES_TB
    extern void Exit_##st(void);  \
 
 POWER_MODE_STATES_TB
-/*=====================================================================================*
- * Exported Object Declarations
- *=====================================================================================*/
 
-/*=====================================================================================* 
- * Exported Function Prototypes
- *=====================================================================================*/
-extern union SSO_PMode_WN SSO_PMode_WN(void);
-extern union SSO_PMode_WN SSO_PMode_WN_New(void);
+extern void Populate_SSO_PM_Worker(union SSO_PM_Worker * const sso_pm_worker);
 
 #ifdef __cplusplus
 }

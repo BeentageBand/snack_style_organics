@@ -14,7 +14,7 @@
  * Project Includes
  *=====================================================================================*/
 #include "snack_power_mode_uset.h"
-#include "std_def.h"
+#include "std_reusehine.h"
 /*=====================================================================================* 
  * Standard Includes
  *=====================================================================================*/
@@ -37,13 +37,14 @@ typedef enum
 
 typedef uint8_t PMode_Sources_T;
 
-#undef PMODE_STATE
-#define PMODE_STATE(st) st,
 typedef enum
 {
-   POWER_MODE_STATES_TB
-   PMODE_MAX_STATES
+   PMODE_ALL_OFF_STID, /*No source is on*/             
+   PMODE_AC_OFF_STID , /*Just Neg DC is on*/           
+   PMODE_ALL_ON_STID , /*AC and Neg DC sources are on*/
+   PMODE_MAX_STID
 }PMODE_STATE_T;
+
 typedef uint8_t PMode_State_T;
 /*=====================================================================================* 
  * snack_power_mode_types.h
