@@ -3,12 +3,12 @@ $(_flavor_)_$(_feat_)_inc=sso_task_def.h
 $(_flavor_)_$(_feat_)_bin_objs=sso_launcher
 $(_flavor_)_$(_feat_)_bin_libs=\
    cobject \
-   dbg_log \
    application \
    snack_org_friends \
    ipc \
    ipc_posix \
    state_machine \
+   dbg_log \
 #\
    sso_power_mode \
     
