@@ -45,7 +45,7 @@ union Worker * SSO_App_Factory_Method(IPC_TID_T const tid)
 int main(void)
 {
    Snack_Style_Organics_Init();
-   union Application sso_application;
+   union Application sso_application = {NULL};
    Populate_Application(&sso_application, SSO_App_Factory_Method);
    App_Stat_T rc = sso_application.vtbl->startup(&sso_application);
    if(0 == rc)

@@ -19,11 +19,14 @@
 #include "pid_ctl_ext.h"
 #include "temp_monitor.h"
 #endif
+#include "ipc_posix.h"
 #include "snack_org_friends.h"
 
 void Snack_Style_Organics_Init(void)
 {
-
+	static IPC_POSIX_T posix_helper = {NULL};
+	Populate_IPC_POSIX(&posix_helper);
+	IPC_Helper_Append(&posix_helper.IPC_Helper);
 }
 
 #ifdef ENABLE_SSO

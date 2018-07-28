@@ -2,13 +2,13 @@ define $(_flavor_)_$(_feat_)_MAKE
 $(_flavor_)_$(_feat_)_inc=sso_task_def.h
 $(_flavor_)_$(_feat_)_bin_objs=sso_launcher
 $(_flavor_)_$(_feat_)_bin_libs=\
-   application \
    cobject \
    dbg_log \
-   ipc \
+   application \
    snack_org_friends \
+   ipc \
+   ipc_posix \
    state_machine \
-   template \
 #\
    sso_power_mode \
     
