@@ -9,8 +9,8 @@ $(_flavor_)_$(_feat_)_bin_libs=\
    ipc_posix \
    state_machine \
    dbg_log \
-#\
    sso_power_mode \
+#\
     
 $(_flavor_)_$(_feat_)_bin=sso_launcher
 

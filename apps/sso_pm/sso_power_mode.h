@@ -13,8 +13,7 @@
 /*=====================================================================================*
  * Project Includes
  *=====================================================================================*/
-#include "state_machine.h"
-#include "snack_power_mode_types.h"
+#include "sso_power_mode_types.h"
 /*=====================================================================================* 
  * Standard Includes
  *=====================================================================================*/
@@ -26,10 +25,6 @@
 /*=====================================================================================*
  * Exported Define Macros
  *=====================================================================================*/
-#define POWER_MODE_STATES_TB \
-   PMODE_STATE(PMODE_ALL_OFF_STATE) /*No source is on*/             \
-   PMODE_STATE(PMODE_AC_OFF       ) /*Just Neg DC is on*/           \
-   PMODE_STATE(PMODE_ALL_ON       ) /*AC and Neg DC sources are on*/\
 /*=====================================================================================* 
  * Exported Type Declarations
  *=====================================================================================*/
@@ -41,29 +36,30 @@ extern "C"
 typedef union SSO_PM
 {
     struct SSO_PM_Class _private * _private vtbl;
-    struct
+    struct 
     {
         struct Object Object;
-        uint8_t _private handle;
-        
+        SSO_PM_Source_T source;
+        uint8_t handle_id;
     };
 }SSO_PM_T;
 
 typedef struct SSO_PM_Class
 {
     struct Class Class;
-    void (* _private set_state)
+    void (* _private request)(union SSO_PM * const);
+    void (* _private release)(union SSO_PM * const);
+    bool (* _private is_active)(union SSO_PM * const);
 }SSO_PM_Class_T;
 /*=====================================================================================* 
  * Exported Object Declarations
  *=====================================================================================*/
-extern struct SSO_PMode_Class SSO_PMode_Class; 
+extern SSO_PM_Class_T _private SSO_PM_Class; 
 /*=====================================================================================* 
  * Exported Function Prototypes
  *=====================================================================================*/
-void Populate_SSO_PM(union SSO_PM * const this);
-void Populate_SSO_PM_Proxy(union SSO_PM * const this);
-
+extern void Populate_SSO_PM(union SSO_PM * const sso_pm, SSO_PM_Source_T const);
+extern void SSO_PM_Release_All(void);
 /*=====================================================================================* 
  * Exported Function Like Macros
  *=====================================================================================*/

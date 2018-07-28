@@ -8,15 +8,16 @@
  *
  */
 /*=====================================================================================*/
-
+#define COBJECT_IMPLEMENTATION
 /*=====================================================================================*
  * Project Includes
  *=====================================================================================*/
-#include "snack_power_mode.h"
-
+#ifdef SSO_PM_ENABLE
 #include "pwm.h"
-#include "snack_power_mode_types.h"
-#include "snack_power_mode_ext.h"
+#endif
+#include "ipc.h"
+#include "sso_power_mode.h"
+#include "sso_power_mode_ext.h"
 /*=====================================================================================* 
  * Standard Includes
  *=====================================================================================*/
@@ -32,13 +33,12 @@
 /*=====================================================================================* 
  * Local Type Definitions
  *=====================================================================================*/
-typedef struct
-{
-   void(*enter)(void);
-   void(*exit)(void);
-}Change_Of_State_T;
-
-CLASS_DEF(SSO_PMode)
+static void sso_pm_init(void);
+static void sso_pm_delete(struct Object * const obj);
+static void sso_pm_request(union SSO_PM * const this);
+static void sso_pm_release(union SSO_PM * const this);
+static void sso_pm_get_handle_id(union SSO_PM * const this);
+static bool sso_pm_is_active(union SSO_PM * const this);
 /*=====================================================================================* 
  * Local Object Definitions
  *=====================================================================================*/
@@ -50,23 +50,18 @@ const Change_Of_State_T st##_State PROGMEM = \
    pmode::Exit_##st   \
 };\
 
-POWER_MODE_STATES_TB
 
-#undef PMODE_STATE
-#define PMODE_STATE(st) \
-&st##_State,\
-
-const Change_Of_State_T * const PMode_SM[] PROGMEM =
+static union FSM SSO_PM_FSM = {NULL};
+static union SSO_PM SSO_PM = {NULL};
+struct SSO_PM_Class SSO_PM_Class =
 {
-   POWER_MODE_STATES_TB
+    {sso_pm_delete, NULL},
+    sso_pm_release,
+    sso_pm_request
 };
-
-static PMode_State_T Current_State = 0;
-static PMode_State_T New_State = 0;
 /*=====================================================================================* 
  * Exported Object Definitions
  *=====================================================================================*/
-
 /*=====================================================================================* 
  * Local Function Prototypes
  *=====================================================================================*/
@@ -74,42 +69,13 @@ static PMode_State_T New_State = 0;
 #define PMODE_SOURCE(src, osc) \
    src##_init();
 
+#ifdef SSO_PM_ENABLE
 void pmode::Init(void)
 {
    POWER_MODE_SOURCES_TB
 }
-void pmode::Main(void)
-{
-   if(New_State != Current_State)
-   {
-      const Change_Of_State_T * sm = reinterpret_cast<const Change_Of_State_T *>( pgm_read_ptr(PMode_SM + Current_State) );
-      void (*handler)(void) = reinterpret_cast< void (*)(void)>(pgm_read_ptr(&sm->exit));
-      handler();
+#endif
 
-      sm = reinterpret_cast<const Change_Of_State_T *>( pgm_read_ptr(PMode_SM + New_State) );
-      handler = reinterpret_cast< void (*)(void)>(pgm_read_ptr(&sm->enter) );
-      handler();
-
-      Current_State = New_State;
-   }
-}
-
-void pmode::Set_State(PMode_State_T state)
-{
-   if(New_State < PMODE_MAX_STATES)
-   {
-      New_State = state;
-   }
-}
-
-PMode_State_T pmode::Get_State(void)
-{
-   return Current_State;
-}
-void pmode::Shut(void)
-{
-   pmode::Set_State(PMODE_ALL_OFF_STATE);
-}
 /*=====================================================================================* 
  * Local Inline-Function Like Macros
  *=====================================================================================*/
@@ -117,59 +83,101 @@ void pmode::Shut(void)
 /*=====================================================================================* 
  * Local Function Definitions
  *=====================================================================================*/
-void SSO_PMode_Init(void)
+
+void sso_pm_delete(struct Object * const obj)
 {
+    union SSO_PM * const this = (union SSO_PM *)Object_Cast(&SSO_PM_Class.Class, obj);
+    Isnt_Nullptr(this,);
+    if(this->is_active)
+    {
+        this->vtbl->sso_pm_release(this);
+    }
+    memset(this, 0, sizeof(SSO_PM));
 }
 
-void SSO_PMode_Delete(struct Object * const obj)
-{}
-
-union SSO_PMode SSO_PMode_Default(void)
+void sso_pm_request(union SSO_PM * const this)
 {
-	union SSO_PMode sso_pmode;
-	if(!SSO_PMode_Class)
-	{
-		SSO_PMode_Init();
-		SSO_PMode_Obj.vbtl = &SSO_PMode_Class;
-	}
-	return sso_pmode;
+    switch(this->source)
+    {
+        case SSO_PM_12VDC_SOURCE:
+        {
+            IPC_Send(SSO_PM_TID, SSO_PM_INT_12VDC_REQ_MID, this->handle_id, sizeof(this->handle_id));
+            break;
+        }
+        case SSO_PM_120AC_SOURCE:
+        {
+            IPC_Send(SSO_PM_TID, SSO_PM_INT_120AC_REQ_MID, this->handle_id, sizeof(this->handle_id));
+            break;
+        }
+        default : 
+        {
+            Dbg_Warn("%s: tid %d has invalid source %d",
+                    __func__,
+                    IPC_Self(),
+                    this->source);
+                    return;
+        }
+    }
+    sso_pm_get_handle_id(this);
 }
 
+void sso_pm_release(union SSO_PM * const this)
+{
+    switch(this->source)
+    {
+        case SSO_PM_12VDC_SOURCE: IPC_Send(SSO_PM_TID, SSO_PM_12VDC_REL_MID, this->handle_id, sizeof(this->handle_id)); break;
+        case SSO_PM_120AC_SOURCE: IPC_Send(SSO_PM_TID, SSO_PM_120AC_REL_MID, this->handle_id, sizeof(this->handle_id)); break;
+        default : 
+        {
+            Dbg_Warn("%s: tid %d has invalid source %d",
+                    __func__,
+                    IPC_Self(),
+                    this->source);
+                    return;
+        }
+    }
+    sso_pm_get_handle_id(this);
+}
+void sso_pm_get_handle_id(union SSO_PM * const this)
+{
+    union Mail mail = {NULL};
+    IPC_TID_T mid = SSO_PM_INT_SOURCE_RESP_MID;
+    if(IPC_Retrieve_From_Mailist(&mid, 1, &mail, IPC_TIMEOUT_MS))
+    {
+        SSO_PM_Source_Handle_T const handle = *(SSO_PM_Req_T * const)mail->data;
+        if(handle->source == this->source)
+        {
+            this->handle_id = this->handle_id;
+        }
+    }
+
+}
+
+bool sso_pm_is_active(union SSO_PM * const this)
+{
+    return 0 < this->handle_id;
+}
 /*=====================================================================================* 
  * Exported Function Definitions
  *=====================================================================================*/
-union SSO_PMode SSO_PMode(void)
+void Populate_SSO_PM(union SSO_PM * const this, SSO_PM_Source_T const)
 {
-	union SSO_PMode this = SSO_PMode_Default();
-
-	return this;
-}
-union SSO_PMode * SSO_PMode_New(void)
-{
-	union SSO_PMode * const _new = malloc(sizeof(SSO_PMode_Default()));
-	Isnt_Nullptr(_new, NULL);
-
-	memcpy(_new, &SSO_PMode_Obj, sizeof(SSO_PMode_Obj));
-	return _new;
+    sso_pm_init();
+    memcpy(this, &SSO_PM, sizeof(SSO_PM));
 }
 
-void SSO_PMode_set_state(union SSO_PMode * const this, PMode_State_T const state)
+void SSO_PM_Release_All(void)
 {
-   if(this->current_state < PMODE_MAX_STATES)
-   {
-	   this->hsm->vtbl->dispatch(&this->hsm, state, NULL);
-   }
+    sso_pm_init();
+    IPC_Send(SSO_PM_TID, SSO_PM_INT_REL_ALL_MID, NULL, 0);
 }
 
-PMode_State_T SSO_PMode_get_state(union SSO_PMode * const this)
-{
-   return this->hsm->vtbl->state;
-}
-
+#ifdef SSO_PM_ENABLE
 void pmode::Shut(void)
 {
    pmode::Set_State(PMODE_ALL_OFF_STATE);
 }
+#endif
 /*=====================================================================================* 
  * snack_power_mode.cpp
  *=====================================================================================*

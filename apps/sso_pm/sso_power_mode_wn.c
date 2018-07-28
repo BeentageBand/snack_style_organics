@@ -12,9 +12,10 @@
 /*=====================================================================================*
  * Project Includes
  *=====================================================================================*/
-#include "snack_power_mode_wn.h"
+#include "sso_power_mode_wn.h"
 #include "pwm.h"
-#include "snack_power_mode_ext.h"
+#include "sso_power_mode_ext.h"
+#include "sso_power_mode_fsm.h"
 /*=====================================================================================* 
  * Standard Includes
  *=====================================================================================*/
@@ -43,29 +44,11 @@ static void sso_pm_worker_on_stop(union Worker * const worker);
 /*=====================================================================================* 
  * Local Object Definitions
  *=====================================================================================*/
-#undef PMODE_STATE
-#define PMODE_STATE(st) \
-const Change_Of_State_T st##_State PROGMEM = \
-{\
-   pmode::Enter_##st, \
-   pmode::Exit_##st   \
-};\
-
-POWER_MODE_STATES_TB
-
-#undef PMODE_STATE
-#define PMODE_STATE(st) \
-&st##_State,\
-
-const Change_Of_State_T * const PMode_SM[] PROGMEM =
-{
-   POWER_MODE_STATES_TB
-};
-
-static PMode_State_T Current_State = 0;
-static PMode_State_T New_State = 0;
 static union SSO_PM_Worker SSO_PM_Worker = {{NULL}};
 static union Mail SSO_PM_Mail_Buff[64] = {{NULL}};
+static SSO_PM_Handle_T SSO_PM_Sources
+static SSO_PM_Handle_Req_T SSO_PM_Handle_Req_Buff[SSO_PM_MAX_SOURCE][SSO_PM_SOURCE_REQ_SIZE];
+static union SSO_PM_FSM SSO_PM_FSM = {NULL};
 /*=====================================================================================* 
  * Exported Object Definitions
  *=====================================================================================*/
@@ -95,7 +78,7 @@ void sso_pm_worker_on_mail(union Worker * const worker, union Mail * const mail)
    src##_init();
 void sso_pm_worker_on_start(union Worker * const worker)
 {
-   POWER_MODE_SOURCES_TB
+    Populate_SSO_PM_FSM(&SSO_PM_FSM, SSO_PM_Handle_Queue, Num_Elems(SSO_PM_Handle_Queue))
 }
 
 void sso_pm_worker_on_loop(union Worker * const worker)
