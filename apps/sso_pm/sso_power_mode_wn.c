@@ -46,7 +46,6 @@ static void sso_pm_worker_on_stop(union Worker * const worker);
  *=====================================================================================*/
 static union SSO_PM_Worker SSO_PM_Worker = {{NULL}};
 static union Mail SSO_PM_Mail_Buff[64] = {{NULL}};
-static SSO_PM_Handle_T SSO_PM_Sources
 static SSO_PM_Handle_Req_T SSO_PM_Handle_Req_Buff[SSO_PM_MAX_SOURCE][SSO_PM_SOURCE_REQ_SIZE];
 static union SSO_PM_FSM SSO_PM_FSM = {NULL};
 /*=====================================================================================* 
@@ -65,29 +64,38 @@ SSO_PM_Worker_Class_T SSO_PM_Worker_Class =
  *=====================================================================================*/
 void sso_pm_worker_delete(struct Object * const obj)
 {
+    _delete(&SSO_PM)
 }
 
 void sso_pm_worker_on_mail(union Worker * const worker, union Mail * const mail)
 {
-
-
+    SSO_PM_Processed_MID_T * const process = SSO_PM_Dispatcher.vtbl->find(&SSO_PM_Dispatcher, mail->mid);
+    if(process != SSO_PM_Dispatcher.vtbl->end(&SSO_PM_Dispatcher))
+    {
+        process->OBJ(&SSO_PM_Worker, mail);
+        SSO_PM_FSM.FSM.vtbl->dispatch(&SSO_PM_FSM, mail);
+    }
 }
 
 #undef PMODE_SOURCE
 #define PMODE_SOURCE(src, osc) \
    src##_init();
+
 void sso_pm_worker_on_start(union Worker * const worker)
 {
-    Populate_SSO_PM_FSM(&SSO_PM_FSM, SSO_PM_Handle_Queue, Num_Elems(SSO_PM_Handle_Queue))
+    IPC_Subscribe(SSO_PM_Subscription_List, Num_Elems(SSO_PM_Subscription_List));
+    Dbg_Info("%s: start SSO PM FSM", __func__);
+    SSO_PM_FSM.FSM.StateMachine.vtbl->dispatch(&SSO_PM_FSM, NULL);
 }
 
 void sso_pm_worker_on_loop(union Worker * const worker)
 {
+
 }
 
 void sso_pm_worker_on_stop(union Worker * const worker)
 {
-   pmode::Set_State(PMODE_ALL_OFF_STATE);
+    IPC_Unsubscribe(SSO_PM_Subscription_List, Num_Elems(SSO_PM_Subscription_List));
 }
 /*=====================================================================================* 
  * Exported Function Definitions
@@ -110,6 +118,12 @@ void Populate_SSO_PM_Worker(union SSO_PM_Worker * const this)
         SSO_PM_Worker_Class.on_start = sso_pm_worker_on_start;
         SSO_PM_Worker_Class.on_loop = sso_pm_worker_on_loop;
         SSO_PM_Worker_Class.on_stop = sso_pm_worker_on_stop;
+        Populate_SSO_PM_Handle_Req(&SSO_PM_Handle_Req_Queue,
+                                    SSO_PM_Handle_Req_Buff, 
+                                    Num_Elems(SSO_PM_Handle_Req_Buff));
+        Populate_SSO_PM_FSM(&SSO_PM_FSM, 
+                            SSO_PM_Handle_Req_Queue,
+                            Num_Elems(SSO_PM_Handle_Queue));
     }
     memcpy(this, &SSO_PM_Worker, sizeof(SSO_PM_Worker));
 }

@@ -34,7 +34,7 @@ FSM_STATE_DEF(cb, SSO_PM_SHUT_STID, \
 
 #define SSO_PM_Do_Nothing (NULL)
 
-#define CQueue_Params(IPC_TID)
+#define CQueue_Params(SSO_PM_Handle_Req)
 #include "cqueue.h"
 #undef CQueue_Params 
 

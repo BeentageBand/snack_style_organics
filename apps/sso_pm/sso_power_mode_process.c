@@ -12,9 +12,8 @@
 /*=====================================================================================*
  * Project Includes
  *=====================================================================================*/
-#include "snack_power_mode_proxy.h"
-#include "snack_power_mode_types.h"
-#include "snack_power_mode_ext.h"
+#include "sso_power_mode_process.h"
+#include "sso_power_mode_ext.h"
 #include "ipc.h"
 /*=====================================================================================* 
  * Standard Includes
@@ -27,26 +26,34 @@
 /*=====================================================================================* 
  * Local Define Macros
  *=====================================================================================*/
-
+#define SSO_PM_PROCESS_POPULATE_SUBSCRIPTION(mid, func) mid,
+#define SSO_PM_PROCESS_POPULATE_DISPATCHER(mid, func) {mid, func}
 /*=====================================================================================* 
  * Local Type Definitions
  *=====================================================================================*/
-CLASS_DEF(SSO_PMode_Proxy)
-/*=====================================================================================* 
- * Local Object Definitions
- *=====================================================================================*/
-static struct Mail_Node_Subcription_Handler SSO_PMode_Mail_Handle[] =
-{
-	SSO_PMODE_PROC_MESSAGE_LIST(MAIL_NODE_POPULATE)
-};
-/*=====================================================================================* 
- * Exported Object Definitions
- *=====================================================================================*/
-
+#define CHash_Map_Params(IPC_MID, SSO_PM_Process_T)
+#include "chash_map.c"
+#undef CHash_Map_Params
 /*=====================================================================================* 
  * Local Function Prototypes
  *=====================================================================================*/
 
+/*=====================================================================================* 
+ * Local Object Definitions
+ *=====================================================================================*/
+
+/*=====================================================================================* 
+ * Exported Object Definitions
+ *=====================================================================================*/
+IPC_MID_T SSO_PM_Subscription_Mailist [] = 
+{
+	SSO_PM_SUBSCRIPTION_MAILIST(SSO_PM_PROCESS_POPULATE_SUBSCRIPTION)
+};
+
+SSO_PM_Processed_MID_T SSO_Process_List [] =
+{
+	SSO_PM_PROCESS_MAILIST(SSO_PM_PROCESS_POPULATE_DISPATCHER)
+}
 /*=====================================================================================* 
  * Local Inline-Function Like Macros
  *=====================================================================================*/
@@ -54,45 +61,12 @@ static struct Mail_Node_Subcription_Handler SSO_PMode_Mail_Handle[] =
 /*=====================================================================================* 
  * Local Function Definitions
  *=====================================================================================*/
-void SSO_PMode_Proxy_Init(void)
-{
 
-}
-union SSO_PMode SSO_PMode(void)
-{
-	union Mail_Node super = Mail_Node_Subscription(SSO_PMODE_TID, SSO_PMode_Mail_Handle, Num_Elems(SSO_PMode_Mail_Handle));
-}
-union SSO_PMode * SSO_PMode_New(void)
-{
-	return NULL;
-}
 /*=====================================================================================* 
  * Exported Function Definitions
  *=====================================================================================*/
-void SSO_PMode_set_state(union SSO_PMode * const this, PMode_State_T const state)
-{
-	if(state < PMODE_MAX_STATES)
-	{
-		IPC_Send(SSO_PMODE_INT_CHANGE_STATE, SSO_PMODE_TID, &state, sizeof(state));
-	}
-}
-
-PMode_State_T SSO_PMode_get_state(union SSO_PMode * const this)
-{
-	union SSO_PMode_Proxy * const this = _dynamic_cast(SSO_PMode_Proxy, super);
-	return this->current_state;
-}
-
-void SSO_PMode_Proxy_SSO_PMode_On_State_Change(union SSO_PMode * const super, union Mail * const mail)
-{
-	union SSO_PMode_Proxy * const this = _dynamic_cast(SSO_PMode_Proxy, super);
-	Isnt_Nullptr(this,);
-	Isnt_Nullptr(mail,);
-	Isnt_Nullptr(mail->data,);
-	this->current_state = *(PMode_State_T * const) mail->data;
-}
 /*=====================================================================================* 
- * snack_power_mode.cpp
+ * snack_power_mode.c
  *=====================================================================================*
  * Log History
  *

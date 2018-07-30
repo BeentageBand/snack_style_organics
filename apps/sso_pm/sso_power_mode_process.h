@@ -7,13 +7,14 @@
  *
  */
 /*=====================================================================================*/
-#ifndef SNACK_POWER_MODE_PROXYH_
-#define SNACK_POWER_MODE_PROXYH_
+#ifndef SSO_POWER_MODE_PROCESS_H_
+#define SSO_POWER_MODE_PROCESS_H_
 /*=====================================================================================*
  * Project Includes
  *=====================================================================================*/
-#include "mail_node.h"
-#include "snack_power_mode_types.h"
+#include "sso_power_mode_uset.h"
+#include "sso_power_mode_wn.h"
+#include "ipc_types.h"
 /*=====================================================================================* 
  * Standard Includes
  *=====================================================================================*/
@@ -21,20 +22,22 @@
 /*=====================================================================================* 
  * Exported X-Macros
  *=====================================================================================*/
+#define SSO_PM_PROCESS_MAILIST(X) \
+SSO_PM_SUBSCRIPTION_MAILIST(X) \
+X(SSO_PM_INT_REL_ALL_MID,    "Release all handles from all sources") \
+X(SSO_PM_INT_12VDC_REQ_MID,  "12VDC Source Power Request") \
+X(SSO_PM_INT_12VDC_REL_MID,  "12VDC Source Power Release Request") \
+X(SSO_PM_INT_12VDC_INIT_MID, "12VDC Source Init") \
+X(SSO_PM_INT_12VDC_SHUT_MID, "12VDC Source Shutdown") \
+X(SSO_PM_INT_120AC_REQ_MID,  "120AC Source Power Request") \
+X(SSO_PM_INT_120AC_REL_MID,  "120AC Source Power Release Request") \
+X(SSO_PM_INT_120AC_INIT_MID, "120AC Source Init") \
+X(SSO_PM_INT_120AC_SHUT_MID, "120AC Source Shutdown") \
+X(SSO_PM_INT_SHUTDOWN_MID,   "Shutdown sequence start") \
 
 /*=====================================================================================*
  * Exported Define Macros
  *=====================================================================================*/
-#define SSO_PMode_Proxy_INHERITS Mail_Node
-
-#define SSO_PMode_Proxy_MEMBERS(_member, _class) \
-	_member(PMode_State_T _private, curr_state) \
-	_member(t_Map(Mail_Node_Subscription_Handler) _private, handler)
-
-#define SSO_PMode_METHODS(_method, _class) \
-_method(void, set_state, PMode_State_T const) \
-_method(PMode_State_T, get_state, void)
-
 /*=====================================================================================* 
  * Exported Type Declarations
  *=====================================================================================*/
@@ -42,15 +45,24 @@ _method(PMode_State_T, get_state, void)
 extern "C"
 {
 #endif
+
+typedef void (* SSO_PM_Process_T)(union SSO_PM_Worker * sso_pm, union Mail * const);
+
+#define CHash_Map_Params(IPC_MID, SSO_PM_Process_T)
+#include "chash_map.h"
+#undef CHash_Map_Params
+typedef CHash_Map_IPC_MID_SSO_PM_Process_T SSO_PM_Dispatcher_T;
+typedef CHash_Map_IPC_MID_SSO_PM_Process_Pair_T SSO_PM_Processed_MID_T;
 /*=====================================================================================* 
  * Exported Object Declarations
  *=====================================================================================*/
-CLASS_DECL(SSO_PMode)
+extern IPC_MID_T SSO_PM_Subscription_Mailist [];
+extern SSO_PM_Processed_MID_T SSO_Process_List [];
+extern SSO_PM_Dispatcher_T SSO_PM_Dispatcher = {NULL};
+extern CQueue_SSO_PM_Handle_Req_T SSO_PM_Handle_Req_Queue = {NULL};
 /*=====================================================================================* 
  * Exported Function Prototypes
  *=====================================================================================*/
-extern union SSO_PMode SSO_PMode_Proxy(void);
-extern union SSO_PMode * SSO_PMode_Proxy_New(void);
 /*=====================================================================================* 
  * Exported Function Like Macros
  *=====================================================================================*/
@@ -63,4 +75,4 @@ extern union SSO_PMode * SSO_PMode_Proxy_New(void);
  * Log History
  *
  *=====================================================================================*/
-#endif /*SNACK_POWER_MODE_PROXYH_*/
+#endif /*SSO_POWER_MODE_PROCESS_H_*/

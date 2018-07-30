@@ -6,7 +6,7 @@
  */ 
 #include "sso_task_def.h"
 #include "application.h"
-#include "snack_org_friends.h"
+#include "sso_friends.h"
 #ifdef ENABLE_SSO
 #include "sso_lcd.h"
 #include "sso_dehyd_ctl.h"

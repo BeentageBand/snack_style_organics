@@ -1,6 +1,6 @@
 #include "sso_power_mode_fsm.h"
 
-#define CQueue_Params(IPC_TID)
+#define CQueue_Params(SSO_PM_Handle_Req)
 #include "cqueue.c"
 #undef CQueue_Params
 

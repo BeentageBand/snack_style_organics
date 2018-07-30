@@ -1,0 +1,8 @@
+Sequence Diagram
+Requesting power
+SSO_PM->>request(source, handle) : SSO_PM_Worker
+SSO_PM_Worker->on_mail(source, handle) : SSO_PM_Dispatcher
+SSO_PM_Dispatcher -->(process) : SSO_PM_Worker
+SSO_PM_Worker->sso_push_request(source, handle) : SSO_PM_Handle_Req
+SSO_PM_FSM->dispatch(request_power, source, handle) : SSO_PM_FSM
+SSO_PM_FSM->transition()

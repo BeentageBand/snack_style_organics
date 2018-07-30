@@ -51,7 +51,6 @@ const Change_Of_State_T st##_State PROGMEM = \
 };\
 
 
-static union FSM SSO_PM_FSM = {NULL};
 static union SSO_PM SSO_PM = {NULL};
 struct SSO_PM_Class SSO_PM_Class =
 {
@@ -144,7 +143,7 @@ void sso_pm_get_handle_id(union SSO_PM * const this)
     IPC_TID_T mid = SSO_PM_INT_SOURCE_RESP_MID;
     if(IPC_Retrieve_From_Mailist(&mid, 1, &mail, IPC_TIMEOUT_MS))
     {
-        SSO_PM_Source_Handle_T const handle = *(SSO_PM_Req_T * const)mail->data;
+        SSO_PM_Handle_Req_T handle = *(SSO_PM_Handle_Req_T * const) mail.payload;
         if(handle->source == this->source)
         {
             this->handle_id = this->handle_id;
@@ -160,15 +159,20 @@ bool sso_pm_is_active(union SSO_PM * const this)
 /*=====================================================================================* 
  * Exported Function Definitions
  *=====================================================================================*/
-void Populate_SSO_PM(union SSO_PM * const this, SSO_PM_Source_T const)
+void Populate_SSO_PM(union SSO_PM * const this, SSO_PM_Source_T const source)
 {
-    sso_pm_init();
+    if(NULL == SSO_PM.vtbl)
+    {
+        SSO_PM.vtbl = &SSO_PM_Class;
+        SSO_PM.handle_id = 0;
+        SSO_PM.source = 0;
+    }
+    SSO_PM.source = source;
     memcpy(this, &SSO_PM, sizeof(SSO_PM));
 }
 
 void SSO_PM_Release_All(void)
 {
-    sso_pm_init();
     IPC_Send(SSO_PM_TID, SSO_PM_INT_REL_ALL_MID, NULL, 0);
 }
 
