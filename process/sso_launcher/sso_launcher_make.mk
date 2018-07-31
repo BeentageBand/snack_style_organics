@@ -4,7 +4,7 @@ $(_flavor_)_$(_feat_)_bin_objs=sso_launcher
 $(_flavor_)_$(_feat_)_bin_libs=\
    cobject \
    application \
-   snack_org_friends \
+   sso_friends \
    ipc \
    ipc_posix \
    state_machine \

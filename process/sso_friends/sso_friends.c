@@ -20,7 +20,7 @@
 #include "temp_monitor.h"
 #endif
 #include "ipc_posix.h"
-#include "snack_org_friends.h"
+#include "sso_friends.h"
 
 void Snack_Style_Organics_Init(void)
 {
@@ -50,7 +50,6 @@ void pid::Put_PID_CTL_CHANNEL_HEATER(const Fix32_T uout)
    uint8_t pwm_out = (uout/PID_CTL_FIX32_PARSE_FACTOR);
    heater::Set_Output(pwm_out);
 }
-
 
 uint32_t pid::Get_Sample_Time(void)
 {

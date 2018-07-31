@@ -8,11 +8,12 @@
  *
  */
 /*=====================================================================================*/
-#ifndef SNACK_POWER_MODE_EXT_H_
-#define SNACK_POWER_MODE_EXT_H_
+#ifndef SSO_POWER_MODE_EXT_H_
+#define SSO_POWER_MODE_EXT_H_
 /*=====================================================================================*
  * Project Includes
  *=====================================================================================*/
+#include "cobject.h"
 #include "sso_power_mode_uset.h"
 #include "sso_power_mode_types.h"
 /*=====================================================================================* 
@@ -29,22 +30,31 @@
 extern "C"{
 #endif
 
-#undef PMODE_SOURCE
-#define PMODE_SOURCE(src, osc) \
-   extern void src##_init(void);
+typedef union SSO_PM_Source_Cbk
+{
+	struct SSO_PM_Source_Cbk_Class _private * _private vtbl;
+	struct
+	{
+		struct Object Object;
+		bool is_active;
+		uint8_t handles;
+	};
+}SSO_PM_Source_Cbk_T;
 
-POWER_MODE_SOURCES_TB
-
-#undef PMODE_STATE
-#define PMODE_STATE(st) \
-   extern void Enter_##st(void); \
-   extern void Exit_##st(void);  \
-
-POWER_MODE_STATES_TB
+typedef struct SSO_PM_Source_Cbk_Class
+{
+	void (* _private subscribe)(union SSO_PM_Source_Cbk * const);
+	void (* _private unsubscribe)(union SSO_PM_Source_Cbk * const);
+	void (* _private init_source)(union SSO_PM_Source_Cbk * const);
+	void (* _private shut_source)(union SSO_PM_Source_Cbk * const);
+	void (* _private acquire_source)(union SSO_PM_Source_Cbk * const);
+	void (* _private release_source)(union SSO_PM_Source_Cbk * const);
+}SSO_PM_Source_Cbk_Class_T;
 /*=====================================================================================*
  * Exported Object Declarations
  *=====================================================================================*/
-
+extern SSO_PM_Source_Cbk_T _private SSO_PM_Source_Cbk_Class;
+extern union SSO_PM_Source_Cbk SSO_PM_Source_Cbk[SSO_PM_MAX_SOURCE];
 /*=====================================================================================* 
  * Exported Function Prototypes
  *=====================================================================================*/
@@ -60,4 +70,4 @@ POWER_MODE_STATES_TB
  * Log History
  *
  *=====================================================================================*/
-#endif /*SNACK_POWER_MODE_EXT_H_*/
+#endif /*SSO_POWER_MODE_EXT_H_*/

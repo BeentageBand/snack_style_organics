@@ -1,6 +1,6 @@
 /*=====================================================================================*/
 /**
- * snack_power_mode.cpp
+ * snack_power_mode.c
  * author : puch
  * date : Oct 22 2015
  *
@@ -33,9 +33,8 @@
 /*=====================================================================================* 
  * Local Type Definitions
  *=====================================================================================*/
-static void sso_pm_init(void);
 static void sso_pm_delete(struct Object * const obj);
-static void sso_pm_request(union SSO_PM * const this);
+static void sso_pm_acquire(union SSO_PM * const this);
 static void sso_pm_release(union SSO_PM * const this);
 static void sso_pm_get_handle_id(union SSO_PM * const this);
 static bool sso_pm_is_active(union SSO_PM * const this);
@@ -55,8 +54,8 @@ static union SSO_PM SSO_PM = {NULL};
 struct SSO_PM_Class SSO_PM_Class =
 {
     {sso_pm_delete, NULL},
-    sso_pm_release,
-    sso_pm_request
+    sso_pm_acquire,
+    sso_pm_release
 };
 /*=====================================================================================* 
  * Exported Object Definitions
@@ -87,69 +86,50 @@ void sso_pm_delete(struct Object * const obj)
 {
     union SSO_PM * const this = (union SSO_PM *)Object_Cast(&SSO_PM_Class.Class, obj);
     Isnt_Nullptr(this,);
-    if(this->is_active)
+    if(this->vtbl->is_active(this))
     {
-        this->vtbl->sso_pm_release(this);
+        this->vtbl->release(this);
     }
     memset(this, 0, sizeof(SSO_PM));
 }
 
-void sso_pm_request(union SSO_PM * const this)
+void sso_pm_acquire(union SSO_PM * const this)
 {
-    switch(this->source)
-    {
-        case SSO_PM_12VDC_SOURCE:
-        {
-            IPC_Send(SSO_PM_TID, SSO_PM_INT_12VDC_REQ_MID, this->handle_id, sizeof(this->handle_id));
-            break;
-        }
-        case SSO_PM_120AC_SOURCE:
-        {
-            IPC_Send(SSO_PM_TID, SSO_PM_INT_120AC_REQ_MID, this->handle_id, sizeof(this->handle_id));
-            break;
-        }
-        default : 
-        {
-            Dbg_Warn("%s: tid %d has invalid source %d",
-                    __func__,
-                    IPC_Self(),
-                    this->source);
-                    return;
-        }
-    }
+	SSO_PM_Handle_Req_T pm_req = 
+	{
+		IPC_Self(),
+		this->handle_id,
+		{ SSO_POWER_ACQUIRE_REQ, this->source}
+	};
+
+	IPC_Send(SSO_PM_TID, SSO_PM_INT_POWER_ACQUIRE_REQ_MID, &pm_req, sizeof(pm_req));
     sso_pm_get_handle_id(this);
 }
 
 void sso_pm_release(union SSO_PM * const this)
 {
-    switch(this->source)
-    {
-        case SSO_PM_12VDC_SOURCE: IPC_Send(SSO_PM_TID, SSO_PM_12VDC_REL_MID, this->handle_id, sizeof(this->handle_id)); break;
-        case SSO_PM_120AC_SOURCE: IPC_Send(SSO_PM_TID, SSO_PM_120AC_REL_MID, this->handle_id, sizeof(this->handle_id)); break;
-        default : 
-        {
-            Dbg_Warn("%s: tid %d has invalid source %d",
-                    __func__,
-                    IPC_Self(),
-                    this->source);
-                    return;
-        }
-    }
+	SSO_PM_Handle_Req_T pm_req = 
+	{
+		IPC_Self(),
+		this->handle_id,
+		{ SSO_POWER_RELEASE_REQ, this->source}
+	};
+
+	IPC_Send(SSO_PM_TID, SSO_PM_INT_POWER_RELEASE_REQ_MID, &pm_req, sizeof(pm_req));
     sso_pm_get_handle_id(this);
 }
 void sso_pm_get_handle_id(union SSO_PM * const this)
 {
     union Mail mail = {NULL};
-    IPC_TID_T mid = SSO_PM_INT_SOURCE_RESP_MID;
+    IPC_TID_T mid = SSO_PM_INT_POWER_REQUEST_RES_MID;
     if(IPC_Retrieve_From_Mailist(&mid, 1, &mail, IPC_TIMEOUT_MS))
     {
         SSO_PM_Handle_Req_T handle = *(SSO_PM_Handle_Req_T * const) mail.payload;
-        if(handle->source == this->source)
+        if(handle.source == this->source)
         {
             this->handle_id = this->handle_id;
         }
     }
-
 }
 
 bool sso_pm_is_active(union SSO_PM * const this)

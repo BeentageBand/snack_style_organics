@@ -25,8 +25,7 @@
 extern "C" {
 #endif
 
-#define IPC_MAX_PROCESSES (1UL)
-#define IPC_MAX_TASKS (12UL)
+#define IPC_TIMEOUT_MS (200U)
 /*=====================================================================================* 
  * Exported Type Declarations
  *=====================================================================================*/

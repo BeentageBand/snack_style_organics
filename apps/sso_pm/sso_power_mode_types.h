@@ -45,11 +45,21 @@ typedef enum SSO_PM_STID
     SSO_PM_MAX_STID
 };
 
+enum SSO_Power_Req_Type
+{
+	SSO_POWER_ACQUIRE_REQ,
+	SSO_POWER_RELEASE_REQ
+};
+
 typedef struct SSO_PM_Handle_Req
 {
     IPC_TID_T tid;
-    SSO_PM_Source_T source;
     uint8_t handle_id;
+	struct
+	{
+		SSO_PM_Source_T req_type :2;
+		SSO_PM_Source_T source :6;
+	};
 }SSO_PM_Handle_Req_T;
 /*=====================================================================================* 
  * snack_power_mode_types.h

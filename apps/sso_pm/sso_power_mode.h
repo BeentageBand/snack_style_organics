@@ -47,7 +47,7 @@ typedef union SSO_PM
 typedef struct SSO_PM_Class
 {
     struct Class Class;
-    void (* _private request)(union SSO_PM * const);
+    void (* _private acquire)(union SSO_PM * const);
     void (* _private release)(union SSO_PM * const);
     bool (* _private is_active)(union SSO_PM * const);
 }SSO_PM_Class_T;
