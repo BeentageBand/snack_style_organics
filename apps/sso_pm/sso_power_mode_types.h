@@ -13,6 +13,7 @@
 /*=====================================================================================*
  * Project Includes
  *=====================================================================================*/
+#include "ipc_types.h"
 #include "sso_power_mode_uset.h"
 #include "std_reuse.h"
 /*=====================================================================================* 
@@ -39,8 +40,8 @@ typedef uint8_t SSO_PM_Source_T;
 typedef enum SSO_PM_STID
 {
     SSO_PM_IDLE_STID, /* Board power (5V), Sensors, Data Logger) */
-    SSO_PM_12VDC_STID, /* Add +-12VDC, fan, drivers */
-    SSO_PM_120AC_STID, /* Inversor ON, heater */
+    SSO_PM_12VDC_ON_STID, /* Add +-12VDC, fan, drivers */
+    SSO_PM_120AC_ON_STID, /* Inversor ON, heater */
     SSO_PM_SHUT_STID, /* Remove Board power (5V)*, manual power cycle */
     SSO_PM_MAX_STID
 };

@@ -1,5 +1,7 @@
+#include "sso_power_mode_ext.h"
 #include "sso_power_mode_fsm.h"
 #include "sso_power_mode_process.h"
+#include "ipc.h"
 
 #define CQueue_Params(SSO_PM_Handle_Req)
 #include "cqueue.c"
@@ -9,11 +11,13 @@ static void sso_pm_fsm_delete(struct Object * const obj);
 static bool sso_pm_pop_power_request(SSO_PM_Handle_Req_T * const pm_req);
 static void sso_pm_init_source(SSO_PM_Source_T const pm_src);
 static void sso_pm_shut_source(SSO_PM_Source_T const pm_src);
-static void SSO_PM_Subscribe_12VDC_Handle(union State_Machine * const fsm);
-static void SSO_PM_Unsubscribe_12VDC_Handle(union State_Machine * const fsm);
+
+static void SSO_PM_Subscribe_Handle(union State_Machine * const fsm);
+static void SSO_PM_Unsubscribe_Handle(union State_Machine * const fsm);
 static void SSO_PM_Init_12VDC_Source(union State_Machine * const fsm);
-static void SSO_PM_Subscribe_120AC_Handle(union State_Machine * const fsm);
-static void SSO_PM_Unsubscribe__120AC_Handle(union State_Machine * const fsm);
+static void SSO_PM_Shut_12VDC_Source(union State_Machine * const fsm);
+static void SSO_PM_Init_120AC_Source(union State_Machine * const fsm);
+static void SSO_PM_Shut_120AC_Source(union State_Machine * const fsm);
 static void SSO_PM_Shut_All(union State_Machine * const fsm);
 
 static union St_Machine_State SSO_PM_States[SSO_PM_MAX_STID] = {NULL};
@@ -57,12 +61,12 @@ void SSO_PM_Subscribe_Handle(union State_Machine * const fsm)
 {
     union SSO_PM_FSM * const this = _cast(SSO_PM_FSM, fsm);
     Isnt_Nullptr(this,);
-   SSO_PM_Handle_Req_T   pm_req = SSO_PM_Power_Req_Queue.vtbl->back(&SSO_PM_Power_Req_Queue);
-   SSO_PM_Power_Req_Queue.vtbl->pop_back(&SSO_PM_Power_Req_Queue);
-   if(0 == pm_request.id)
+   SSO_PM_Handle_Req_T   pm_req = SSO_PM_Handle_Req_Queue.vtbl->back(&SSO_PM_Handle_Req_Queue);;
+   SSO_PM_Handle_Req_Queue.vtbl->pop_back(&SSO_PM_Handle_Req_Queue);
+   if(0 == pm_request.handle_id)
    {
-      SSO_PM_Source_Cbk.vtbl->subscribe(&SSO_PM_Source_Cbk);
-      pm_req.id = SSO_PM_Source_Cbk[pm_req.source].handles;
+      SSO_PM_Source_Cbk[pm_req.source].vtbl->subscribe(&SSO_PM_Source_Cbk);
+      pm_req.handle_id = SSO_PM_Source_Cbk[pm_req.source].handles;
    }
    IPC_Send(pm_req.tid,
          SSO_PM_INT_POWER_REQUEST_RES_MID,
@@ -75,13 +79,13 @@ void SSO_PM_Subscribe_Handle(union State_Machine * const fsm)
 void SSO_PM_Unsubscribe_Handle(union State_Machine * const fsm)
 {
    SSO_PM_Handle_Req_T pm_req = {0};
-   SSO_PM_Handle_Req_T   pm_req = SSO_PM_Power_Req_Queue.vtbl->back(&SSO_PM_Power_Req_Queue);
-   SSO_PM_Power_Req_Queue.vtbl->pop_back(&SSO_PM_Power_Req_Queue);
-   if(pm_req.id && 
-     pm_req.id <= SSO_PM_Source_Cbk[pm_req.source].handles)  
+   SSO_PM_Handle_Req_T pm_req = SSO_PM_Handle_Req_Queue.vtbl->back(&SSO_PM_Handle_Req_Queue);
+   SSO_PM_Handle_Req_Queue.vtbl->pop_back(&SSO_PM_Handle_Req_Queue);
+   if(pm_req.handle_id && 
+     pm_req.handle_id <= SSO_PM_Source_Cbk[pm_req.source].handles)  
    {
-      SSO_PM_Source_Cbk.vtbl->unsubscribe(&SSO_PM_Source_Cbk);
-      pm_req.id = SSO_PM_Source_Cbk[pm_req.source].handles;
+      SSO_PM_Source_Cbk[pm_req.source].vtbl->unsubscribe(&SSO_PM_Source_Cbk);
+      pm_req.handle_id = SSO_PM_Source_Cbk[pm_req.source].handles;
    }
    IPC_Send(pm_req.tid,
          SSO_PM_INT_POWER_REQUEST_RES_MID,
@@ -145,29 +149,29 @@ void SSO_PM_Shut_All(union State_Machine * const fsm)
 bool SSO_PM_Power_Request_Guard(union State_Machine * const fsm, union St_Machine_State * const state)
 {
    SSO_PM_Handle_Req_T pm_req = {0};
-   if(SSO_PM_Power_Req_Queue.size)
+   if(SSO_PM_Handle_Req_Queue.size)
    {
-      *pm_req = SSO_PM_Power_Req_Queue.vtbl->back(&SSO_PM_Power_Req_Queue);
+      *pm_req = SSO_PM_Handle_Req_Queue.vtbl->back(&SSO_PM_Handle_Req_Queue);
    }
    else
    {
       Dbg_Warn("%s: Power Request Queue is empty", __func__);
-      SSO_PM_Power_Req_Queue.vtbl->pop_back(&SSO_PM_Power_Req_Queue);
+      SSO_PM_Handle_Req_Queue.vtbl->pop_back(&SSO_PM_Handle_Req_Queue);
       return false;
    }
 
-   if(pm_req->source >= SSO_MAX_SOURCE && 0 == pm_req->id)
+   if(pm_req.source >= SSO_PM_MAX_SOURCE && 0 == pm_req.handle_id)
    {
       Dbg_Warn("%s:Invalid Power Request handle id=%d; source=%d request=%s",
             __func__,
-            pm_req->id,
-            pm_req->source,
-            (pm_req->request)? "ACQUIRE" : "RELEASE");
-      IPC_Send(pm_req->tid, 
+            pm_req.handle_id,
+            pm_req.source,
+            (pm_req.req_type)? "ACQUIRE" : "RELEASE");
+      IPC_Send(pm_req.tid, 
             SSO_PM_INT_POWER_REQUEST_RES_MID,
             &pm_req,
             sizeof(pm_req));
-      SSO_PM_Power_Req_Queue.vtbl->pop_back(&SSO_PM_Power_Req_Queue);
+      SSO_PM_Handle_Req_Queue.vtbl->pop_back(&SSO_PM_Handle_Req_Queue);
       return false;
    }
    return true;
@@ -224,7 +228,7 @@ void Populate_SSO_PM_FSM(union SSO_PM_FSM * const this)
         Object_Init(&SSO_PM_FSM.Object,
                     &SSO_PM_FSM_Class.Class,
                     sizeof(SSO_PM_FSM_Class.FSM));
-      TEMPLATE(Populate, CQueue, IPC_TID)(&SSO_PM_Handle_Req_Queue,
+      TEMPLATE(Populate, CQueue, SSO_PM_Handle_Req)(&SSO_PM_Handle_Req_Queue,
             SSO_PM_Power_Request_Buff,
             Num_Elems(SSO_PM_Power_Request_Buff));
     }

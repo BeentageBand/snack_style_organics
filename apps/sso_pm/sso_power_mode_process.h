@@ -12,6 +12,7 @@
 /*=====================================================================================*
  * Project Includes
  *=====================================================================================*/
+#include "sso_power_mode_fsm.h"
 #include "sso_power_mode_uset.h"
 #include "sso_power_mode_wn.h"
 #include "ipc_types.h"
@@ -51,8 +52,8 @@ typedef CHash_Map_IPC_MID_SSO_PM_Process_Pair_T SSO_PM_Processed_MID_T;
  *=====================================================================================*/
 extern IPC_MID_T SSO_PM_Subscription_Mailist [];
 extern SSO_PM_Processed_MID_T SSO_Process_List [];
-extern SSO_PM_Dispatcher_T SSO_PM_Dispatcher = {NULL};
-extern CQueue_SSO_PM_Handle_Req_T SSO_PM_Handle_Req_Queue = {NULL};
+SSO_PM_Dispatcher_T SSO_PM_Dispatcher = {NULL};
+CQueue_SSO_PM_Handle_Req_T SSO_PM_Handle_Req_Queue = {NULL};
 /*=====================================================================================* 
  * Exported Function Prototypes
  *=====================================================================================*/

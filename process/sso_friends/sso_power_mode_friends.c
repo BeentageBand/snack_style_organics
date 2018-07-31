@@ -12,12 +12,13 @@
 /*=====================================================================================*
  * Project Includes
  *=====================================================================================*/
+#ifdef SSO_PM_ENABLE
 #include "arduino_fwk_clk.h"
 #include "arduino_fwk_dio.h"
 #include "arduino_fwk_isr.h"
 #include "snack_style_gpio.h"
-#include "snack_power_mode_ext.h"
-#include "snack_power_mode_types.h"
+#endif
+#include "sso_power_mode_ext.h"
 /*=====================================================================================* 
  * Standard Includes
  *=====================================================================================*/
@@ -53,10 +54,15 @@ static bool NEG_Source_Signal = false;
 /*=====================================================================================* 
  * Exported Object Definitions
  *=====================================================================================*/
-
+union SSO_PM_Source_Cbk SSO_PM_Source_Cbk[] = {{NULL}};
+SSO_PM_Source_Cbk_T _private SSO_PM_Source_Cbk_Class =
+{
+      {NULL, NULL}
+};
 /*=====================================================================================* 
  * Local Function Prototypes
  *=====================================================================================*/
+#ifdef SSO_PM_ENABLE
 #undef PMODE_SOURCE
 #define PMODE_SOURCE(src, osc) \
    static void src##_start(void); \
@@ -160,6 +166,7 @@ void pmode::Exit_PMODE_ALL_ON(void)
 {
    PMODE_SOURCE_AC_stop();
 }
+#endif
 /*=====================================================================================* 
  * snack_power_mode.cpp
  *=====================================================================================*
