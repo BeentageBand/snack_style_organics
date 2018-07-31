@@ -81,7 +81,6 @@ void pmode::Init(void)
 /*=====================================================================================* 
  * Local Function Definitions
  *=====================================================================================*/
-
 void sso_pm_delete(struct Object * const obj)
 {
     union SSO_PM * const this = (union SSO_PM *)Object_Cast(&SSO_PM_Class.Class, obj);

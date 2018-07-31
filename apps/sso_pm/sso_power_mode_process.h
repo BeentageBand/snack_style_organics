@@ -24,16 +24,9 @@
  *=====================================================================================*/
 #define SSO_PM_PROCESS_MAILIST(X) \
 SSO_PM_SUBSCRIPTION_MAILIST(X) \
-X(SSO_PM_INT_REL_ALL_MID,    "Release all handles from all sources") \
-X(SSO_PM_INT_12VDC_REQ_MID,  "12VDC Source Power Request") \
-X(SSO_PM_INT_12VDC_REL_MID,  "12VDC Source Power Release Request") \
-X(SSO_PM_INT_12VDC_INIT_MID, "12VDC Source Init") \
-X(SSO_PM_INT_12VDC_SHUT_MID, "12VDC Source Shutdown") \
-X(SSO_PM_INT_120AC_REQ_MID,  "120AC Source Power Request") \
-X(SSO_PM_INT_120AC_REL_MID,  "120AC Source Power Release Request") \
-X(SSO_PM_INT_120AC_INIT_MID, "120AC Source Init") \
-X(SSO_PM_INT_120AC_SHUT_MID, "120AC Source Shutdown") \
-X(SSO_PM_INT_SHUTDOWN_MID,   "Shutdown sequence start") \
+X(SSO_PM_INT_REL_ALL_MID,    sso_pm_release_all) \
+X(SSO_PM_INT_12VDC_REQ_MID,  sso_pm_power_request) \
+X(SSO_PM_INT_12VDC_REL_MID,  sso_pm_power_request) \
 
 /*=====================================================================================*
  * Exported Define Macros
@@ -63,6 +56,7 @@ extern CQueue_SSO_PM_Handle_Req_T SSO_PM_Handle_Req_Queue = {NULL};
 /*=====================================================================================* 
  * Exported Function Prototypes
  *=====================================================================================*/
+
 /*=====================================================================================* 
  * Exported Function Like Macros
  *=====================================================================================*/
