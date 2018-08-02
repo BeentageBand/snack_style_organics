@@ -42,11 +42,11 @@ extern "C"
 
 typedef void (* SSO_PM_Process_T)(union SSO_PM_Worker * sso_pm, union Mail * const);
 
-#define CHash_Map_Params(IPC_MID, SSO_PM_Process_T)
+#define CHash_Map_Params IPC_MID, SSO_PM_Process_T
 #include "chash_map.h"
 #undef CHash_Map_Params
 typedef CHash_Map_IPC_MID_SSO_PM_Process_T SSO_PM_Dispatcher_T;
-typedef CHash_Map_IPC_MID_SSO_PM_Process_Pair_T SSO_PM_Processed_MID_T;
+typedef Pair_IPC_MID_SSO_PM_Process_T SSO_PM_Processed_MID_T;
 /*=====================================================================================* 
  * Exported Object Declarations
  *=====================================================================================*/

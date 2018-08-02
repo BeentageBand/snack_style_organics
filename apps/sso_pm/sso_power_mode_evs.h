@@ -25,12 +25,15 @@
 X(SSO_PM_INT_REL_ALL_MID,           "Release all handles from all sources") \
 X(SSO_PM_INT_POWER_ACQUIRE_REQ_MID, "Source Power Acquire Request") \
 X(SSO_PM_INT_POWER_RELEASE_REQ_MID, "Source Power Release Request") \
-X(SSO_PM_INT_POWER_INIT_MID,        "Source Init") \
-X(SSO_PM_INT_POWER_SHUT_MID,        "Source Shutdown") \
+X(SSO_PM_INT_12VDC_INIT_MID,        "Source Init") \
+X(SSO_PM_INT_12VDC_SHUT_MID,        "Source Shutdown") \
+X(SSO_PM_INT_120AC_INIT_MID,        "Source Init") \
+X(SSO_PM_INT_120AC_SHUT_MID,        "Source Shutdown") \
 X(SSO_PM_INT_POWER_REQUEST_RES_MID, "Power Request Response") \
 X(SSO_PM_INT_SHUTDOWN_MID,          "Shutdown sequence start") \
 
 #define SSO_PM_PBC_MAILIST(X) \
+X(SSO_PM_PBC_FORCE_RELEASE_REQ_MID, "Request to release")
 /*=====================================================================================* 
  * Exported Define Macros
  *=====================================================================================*/

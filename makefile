@@ -9,7 +9,8 @@ PROJ_DIR=.
 PROJ_MAK_DIR=$(PROJ_DIR)/project_make
 #OUT_DIR=$(HOME)/projects/suite_object_out
 
-FLAVOR_LIST=linux arduino
+FLAVOR_LIST=linux \
+#arduino
 
 #Flavor
 arduino_build=arduino

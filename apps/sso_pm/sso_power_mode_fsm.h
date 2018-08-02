@@ -12,14 +12,14 @@ FSM_STATE_DEF(cb, SSO_PM_IDLE_STID, \
      FSM_TRANSITION_DEF(cb, SSO_PM_INT_120AC_INIT_MID,        SSO_PM_IDLE_STID,  SSO_PM_120AC_Guard,         SSO_PM_Init_120AC_Source) \
      FSM_TRANSITION_DEF(cb, SSO_PM_INT_SHUTDOWN_MID,          SSO_PM_SHUT_STID,  SSO_PM_Shut_Guard,          SSO_PM_Shut_All) \
      ) \
-FSM_STATE_DEF(cb, SSO_PM_12VDC_ON_STID, \
+FSM_STATE_DEF(cb, SSO_PM_12VDC_STID, \
      FSM_TRANSITION_DEF(cb, SSO_PM_INT_POWER_ACQUIRE_REQ_MID, SSO_PM_12VDC_STID, SSO_PM_Power_Request_Guard, SSO_PM_Subscribe_Handle) \
      FSM_TRANSITION_DEF(cb, SSO_PM_INT_POWER_RELEASE_REQ_MID, SSO_PM_12VDC_STID, SSO_PM_Power_Request_Guard, SSO_PM_Unsubscribe_Handle) \
-     FSM_TRANSITION_DEF(cb, SSO_PM_INT_120AC_INIT_MID, SSO_PM_120DC_STID,        SSO_PM_12VDC_Guard,         SSO_PM_Init_120AC_Source) \
-     FSM_TRANSITION_DEF(cb, SSO_PM_INT_12VDC_SHUT_MID, SSO_PM_IDLE_STID,         SSO_PM_120AC_Guard,         SSO_PM_Shut_12VDC_Source) \
+     FSM_TRANSITION_DEF(cb, SSO_PM_INT_120AC_INIT_MID,        SSO_PM_120AC_STID, SSO_PM_12VDC_Guard,         SSO_PM_Init_120AC_Source) \
+     FSM_TRANSITION_DEF(cb, SSO_PM_INT_12VDC_SHUT_MID,        SSO_PM_IDLE_STID,  SSO_PM_120AC_Guard,         SSO_PM_Shut_12VDC_Source) \
      FSM_TRANSITION_DEF(cb, SSO_PM_INT_SHUTDOWN_MID,          SSO_PM_SHUT_STID,  SSO_PM_Shut_Guard,          SSO_PM_Shut_All) \
      ) \
-FSM_STATE_DEF(cb, SSO_PM_120AC_ON_STID, \
+FSM_STATE_DEF(cb, SSO_PM_120AC_STID, \
      FSM_TRANSITION_DEF(cb, SSO_PM_INT_POWER_ACQUIRE_REQ_MID, SSO_PM_120AC_STID, SSO_PM_Power_Request_Guard, SSO_PM_Subscribe_Handle) \
      FSM_TRANSITION_DEF(cb, SSO_PM_INT_POWER_RELEASE_REQ_MID, SSO_PM_120AC_STID, SSO_PM_Power_Request_Guard, SSO_PM_Unsubscribe_Handle) \
      FSM_TRANSITION_DEF(cb, SSO_PM_INT_120AC_SHUT_MID,        SSO_PM_IDLE_STID,  SSO_PM_120AC_Guard,         SSO_PM_Shut_120AC_Source) \
@@ -34,7 +34,7 @@ FSM_STATE_DEF(cb, SSO_PM_SHUT_STID, \
 
 #define SSO_PM_Do_Nothing (NULL)
 
-#define CQueue_Params(SSO_PM_Handle_Req)
+#define CQueue_Params SSO_PM_Handle_Req
 #include "cqueue.h"
 #undef CQueue_Params 
 

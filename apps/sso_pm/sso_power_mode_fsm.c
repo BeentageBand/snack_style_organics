@@ -1,9 +1,10 @@
+#define COBJECT_IMPLEMENTATION
 #include "sso_power_mode_ext.h"
 #include "sso_power_mode_fsm.h"
 #include "sso_power_mode_process.h"
 #include "ipc.h"
 
-#define CQueue_Params(SSO_PM_Handle_Req)
+#define CQueue_Params SSO_PM_Handle_Req
 #include "cqueue.c"
 #undef CQueue_Params
 
@@ -12,6 +13,12 @@ static bool sso_pm_pop_power_request(SSO_PM_Handle_Req_T * const pm_req);
 static void sso_pm_init_source(SSO_PM_Source_T const pm_src);
 static void sso_pm_shut_source(SSO_PM_Source_T const pm_src);
 
+/* Guards */
+static bool SSO_PM_12VDC_Guard(union State_Machine * const fsm, union St_Machine_State * const st);
+static bool SSO_PM_120AC_Guard(union State_Machine * const fsm, union St_Machine_State * const st);
+static bool SSO_PM_Power_Request_Guard(union State_Machine * const fsm, union St_Machine_State * const st);
+static bool SSO_PM_Shut_Guard(union State_Machine * const fsm, union St_Machine_State * const st);
+/* Actions */
 static void SSO_PM_Subscribe_Handle(union State_Machine * const fsm);
 static void SSO_PM_Unsubscribe_Handle(union State_Machine * const fsm);
 static void SSO_PM_Init_12VDC_Source(union State_Machine * const fsm);
@@ -34,10 +41,10 @@ void sso_pm_init_source(SSO_PM_Source_T const pm_src)
    switch(pm_src)
    {
       case SSO_PM_120AC_SOURCE:
-         IPC_Send(SSO_PM_INT_120AC_INIT_MID, NULL, 0);
+         IPC_Self_Send(SSO_PM_INT_120AC_INIT_MID, NULL, 0);
          break;
       case SSO_PM_12VDC_SOURCE:
-         IPC_Send(SSO_PM_INT_12VDC_INIT_MID, NULL, 0);
+         IPC_Self_Send(SSO_PM_INT_12VDC_INIT_MID, NULL, 0);
          break;
       default: break;
    }
@@ -137,7 +144,7 @@ void SSO_PM_Shut_120AC_Source(union State_Machine * const fsm)
          SSO_PM_Source_Cbk[SSO_PM_120AC_SOURCE].vtbl->shut_source(&SSO_PM_Source_Cbk);
       }
       SSO_PM_Source_Cbk[SSO_PM_120AC_SOURCE].vtbl->release_source(
-            SSO_PM_Source_Cbk + SSO_PM_120AC_SOURCE, SSO_PM_12VDC_SOURCE);
+            SSO_PM_Source_Cbk + SSO_PM_120AC_SOURCE);
    }
 }
 
@@ -149,9 +156,9 @@ void SSO_PM_Shut_All(union State_Machine * const fsm)
 bool SSO_PM_Power_Request_Guard(union State_Machine * const fsm, union St_Machine_State * const state)
 {
    SSO_PM_Handle_Req_T pm_req = {0};
-   if(SSO_PM_Handle_Req_Queue.size)
+   if(SSO_PM_Handle_Req_Queue.vtbl->size(&SSO_PM_Handle_Req_Queue))
    {
-      *pm_req = SSO_PM_Handle_Req_Queue.vtbl->back(&SSO_PM_Handle_Req_Queue);
+      pm_req = SSO_PM_Handle_Req_Queue.vtbl->back(&SSO_PM_Handle_Req_Queue);
    }
    else
    {
@@ -177,7 +184,7 @@ bool SSO_PM_Power_Request_Guard(union State_Machine * const fsm, union St_Machin
    return true;
 }
 
-bool SSO_PM_12VDC_guard(union State_Machine * const fsm, union St_Machine_State * const state)
+bool SSO_PM_12VDC_Guard(union State_Machine * const fsm, union St_Machine_State * const state)
 {
    bool do_transition = false;
    switch(state->stid)
@@ -194,16 +201,16 @@ bool SSO_PM_12VDC_guard(union State_Machine * const fsm, union St_Machine_State 
    }
    return do_transition;
 }
-bool SSO_PM_120AC_guard(union State_Machine * const fsm, union St_Machine_State * const state)
+bool SSO_PM_120AC_Guard(union State_Machine * const fsm, union St_Machine_State * const state)
 {
    bool do_transition = false;
    switch(state->stid)
    {
-      case SSO_PM_12VDC_ON_STID: //shutdown 120ac
+      case SSO_PM_12VDC_STID: //shutdown 120ac
          do_transition = 0 == SSO_PM_Source_Cbk[SSO_PM_120AC_SOURCE].handles &&
                      SSO_PM_Source_Cbk[SSO_PM_120AC_SOURCE].is_active;
          break;
-      case SSO_PM_120AC_ON_STID: //init 120ac
+      case SSO_PM_120AC_STID: //init 120ac
          do_transition = SSO_PM_Source_Cbk[SSO_PM_120AC_SOURCE].handles &&
                      !SSO_PM_Source_Cbk[SSO_PM_120AC_SOURCE].is_active;
          break;
@@ -211,7 +218,7 @@ bool SSO_PM_120AC_guard(union State_Machine * const fsm, union St_Machine_State 
    }
    return do_transition;
 }
-bool SSO_PM_SHUT_STID_guard(union State_Machine * const fsm, union St_Machine_State * const state)
+bool SSO_PM_SHUT_STID_Guard(union State_Machine * const fsm, union St_Machine_State * const state)
 {
    return true;
 }
