@@ -55,10 +55,10 @@ void sso_pm_shut_source(SSO_PM_Source_T const pm_src)
    switch(pm_src)
    {
       case SSO_PM_120AC_SOURCE:
-         IPC_Send(SSO_PM_INT_120AC_SHUT_MID, NULL, 0);
+         IPC_Self_Send(SSO_PM_INT_120AC_SHUT_MID, NULL, 0);
          break;
       case SSO_PM_12VDC_SOURCE:
-         IPC_Send(SSO_PM_INT_12VDC_SHUT_MID, NULL, 0);
+         IPC_Self_Send(SSO_PM_INT_12VDC_SHUT_MID, NULL, 0);
          break;
       default: break;
    }
@@ -66,8 +66,6 @@ void sso_pm_shut_source(SSO_PM_Source_T const pm_src)
 
 void SSO_PM_Subscribe_Handle(union State_Machine * const fsm)
 {
-    union SSO_PM_FSM * const this = _cast(SSO_PM_FSM, fsm);
-    Isnt_Nullptr(this,);
    SSO_PM_Handle_Req_T   pm_req = SSO_PM_Handle_Req_Queue.vtbl->back(&SSO_PM_Handle_Req_Queue);;
    SSO_PM_Handle_Req_Queue.vtbl->pop_back(&SSO_PM_Handle_Req_Queue);
    if(0 == pm_request.handle_id)
@@ -85,7 +83,6 @@ void SSO_PM_Subscribe_Handle(union State_Machine * const fsm)
 
 void SSO_PM_Unsubscribe_Handle(union State_Machine * const fsm)
 {
-   SSO_PM_Handle_Req_T pm_req = {0};
    SSO_PM_Handle_Req_T pm_req = SSO_PM_Handle_Req_Queue.vtbl->back(&SSO_PM_Handle_Req_Queue);
    SSO_PM_Handle_Req_Queue.vtbl->pop_back(&SSO_PM_Handle_Req_Queue);
    if(pm_req.handle_id && 

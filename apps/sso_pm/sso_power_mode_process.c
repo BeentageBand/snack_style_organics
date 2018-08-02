@@ -31,7 +31,7 @@
 /*=====================================================================================* 
  * Local Type Definitions
  *=====================================================================================*/
-#define CHash_Map_Params IPC_MID, SSO_PM_Process_T
+#define CHash_Map_Params IPC_MID, SSO_PM_Process
 #include "chash_map.c"
 #undef CHash_Map_Params
 /*=====================================================================================* 
