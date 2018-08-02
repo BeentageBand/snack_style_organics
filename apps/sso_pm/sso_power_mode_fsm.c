@@ -68,7 +68,7 @@ void SSO_PM_Subscribe_Handle(union State_Machine * const fsm)
 {
    SSO_PM_Handle_Req_T   pm_req = SSO_PM_Handle_Req_Queue.vtbl->back(&SSO_PM_Handle_Req_Queue);;
    SSO_PM_Handle_Req_Queue.vtbl->pop_back(&SSO_PM_Handle_Req_Queue);
-   if(0 == pm_request.handle_id)
+   if(0 == pm_req.handle_id)
    {
       SSO_PM_Source_Cbk[pm_req.source].vtbl->subscribe(&SSO_PM_Source_Cbk);
       pm_req.handle_id = SSO_PM_Source_Cbk[pm_req.source].handles;
@@ -115,7 +115,7 @@ void SSO_PM_Init_120AC_Source(union State_Machine * const fsm)
       !SSO_PM_Source_Cbk[SSO_PM_120AC_SOURCE].is_active)
    {
       SSO_PM_Source_Cbk[SSO_PM_120AC_SOURCE].vtbl->acquire_source(
-            SSO_PM_Source_Cbk + SSO_PM_120AC_SOURCE, SSO_PM_12VDC_SOURCE);
+            SSO_PM_Source_Cbk + SSO_PM_120AC_SOURCE);
    }
 
    if(SSO_PM_Source_Cbk[SSO_PM_120AC_SOURCE].handles)
@@ -190,7 +190,7 @@ bool SSO_PM_12VDC_Guard(union State_Machine * const fsm, union St_Machine_State 
          do_transition = 0 == SSO_PM_Source_Cbk[SSO_PM_12VDC_SOURCE].handles &&
                      SSO_PM_Source_Cbk[SSO_PM_12VDC_SOURCE].is_active;
          break;
-      case SSO_PM_12VDC_ON_STID: //init 12vdc
+      case SSO_PM_12VDC_STID: //init 12vdc
          do_transition = SSO_PM_Source_Cbk[SSO_PM_12VDC_SOURCE].handles &&
                      !SSO_PM_Source_Cbk[SSO_PM_12VDC_SOURCE].is_active;
          break;
