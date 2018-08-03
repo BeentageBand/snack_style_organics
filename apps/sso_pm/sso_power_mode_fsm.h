@@ -45,7 +45,7 @@ typedef union SSO_PM_FSM
     {
         union FSM FSM;
         SSO_PM_Source_T _private active[SSO_PM_MAX_SOURCE];
-        SSO_PM_Handle_T _private * _private source; 
+        SSO_PM_Handle_Req_T _private * _private source; 
         size_t _private n_sources;
     };
 	union State_Machine State_Machine;
@@ -55,7 +55,7 @@ typedef union SSO_PM_FSM
 typedef union SSO_PM_FSM_Class
 {
     struct Class Class;
-	union State_Machine_Class State_Machine;
+	struct State_Machine_Class State_Machine;
     union FSM_Class FSM;
 }SSO_PM_FSM_Class_T;
 

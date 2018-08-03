@@ -32,7 +32,7 @@ extern "C"
  *=====================================================================================*/
 typedef union SSO_PM_Worker
 {
-    union SSO_PM_Worker_Class _private * private vtbl;
+    union SSO_PM_Worker_Class _private * _private vtbl;
     union Worker Worker;
     struct Object Object;
 }SSO_PM_Worker_T;
