@@ -38,7 +38,7 @@
  * Local Function Prototypes
  *=====================================================================================*/
 static void sso_pm_release_all(union SSO_PM_Worker * const sso_pm, union Mail * const mail);
-static void sso_pm_request_power(union SSO_PM_Worker * const sso_pm, union Mail * const mail);
+static void sso_pm_power_request(union SSO_PM_Worker * const sso_pm, union Mail * const mail);
 /*=====================================================================================* 
  * Local Object Definitions
  *=====================================================================================*/
