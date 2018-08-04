@@ -27,7 +27,7 @@
  * Local Define Macros
  *=====================================================================================*/
 #define SSO_PM_PROCESS_POPULATE_SUBSCRIPTION(mid, func) mid,
-#define SSO_PM_PROCESS_POPULATE_DISPATCHER(mid, func) {mid, func}
+#define SSO_PM_PROCESS_POPULATE_DISPATCHER(mid, func) {mid, func},
 /*=====================================================================================* 
  * Local Type Definitions
  *=====================================================================================*/
@@ -48,12 +48,12 @@ static void sso_pm_request_power(union SSO_PM_Worker * const sso_pm, union Mail 
  *=====================================================================================*/
 IPC_MID_T SSO_PM_Subscription_Mailist [] = 
 {
-	SSO_PM_SUBSCRIPTION_MAILIST(SSO_PM_PROCESS_POPULATE_SUBSCRIPTION)
+   SSO_PM_SUBSCRIPTION_MAILIST(SSO_PM_PROCESS_POPULATE_SUBSCRIPTION)
 };
 
 SSO_PM_Processed_MID_T SSO_Process_List [] =
 {
-	SSO_PM_PROCESS_MAILIST(SSO_PM_PROCESS_POPULATE_DISPATCHER)
+   SSO_PM_PROCESS_MAILIST(SSO_PM_PROCESS_POPULATE_DISPATCHER)
 };
 /*=====================================================================================* 
  * Local Inline-Function Like Macros
@@ -69,8 +69,8 @@ void sso_pm_release_all(union SSO_PM_Worker * const sso_pm, union Mail * const m
 
 void sso_pm_power_request(union SSO_PM_Worker * const sso_pm, union Mail * const mail)
 {
-	SSO_PM_Handle_Req_T pm_req = *(SSO_PM_Handle_Req_T *)mail->payload;
-	SSO_PM_Handle_Req_Queue.vtbl->push_front(&SSO_PM_Handle_Req_Queue, pm_req);
+   SSO_PM_Handle_Req_T pm_req = *(SSO_PM_Handle_Req_T *)mail->payload;
+   SSO_PM_Handle_Req_Queue.vtbl->push_front(&SSO_PM_Handle_Req_Queue, pm_req);
 }
 
 /*=====================================================================================* 

@@ -94,27 +94,27 @@ void sso_pm_delete(struct Object * const obj)
 
 void sso_pm_acquire(union SSO_PM * const this)
 {
-	SSO_PM_Handle_Req_T pm_req = 
-	{
-		IPC_Self(),
-		this->handle_id,
-		{ SSO_POWER_ACQUIRE_REQ, this->source}
-	};
+   SSO_PM_Handle_Req_T pm_req = 
+   {
+      IPC_Self(),
+      this->handle_id,
+      { SSO_POWER_ACQUIRE_REQ, this->source}
+   };
 
-	IPC_Send(SSO_PM_TID, SSO_PM_INT_POWER_ACQUIRE_REQ_MID, &pm_req, sizeof(pm_req));
+   IPC_Send(SSO_PM_TID, SSO_PM_INT_POWER_ACQUIRE_REQ_MID, &pm_req, sizeof(pm_req));
     sso_pm_get_handle_id(this);
 }
 
 void sso_pm_release(union SSO_PM * const this)
 {
-	SSO_PM_Handle_Req_T pm_req = 
-	{
-		IPC_Self(),
-		this->handle_id,
-		{ SSO_POWER_RELEASE_REQ, this->source}
-	};
+   SSO_PM_Handle_Req_T pm_req = 
+   {
+      IPC_Self(),
+      this->handle_id,
+      { SSO_POWER_RELEASE_REQ, this->source}
+   };
 
-	IPC_Send(SSO_PM_TID, SSO_PM_INT_POWER_RELEASE_REQ_MID, &pm_req, sizeof(pm_req));
+   IPC_Send(SSO_PM_TID, SSO_PM_INT_POWER_RELEASE_REQ_MID, &pm_req, sizeof(pm_req));
     sso_pm_get_handle_id(this);
 }
 void sso_pm_get_handle_id(union SSO_PM * const this)

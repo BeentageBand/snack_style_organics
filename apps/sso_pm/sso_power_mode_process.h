@@ -25,9 +25,9 @@
  *=====================================================================================*/
 #define SSO_PM_PROCESS_MAILIST(X) \
 SSO_PM_SUBSCRIPTION_MAILIST(X) \
-X(SSO_PM_INT_REL_ALL_MID,    sso_pm_release_all) \
-X(SSO_PM_INT_12VDC_REQ_MID,  sso_pm_power_request) \
-X(SSO_PM_INT_12VDC_REL_MID,  sso_pm_power_request) \
+X(SSO_PM_INT_REL_ALL_MID,            sso_pm_release_all) \
+X(SSO_PM_INT_POWER_ACQUIRE_REQ_MID,  sso_pm_power_request) \
+X(SSO_PM_INT_POWER_RELEASE_REQ_MID,  sso_pm_power_request) \
 
 /*=====================================================================================*
  * Exported Define Macros
