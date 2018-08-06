@@ -12,8 +12,10 @@
 /*=====================================================================================*
  * Project Includes
  *=====================================================================================*/
-#include "sso_power_mode_wn.h"
+#ifdef SSO_ENABLE
 #include "pwm.h"
+#endif /*SSO_ENABLE*/
+#include "sso_power_mode_wn.h"
 #include "sso_power_mode_fsm.h"
 #include "sso_power_mode_process.h"
 /*=====================================================================================* 

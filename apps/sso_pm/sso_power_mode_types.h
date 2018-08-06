@@ -62,6 +62,8 @@ typedef struct SSO_PM_Handle_Req
 		SSO_PM_Source_T source :6;
 	};
 }SSO_PM_Handle_Req_T;
+
+typedef void (* SSO_PM_Process_T)(union SSO_PM_Worker * sso_pm, union Mail * const);
 /*=====================================================================================* 
  * snack_power_mode_types.h
  *=====================================================================================*

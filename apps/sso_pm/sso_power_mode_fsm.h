@@ -34,6 +34,10 @@ FSM_STATE_DEF(cb, SSO_PM_SHUT_STID, \
 
 #define SSO_PM_Do_Nothing (NULL)
 
+#ifdef __plusplus
+extern "C" {
+#endif
+
 #define CQueue_Params SSO_PM_Handle_Req
 #include "cqueue.h"
 #undef CQueue_Params 
@@ -63,4 +67,7 @@ extern SSO_PM_FSM_Class_T _private SSO_PM_FSM_Class;
 
 extern void Populate_SSO_PM_FSM(union SSO_PM_FSM * const fsm);
 
+#ifdef __plusplus
+}
+#endif
 #endif /*SSO_POWER_MODE_FSM_H_*/
