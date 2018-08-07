@@ -29,6 +29,7 @@ X(SSO_PM_INT_REL_ALL_MID,            sso_pm_release_all) \
 X(SSO_PM_INT_POWER_ACQUIRE_REQ_MID,  sso_pm_power_request) \
 X(SSO_PM_INT_POWER_RELEASE_REQ_MID,  sso_pm_power_request) \
 
+#define SSO_PM_PROCESS_POPULATE_SUBSCRIPTION(mid, func) mid,
 /*=====================================================================================*
  * Exported Define Macros
  *=====================================================================================*/

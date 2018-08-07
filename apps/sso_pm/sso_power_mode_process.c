@@ -46,11 +46,6 @@ static void sso_pm_power_request(union SSO_PM_Worker * const sso_pm, union Mail 
 /*=====================================================================================* 
  * Exported Object Definitions
  *=====================================================================================*/
-IPC_MID_T SSO_PM_Subscription_Mailist [] = 
-{
-   SSO_PM_SUBSCRIPTION_MAILIST(SSO_PM_PROCESS_POPULATE_SUBSCRIPTION)
-};
-
 SSO_PM_Processed_MID_T SSO_Process_List [] =
 {
    SSO_PM_PROCESS_MAILIST(SSO_PM_PROCESS_POPULATE_DISPATCHER)
