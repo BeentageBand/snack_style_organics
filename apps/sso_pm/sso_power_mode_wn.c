@@ -72,13 +72,13 @@ IPC_MID_T SSO_PM_Subscription_Mailist [] =
  *=====================================================================================*/
 void sso_pm_worker_delete(struct Object * const obj)
 {
-    _delete(&SSO_PM_FSM)
+    _delete(&SSO_PM_FSM);
 }
 
 void sso_pm_worker_on_mail(union Worker * const worker, union Mail * const mail)
 {
     SSO_PM_Processed_MID_T * const process = SSO_PM_Dispatcher.vtbl->find(&SSO_PM_Dispatcher, mail->mid);
-    if(process != SSO_PM_Dispatcher.vtbl->end(&SSO_PM_Dispatcher))
+    if(process != SSO_PM_Dispatcher.CHash_Set_Pair_IPC_MID_SSO_PM_Process.vtbl->end(&SSO_PM_Dispatcher))
     {
         process->obj(&SSO_PM_Worker, mail);
         SSO_PM_FSM.State_Machine.vtbl->dispatch(&SSO_PM_FSM, mail);
