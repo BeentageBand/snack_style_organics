@@ -6,6 +6,7 @@
    FID(APP_FID,            DBG_WARN_LVL, "Application") \
    FID(IPC_FID,            DBG_WARN_LVL, "IPC FrameWork") \
    FID(STATE_MACHINE_FID,  DBG_WARN_LVL, "State Machine") \
+   FID(SSO_PM_FID,         DBG_WARN_LVL, "Snack Style Organics Power Mode App") \
 
 #define Dbg_Log_Print(feat_id, lvl, line, ...) \
     Dbg_Log(lvl, IFF_1(__VA_ARGS__), feat_id, \

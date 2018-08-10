@@ -9,12 +9,14 @@
  */
 /*=====================================================================================*/
 #define COBJECT_IMPLEMENTATION
+#define Dbg_FID SSO_PM_FID, 1
 /*=====================================================================================*
  * Project Includes
  *=====================================================================================*/
 #ifdef SSO_ENABLE
 #include "pwm.h"
 #endif /*SSO_ENABLE*/
+#include "dbg_log.h"
 #include "sso_power_mode_wn.h"
 #include "sso_power_mode_fsm.h"
 #include "sso_power_mode_process.h"
