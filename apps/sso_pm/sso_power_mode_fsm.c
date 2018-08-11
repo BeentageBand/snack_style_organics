@@ -1,8 +1,10 @@
 #define COBJECT_IMPLEMENTATION
+#define Dbg_FID SSO_PM_FID,2
+#include "dbg_log.h"
+#include "ipc.h"
 #include "sso_power_mode_ext.h"
 #include "sso_power_mode_fsm.h"
 #include "sso_power_mode_process.h"
-#include "ipc.h"
 
 #define CQueue_Params SSO_PM_Handle_Req
 #include "cqueue.c"
@@ -36,15 +38,18 @@ union SSO_PM_FSM_Class SSO_PM_FSM_Class =
 };
 FSM_Declare_Chart(SSO_PM_FSM_DEF, SSO_PM_St_Chart)
 
+void sso_pm_fsm_delete(struct Object * const obj)
+{}
+
 void sso_pm_init_source(SSO_PM_Source_T const pm_src)
 {
    switch(pm_src)
    {
       case SSO_PM_120AC_SOURCE:
-         IPC_Self_Send(SSO_PM_INT_120AC_INIT_MID, NULL, 0);
+         IPC_Send_Self(SSO_PM_INT_120AC_INIT_MID, NULL, 0);
          break;
       case SSO_PM_12VDC_SOURCE:
-         IPC_Self_Send(SSO_PM_INT_12VDC_INIT_MID, NULL, 0);
+         IPC_Send_Self(SSO_PM_INT_12VDC_INIT_MID, NULL, 0);
          break;
       default: break;
    }
@@ -55,10 +60,10 @@ void sso_pm_shut_source(SSO_PM_Source_T const pm_src)
    switch(pm_src)
    {
       case SSO_PM_120AC_SOURCE:
-         IPC_Self_Send(SSO_PM_INT_120AC_SHUT_MID, NULL, 0);
+         IPC_Send_Self(SSO_PM_INT_120AC_SHUT_MID, NULL, 0);
          break;
       case SSO_PM_12VDC_SOURCE:
-         IPC_Self_Send(SSO_PM_INT_12VDC_SHUT_MID, NULL, 0);
+         IPC_Send_Self(SSO_PM_INT_12VDC_SHUT_MID, NULL, 0);
          break;
       default: break;
    }
@@ -215,7 +220,7 @@ bool SSO_PM_120AC_Guard(union State_Machine * const fsm, union St_Machine_State 
    }
    return do_transition;
 }
-bool SSO_PM_SHUT_STID_Guard(union State_Machine * const fsm, union St_Machine_State * const state)
+bool SSO_PM_Shut_Guard(union State_Machine * const fsm, union St_Machine_State * const state)
 {
    return true;
 }

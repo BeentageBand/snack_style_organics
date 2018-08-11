@@ -14,6 +14,7 @@
  * Project Includes
  *=====================================================================================*/
 #include "ipc_types.h"
+#include "mail.h"
 #include "sso_power_mode_uset.h"
 #include "std_reuse.h"
 /*=====================================================================================* 
@@ -30,14 +31,14 @@
 #undef PMODE_SOURCE
 #define PMODE_SOURCE(src, osc) src,
 
-typedef enum
+enum SSO_SOURCE
 {
    POWER_MODE_SOURCES_TB
    SSO_PM_MAX_SOURCE
 };
 typedef uint8_t SSO_PM_Source_T;
 
-typedef enum SSO_PM_STID
+enum SSO_PM_STID
 {
     SSO_PM_IDLE_STID, /* Board power (5V), Sensors, Data Logger) */
     SSO_PM_12VDC_STID, /* Add +-12VDC, fan, drivers */
@@ -63,7 +64,7 @@ typedef struct SSO_PM_Handle_Req
 	};
 }SSO_PM_Handle_Req_T;
 
-typedef void (* SSO_PM_Process_T)(union SSO_PM_Worker * sso_pm, union Mail * const);
+typedef void (* SSO_PM_Process_T)(union SSO_PM_Worker * const sso_pm, union Mail * const);
 /*=====================================================================================* 
  * snack_power_mode_types.h
  *=====================================================================================*

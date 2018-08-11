@@ -16,8 +16,8 @@
 #ifdef ENABLE_SSO
 #include "snacky_dehyd_ctl.h"
 #include "snack_org_lcd.h"
-#include "sso_power_mode.h"
 #endif
+#include "sso_power_mode_wn.h"
 /*=====================================================================================* 
  * Standard Includes
  *=====================================================================================*/
@@ -25,7 +25,7 @@
 /*=====================================================================================* 
  * Exported X-Macros
  *=====================================================================================*/
-#define SSO_TASKS_TABLE(SSO_TASK) \
+#define SSO_APP_TASK_DEF(SSO_TASK) \
          /* Class, Worker Id,  Dependencies*/\
    SSO_TASK(SSO_PM, SSO_PM_TID, APP_NO_DEPS) \
    /*

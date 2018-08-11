@@ -3,7 +3,7 @@
 
 #define DBG_FID_LIST(FID) \
 	/*  Feature ID,        Dbg Level,    Description */ \
-   FID(APP_FID,            DBG_WARN_LVL, "Application") \
+   FID(APP_FID,            DBG_INFO_LVL, "Application") \
    FID(IPC_FID,            DBG_WARN_LVL, "IPC FrameWork") \
    FID(STATE_MACHINE_FID,  DBG_WARN_LVL, "State Machine") \
    FID(SSO_PM_FID,         DBG_WARN_LVL, "Snack Style Organics Power Mode App") \

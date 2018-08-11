@@ -54,7 +54,12 @@ static bool NEG_Source_Signal = false;
 /*=====================================================================================* 
  * Exported Object Definitions
  *=====================================================================================*/
-union SSO_PM_Source_Cbk SSO_PM_Source_Cbk[] = {{NULL}};
+union SSO_PM_Source_Cbk SSO_PM_Source_Cbk[SSO_PM_MAX_SOURCE] =
+{
+      {NULL},
+      {NULL}
+};
+
 SSO_PM_Source_Cbk_T _private SSO_PM_Source_Cbk_Class =
 {
       {NULL, NULL}

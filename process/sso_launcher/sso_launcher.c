@@ -15,7 +15,7 @@
 
 #define SSO_APP_TASK_SWITCH(name, id, desc) \
 case id: \
-   static union name name = {{NULL}}; \
+   static union name name = {NULL}; \
    if (NULL == name.vtbl) \
    { \
     Method_Name(Populate, name)(&name, id); \
@@ -27,14 +27,18 @@ static union Worker * SSO_App_Factory_Method(IPC_TID_T const tid);
 
 union Worker * SSO_App_Factory_Method(IPC_TID_T const tid)
 {
+   static union SSO_PM_Worker sso_pm;
    union Worker * worker = NULL;
-#ifdef ENABLE_SSO
    switch(tid)
    {
-      SSO_APP_TASK_DEF(SSO_APP_TASK_SWITCH)
+      //SSO_APP_TASK_DEF(SSO_APP_TASK_SWITCH)
+      case SSO_PM_TID:
+      if(NULL == sso_pm.vtbl)
+        Populate_SSO_PM_Worker(&sso_pm);
+      worker = &sso_pm.Worker;
+      break;
       default: break;
    }
-#endif
    return worker;
 }
 

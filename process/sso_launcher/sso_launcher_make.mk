@@ -2,14 +2,14 @@ define $(_flavor_)_$(_feat_)_MAKE
 $(_flavor_)_$(_feat_)_inc=sso_task_def.h
 $(_flavor_)_$(_feat_)_bin_objs=sso_launcher
 $(_flavor_)_$(_feat_)_bin_libs=\
-   cobject \
-   application \
-   sso_friends \
-   ipc \
-   ipc_posix \
-   state_machine \
-   dbg_log \
    sso_power_mode \
+   sso_friends \
+   application \
+   state_machine \
+   ipc_posix \
+   ipc \
+   dbg_log \
+   cobject \
 #\
     
 $(_flavor_)_$(_feat_)_bin=sso_launcher

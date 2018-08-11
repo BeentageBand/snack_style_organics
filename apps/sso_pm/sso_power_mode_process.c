@@ -50,6 +50,8 @@ SSO_PM_Processed_MID_T SSO_Process_List [] =
 {
    SSO_PM_PROCESS_MAILIST(SSO_PM_PROCESS_POPULATE_DISPATCHER)
 };
+SSO_PM_Dispatcher_T SSO_PM_Dispatcher = {NULL};
+CQueue_SSO_PM_Handle_Req_T SSO_PM_Handle_Req_Queue = {NULL};
 /*=====================================================================================* 
  * Local Inline-Function Like Macros
  *=====================================================================================*/

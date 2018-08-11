@@ -53,8 +53,8 @@ typedef Pair_IPC_MID_SSO_PM_Process_T SSO_PM_Processed_MID_T;
  *=====================================================================================*/
 extern IPC_MID_T SSO_PM_Subscription_Mailist [];
 extern SSO_PM_Processed_MID_T SSO_Process_List [];
-extern SSO_PM_Dispatcher_T SSO_PM_Dispatcher = {NULL};
-extern CQueue_SSO_PM_Handle_Req_T SSO_PM_Handle_Req_Queue = {NULL};
+extern SSO_PM_Dispatcher_T SSO_PM_Dispatcher;
+extern CQueue_SSO_PM_Handle_Req_T SSO_PM_Handle_Req_Queue;
 /*=====================================================================================* 
  * Exported Function Prototypes
  *=====================================================================================*/

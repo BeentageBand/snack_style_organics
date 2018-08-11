@@ -17,6 +17,7 @@
 #include "pwm.h"
 #endif /*SSO_ENABLE*/
 #include "dbg_log.h"
+#include "ipc.h"
 #include "sso_power_mode_wn.h"
 #include "sso_power_mode_fsm.h"
 #include "sso_power_mode_process.h"
@@ -50,7 +51,7 @@ static void sso_pm_worker_on_stop(union Worker * const worker);
  *=====================================================================================*/
 static union SSO_PM_Worker SSO_PM_Worker = {{NULL}};
 static union Mail SSO_PM_Mail_Buff[64] = {{NULL}};
-static SSO_PM_Handle_Req_T SSO_PM_Handle_Req_Buff[SSO_PM_MAX_SOURCE][SSO_PM_POWER_REQUEST_BUFF_SZ];
+static SSO_PM_Handle_Req_T SSO_PM_Handle_Req_Buff[SSO_PM_POWER_REQUEST_BUFF_SZ];
 static union SSO_PM_FSM SSO_PM_FSM = {NULL};
 /*=====================================================================================* 
  * Exported Object Definitions
@@ -83,7 +84,7 @@ void sso_pm_worker_on_mail(union Worker * const worker, union Mail * const mail)
     if(process != SSO_PM_Dispatcher.CHash_Set_Pair_IPC_MID_SSO_PM_Process.vtbl->end(&SSO_PM_Dispatcher))
     {
         process->obj(&SSO_PM_Worker, mail);
-        SSO_PM_FSM.State_Machine.vtbl->dispatch(&SSO_PM_FSM, mail);
+        SSO_PM_FSM.State_Machine.vtbl->dispatch(&SSO_PM_FSM.State_Machine, mail);
     }
 }
 
@@ -93,9 +94,9 @@ void sso_pm_worker_on_mail(union Worker * const worker, union Mail * const mail)
 
 void sso_pm_worker_on_start(union Worker * const worker)
 {
-    IPC_Subscribe(SSO_PM_Subscription_Mailist, Num_Elems(SSO_PM_Subscription_Mailist));
+    IPC_Subscribe_Mailist(SSO_PM_Subscription_Mailist, Num_Elems(SSO_PM_Subscription_Mailist));
     Dbg_Info("%s: start SSO PM FSM", __func__);
-    SSO_PM_FSM.State_Machine.vtbl->dispatch(&SSO_PM_FSM, NULL);
+    SSO_PM_FSM.State_Machine.vtbl->dispatch(&SSO_PM_FSM.State_Machine, NULL);
 }
 
 void sso_pm_worker_on_loop(union Worker * const worker)
@@ -105,7 +106,7 @@ void sso_pm_worker_on_loop(union Worker * const worker)
 
 void sso_pm_worker_on_stop(union Worker * const worker)
 {
-   IPC_Unsubscribe(SSO_PM_Subscription_Mailist, Num_Elems(SSO_PM_Subscription_Mailist));
+   IPC_Unsubscribe_Mailist(SSO_PM_Subscription_Mailist, Num_Elems(SSO_PM_Subscription_Mailist));
 }
 /*=====================================================================================* 
  * Exported Function Definitions
@@ -128,7 +129,7 @@ void Populate_SSO_PM_Worker(union SSO_PM_Worker * const this)
         SSO_PM_Worker_Class.Worker.on_start = sso_pm_worker_on_start;
         SSO_PM_Worker_Class.Worker.on_loop = sso_pm_worker_on_loop;
         SSO_PM_Worker_Class.Worker.on_stop = sso_pm_worker_on_stop;
-        Populate_SSO_PM_Handle_Req(&SSO_PM_Handle_Req_Queue,
+        Populate_CQueue_SSO_PM_Handle_Req(&SSO_PM_Handle_Req_Queue,
                                     SSO_PM_Handle_Req_Buff, 
                                     Num_Elems(SSO_PM_Handle_Req_Buff));
         Populate_SSO_PM_FSM(&SSO_PM_FSM);

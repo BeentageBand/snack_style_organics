@@ -43,6 +43,7 @@ typedef union SSO_PM_Source_Cbk
 
 typedef struct SSO_PM_Source_Cbk_Class
 {
+	struct Class Class;
 	void (* _private subscribe)(union SSO_PM_Source_Cbk * const);
 	void (* _private unsubscribe)(union SSO_PM_Source_Cbk * const);
 	void (* _private init_source)(union SSO_PM_Source_Cbk * const);
