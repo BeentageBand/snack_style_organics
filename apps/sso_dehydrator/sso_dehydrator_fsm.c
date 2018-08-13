@@ -17,6 +17,18 @@ static void SSO_Dehyd_Sunlight_Start_Ctl(union State_Machine * const stm);
 static void SSO_Dehyd_Switch_Op(union State_Machine * const stm);
 static void SSO_Dehyd_Stop_Ctl(union State_Machine * const stm);
 
+static void sso_dehyd_fsm_delete(struct Object * const obj);
+
+static union SSO_Dehyd_FSM SSO_Dehyd_FSM = {NULL};
+static union St_Machine_State SSO_Dehyd_FSM_States[SSO_DEHYD_MAX_STID] = {{0}};
+
+union SSO_Dehyd_FSM_Class SSO_Dehyd_FSM_Class =
+{
+    {sso_dehyd_fsm_delete, &FSM_Class}
+};
+
+FSM_Declare_Chart(SSO_DEHYD_FSM_DEF, SSO_Dehyd_St_Chart)
+
 bool SSO_Dehyd_Ready_Guard(union State_Machine * const st_m, union St_Machine_State * const st)
 {
     union SSO_Dehyd_FSM * const fsm = _cast(SSO_Dehyd_FSM, st_m);
@@ -179,4 +191,22 @@ void SSO_Dehyd_Stop_Ctl(union State_Machine * const stm)
 
     union Timer * const pid_timer = fsm->pid_timer;
     pid_timer->vtbl->stop(pid_timer);
+}
+
+void sso_dehyd_fsm_delete(struct Object * const obj)
+{}
+
+void Populate_SSO_Dehyd_FSM(union SSO_Dehyd_FSM * const this,
+ union PID_Ctl * const cooler_ctl,
+ union PID_Ctl * const heater_ctl,)
+{
+    if(NULL == SSO_Dehyd_FSM.vtbl)
+    {
+        Populate_FSM(&SSO_Dehyd_FSM.FSM,
+        SSO_Dehyd_St_Chart,
+        Num_Elems(SSO_Dehyd_St_Chart),
+        SSO_Dehyd_FSM_States,
+        Num_Elems(SSD_Dehyd_FSM_States));
+    }
+    _clone(this, SSO_Dehyd_FSM);
 }

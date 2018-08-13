@@ -1,6 +1,7 @@
 #ifndef SSO_DEHYD_CTL_DISPATCHER_H_
 #define SSO_DEHYD_CTL_DISPATCHER_H_
 
+#include "state_machine.h"
 #include "worker.h"
 
 typedef union SSO_Dehyd_Worker
@@ -21,6 +22,8 @@ typedef union SSO_Dehyd_Worker_Class
     union State_Machine_Class State_Machine;
     struct Class Class;
 }SSO_Dehyd_Worker_Class_T;
+
+extern union SSO_Dehyd_Worker_Class _private SSO_Dehyd_Worker_Class;
 
 extern void Populate_SSO_Dehyd_Worker(union SSO_Dehyd_Worker * const dehyd);
 
