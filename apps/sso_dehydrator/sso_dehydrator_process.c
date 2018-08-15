@@ -40,9 +40,15 @@ void sso_dehyd_temperature_monitor_update(union SSO_Dehyd_Worker * const dehyd, 
 
 void sso_dehyd_pid_timeout(union SSO_Dehyd_Worker * const dehyd, union Mail * const mail)
 {
-    if(dehyd->heater_ctl->is_running)
-        dehyd->heater_ctl->vtbl->feed_pid(dehyd->heater_ctl, dehyd->temp_reading);
+    union SSO_Dehyd_FSM * const fsm = _cast(SSO_Dehyd_FSM, dehyd->fsm)
+    if(fsm->heater_ctl->is_running)
+        fsm->heater_ctl->vtbl->loop(fsm->heater_ctl, fsm->temp_reading);
 
-    if(dehyd->cooler_ctl.is_running)
-        dehyd->cooler_ctl->vtbl->feed_pid(dehyd->heater_ctl, dehyd->temp_reading);
+    if(fsm->cooler_ctl.is_running)
+        fsm->cooler_ctl->vtbl->loop(fsm->cooler_ctl, fsm->temp_reading);
+}
+
+void sso_dehyd_release(union SSO_Dehyd_Worker * const dehyd, union Mail * const mail)
+{
+
 }

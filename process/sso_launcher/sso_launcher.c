@@ -9,7 +9,6 @@
 #include "sso_friends.h"
 #ifdef ENABLE_SSO
 #include "sso_lcd.h"
-#include "sso_dehyd_ctl.h"
 #include "sso_monitor.h"
 #endif
 
@@ -27,15 +26,21 @@ static union Worker * SSO_App_Factory_Method(IPC_TID_T const tid);
 
 union Worker * SSO_App_Factory_Method(IPC_TID_T const tid)
 {
-   static union SSO_PM_Worker sso_pm;
+   static union SSO_PM_Worker sso_pm = {NULL};
+   static union SSO_Dehyd_Worker sso_dehyd = {NULL};
    union Worker * worker = NULL;
    switch(tid)
    {
       //SSO_APP_TASK_DEF(SSO_APP_TASK_SWITCH)
-      case SSO_PM_TID:
+      case SSO_PM_WORKER_TID:
       if(NULL == sso_pm.vtbl)
         Populate_SSO_PM_Worker(&sso_pm);
       worker = &sso_pm.Worker;
+      break;
+
+      case SSO_DEHYD_WORKER_TID:
+      if(NULL == sso_dehyd.vtbl)
+        Populate_SSO_Dehyd_Worker(&sso_dehyd);
       break;
       default: break;
    }

@@ -19,7 +19,7 @@ typedef union SSO_Dehyd_Worker
 typedef union SSO_Dehyd_Worker_Class
 {
     union Worker_Class Worker;
-    union State_Machine_Class State_Machine;
+    struct Thread_Class Thread;
     struct Class Class;
 }SSO_Dehyd_Worker_Class_T;
 

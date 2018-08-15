@@ -2,8 +2,10 @@
 #define SSO_DEHYDRATOR_PROCESS_H_
 
 #include "sso_dehydrator_types.h"
+#include "sso_dehydrator_uset.h"
+#include "sso_dehydrator_worker.h"
 
-SSO_DEHYD_PROCESS_MAILIST(X) \
+#define SSO_DEHYD_PROCESS_MAILIST(X) \
 SSO_DEHYD_SUBSCRIPTION_MAILIST(X) \
 X(SSO_DEHYD_INT_SUNLIGHT_UPDATE_MID,  SSO_Dehyd_Update_Sunlight_Reading)\
 X(SSO_DEHYD_INT_TEMP_UPDATE_MID,      SSO_Dehyd_Update_Temperature_Reading) \
