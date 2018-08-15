@@ -1,7 +1,8 @@
 #ifndef SSO_DEHYDRATOR_FSM_H_
 #define SSO_DEHYDRATOR_FSM_H_
 
-#define SSO_DEHYD_DEF(cb) \
+#include "fsm.h"
+#define SSO_DEHYD_FSM_DEF(cb) \
 FSM_STATE_DEF(cb, SSO_DEHYD_IDLE_STID, \
      FSM_TRANSITION_DEF(cb, SSO_DEHYD_INT_SUNLIGHT_UPDATE_MID, SSO_DEHYD_READY_STID,  SSO_Dehyd_Ready_Guard, SSO_Dehyd_Gets_Ready) \
      FSM_TRANSITION_DEF(cb, SSO_DEHYD_INT_TEMP_UPDATE_MID,     SSO_DEHYD_READY_STID,  SSO_Dehyd_Ready_Guard, SSO_Dehyd_Gets_Ready) \
@@ -62,6 +63,8 @@ typedef union SSO_Dehyd_FSM_Class
     union State_Machine_Class State_Machine;
     struct Class Class;
 }SSO_Dehyd_FSM_Class_T;
+
+extern SSO_Dehyd_FSM_Class _private SSO_Dehyd_FSM_Class;
 
 extern void Populate_SSO_Dehyd_FSM(union SSO_Dehyd_FSM * const fsm);
 

@@ -46,7 +46,7 @@ static void sso_dehyd_worker_on_mail(union Worker * const worker, union Mail * c
 /*=====================================================================================* 
  * Local Object Definitions
  *=====================================================================================*/
-static union SSO_Dehyd_Worker = {NULL};
+static union SSO_Dehyd_Worker SSO_Dehyd_Worker = {NULL};
 static union Mail SSO_Dehyd_Mailbox_Buff[64] = {{0}};
 static union PID_Ctl SSO_Dehyd_Cooler = {NULL};
 static union PID_Ctl SSO_Dehyd_Heater = {NULL};
@@ -106,7 +106,7 @@ void sso_dehyd_worker_on_mail(union Worker * const super, union Mail * const mai
    Isnt_Nullptr(this, );
 
    /** handle events **/
-   SSO_Dehyd_IPC_MID_Process_T * process = SSO_Dehyd_Dispatcher.vtbl->find(&SSO_Dehyd_Dispatcher, mail->mid);
+   SSO_Dehyd_IPC_MID_SSO_Dehyd_Process_T * process = SSO_Dehyd_Dispatcher.vtbl->find(&SSO_Dehyd_Dispatcher, mail->mid);
    if(process != SSO_Dehyd_Dispatcher.CHash_Set_Pair_IPC_MID_SSO_Dehyd_Process.vtbl->end(&SSO_Dehyd_Dispatcher))
    {
       process->obj(this, mail);

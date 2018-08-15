@@ -20,6 +20,7 @@ static void SSO_Dehyd_Stop_Ctl(union State_Machine * const stm);
 static void sso_dehyd_fsm_delete(struct Object * const obj);
 
 static union SSO_Dehyd_FSM SSO_Dehyd_FSM = {NULL};
+static union SSO_Dehyd_Cbk SSO_Dehyd_Cbk = {NULL};
 static union St_Machine_State SSO_Dehyd_FSM_States[SSO_DEHYD_MAX_STID] = {{0}};
 
 union SSO_Dehyd_FSM_Class SSO_Dehyd_FSM_Class =
@@ -207,6 +208,11 @@ void Populate_SSO_Dehyd_FSM(union SSO_Dehyd_FSM * const this,
         Num_Elems(SSO_Dehyd_St_Chart),
         SSO_Dehyd_FSM_States,
         Num_Elems(SSD_Dehyd_FSM_States));
+        Object_Init(&SSO_Dehyd_FSM.Object,
+        &SSO_Dehyd_FSM_Class.Class,
+        sizeof(SSO_Dehyd_FSM_Class.FSM));
+
+        SSO_Dehyd_FSM.vtbl = &SSO_Dehyd_FSM_Class;
     }
     _clone(this, SSO_Dehyd_FSM);
 }

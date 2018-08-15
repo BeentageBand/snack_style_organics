@@ -12,12 +12,10 @@
 /*=====================================================================================*
  * Project Includes
  *=====================================================================================*/
-#include "../../../pid_controller/pk_pid_ctl_user/pid_ctl.h"
-
-#include "../../../../include/pid_ctl_set.h"
-#include "../../../pid_controller/pk_pid_ctl_code/_inc/pid_ctl_ext.h"
-#include "hama_dbg_trace.h"
-#include "std_def.h"
+#include "pid_ctl.h"
+#include "pid_ctl_set.h"
+#include "dbg_log.h"
+#include "ipc.h"
 /*=====================================================================================* 
  * Standard Includes
  *=====================================================================================*/
@@ -33,7 +31,6 @@
 /*=====================================================================================* 
  * Local Type Definitions
  *=====================================================================================*/
-
 
 typedef struct
 {
@@ -56,6 +53,20 @@ typedef struct
    Fix32_T b;
    Fix32_T c;
 }Pid_Ctl_T;
+
+/*=====================================================================================* 
+ * Local Function Prototypes
+ *=====================================================================================*/
+static void pid_ctl_set_point(union PID_Ctl * const this, PID_Fix32_T const set_point);
+static void pid_ctl_start(union PID_Ctl * const this, union PID_Driver * const driver);
+static void pid_ctl_stop(union PID_Ctl * const this);
+static void pid_ctl_loop(union PID_Ctl * const this, PID_Fix32_T const input);
+static PID_Fix32_T pid_ctl_feedback(union PID_Ctl * const this);
+
+static void pid_ctl_calculate_err(const uint8_t channel);
+static void pid_ctl_set_output(const uint8_t channel);
+static void pid_ctl_read_feedback(const uint8_t channel);
+static bool pid_ctl_wait_for_sample(void);
 /*=====================================================================================* 
  * Local Object Definitions
  *=====================================================================================*/
@@ -103,105 +114,80 @@ static uint32_t Sample_Tout = 0;
  *=====================================================================================*/
 
 /*=====================================================================================* 
- * Local Function Prototypes
- *=====================================================================================*/
-static void Pid_Ctl_Calculate_Err(const uint8_t channel);
-static void Pid_Ctl_Set_Output(const uint8_t channel);
-static void Pid_Ctl_Read_FeedBack(const uint8_t channel);
-static bool Wait_For_Sample(void);
-/*=====================================================================================* 
  * Local Inline-Function Like Macros
  *=====================================================================================*/
 
 /*=====================================================================================* 
  * Local Function Definitions
  *=====================================================================================*/
-void Pid_Ctl_Calculate_Err(const uint8_t channel)
+void pid_ctl_calculate_err(jconst uint8_t channel)
 {
-   const Pid_Ctl_T * pid_ptr = reinterpret_cast<const Pid_Ctl_T *>( pgm_read_ptr(Pid_Laws_Coeff + channel));
-   Pid_Ctl_T pid_coeffs =
-   {
-         static_cast<Fix32_T>( pgm_read_dword(pid_ptr->a) ),
-         static_cast<Fix32_T>( pgm_read_dword(pid_ptr->b) ),
-         static_cast<Fix32_T>( pgm_read_dword(pid_ptr->c) )
-   };
+   this->err[0] =
+            this->set_point - this->feedback;
 
-   Pid_Channels[channel].err[0] =
-            Pid_Channels[channel].set_point - Pid_Channels[channel].feedback;
-
-   Pid_Channels[channel].u_out[0] =
-            ( pid_coeffs.a * Pid_Channels[channel].u_out[1U]) +
-            ( pid_coeffs.b * Pid_Channels[channel].err[0]) +
-            ( pid_coeffs.c * Pid_Channels[channel].err[1U]);
+   this->u_out[0] =
+            ( this->driver->a * this->u_out[1U]) +
+            ( this->driver->b * this->err[0]) +
+            ( this->driver->c * this->err[1U]);
 }
 
-void Pid_Ctl_Set_Output(const uint8_t channel)
+void pid_ctl_set_output(const uint8_t channel)
 {
-   const Pid_Ctl_Callback_T * pid_cbk = reinterpret_cast<const Pid_Ctl_Callback_T *>(pgm_read_ptr(Pid_Callback + channel) );
-   void (*u_out_func)(const Fix32_T) = reinterpret_cast<void (*)(const Fix32_T)>(pgm_read_ptr(&pid_cbk->u_out_func));
-   u_out_func( Pid_Channels[channel].u_out[0] );
+      Isnt_Nullptr(this->driver, );
+      this->driver->vtbl->write_u(this->driver, this->u_out[0]);
 }
 
-void Pid_Ctl_Read_FeedBack(const uint8_t channel)
+void pid_ctl_read_feedback(PID_Ctl * const this)
 {
-   const Pid_Ctl_Callback_T * pid_cbk = reinterpret_cast<const Pid_Ctl_Callback_T *>(pgm_read_ptr(Pid_Callback + channel));
-   Fix32_T (*feedback_func)(void) = reinterpret_cast< Fix32_T (*)(void)>( pgm_read_ptr( &pid_cbk->feedback_func) );
-   Pid_Channels[channel].feedback = feedback_func();
+      this->err[0] = this->set_point - this->feedback;
 }
 
-bool Wait_For_Sample(void)
+bool pid_ctl_wait_for_sample(union PID_Ctl * const this)
 {
-   uint32_t time_now = pid::Get_Sample_Time();
-   TR_INFO_2("Waiting %ld == %ld", (long)time_now, (long)Sample_Tout);
-   return ( (time_now -  Sample_Tout) >= PID_CTL_TAU_COEFF_MS);
+   uint32_t time_now = IPC_Clock();
+   TR_INFO_2("Waiting %ld == %ld", (long)time_now, (long)this->time);
+   Isnt_Nullptr(this->driver, false);
+   return ( (time_now -  this->time) >= this->sample_tout);
 }
 /*=====================================================================================* 
  * Exported Function Definitions
  *=====================================================================================*/
-void pid::Init(void)
+void pid_ctl_start(union PID_Ctl * const this, union PID_Driver * const driver);
 {
-   memset(Pid_Channels, 0, sizeof(Pid_Channels) );
-   Sample_Tout = pid::Get_Sample_Time();
+      this->time_now = IPC_Clock();
+      this->driver = driver;
 }
 
-void pid::Set_Point(const PID_CHANNEL_T channel, const Fix32_T val)
+void pid_ctl_set_point(union PID_Ctl * const this, PID_Fix32_T const set_point)
 {
    TR_INFO_2("pid::Set_Point pid_ch = %d, val %d", channel,(int32_t)val);
-   Pid_Channels[channel].set_point = val;
+   this->set_point = set_point;
 }
 
-Fix32_T pid::Get_Feedback(const PID_CHANNEL_T channel)
+PID_Fix32_T pid_ctl_feedback(union PID_Ctl * const this)
 {
-   return Pid_Channels[channel].feedback;
+      return this->feedback;
 }
 
-void pid::Run(const PID_CHANNEL_T channel)
+void pid_ctl_stop(union PID_Ctl * const this)
 {
-   Pid_Channels[channel].is_running = true;
+   this->driver = NULL;
 }
 
-void pid::Stop(const PID_CHANNEL_T channel)
+void pid_ctl_loop(union PID_Ctl * const this, PID_Fix32_T const input_sample)
 {
-   Pid_Channels[channel].is_running = false;
-}
-
-void pid::Main(void)
-{
-   if(Wait_For_Sample())
+   if(pid_ctl_wait_sample())
    {
-      Sample_Tout = pid::Get_Sample_Time();
-      for(uint8_t i =0; i < PID_CTL_MAX_CHANNELS ;i++)
+      IPC_Clock_T sample_tout = IPC_Clock() - this->time;
+      this->time = sample_tout;
+
+      if (this->driver)
       {
-         if(Pid_Channels[i].is_running)
-         {
-
-            Pid_Channels[i].u_out[1U] = Pid_Channels[i].u_out[0];
-            Pid_Channels[i].err[1U] = Pid_Channels[i].err[0];
-
-            Pid_Ctl_Read_FeedBack(i);
-            Pid_Ctl_Calculate_Err(i);
-            Pid_Ctl_Set_Output(i);
-         }
+            this->u_out[1U] = this->u_out[0];
+            this->err[1U] = this->err[0];
+            pid_ctl_read_feedback(this);
+            pid_ctl_calculate_err(this);
+            pid_ctl_set_output(this);
       }
    }
 }
