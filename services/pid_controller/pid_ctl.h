@@ -39,7 +39,7 @@ typedef union PID_Ctl
         struct Object Object;
         PID_Fix32_T _private set_point;
         PID_Fix32_T _private feedback;
-        IPC_Clock_T _private time;
+        IPC_Clock_T _private sample_tout;
         union PID_Driver _private * _private driver;
     };
 }PID_Ctl_T;

@@ -6,6 +6,7 @@ $(_flavor_)_$(_feat_)_bin_libs=\
    sso_power_mode \
    sso_friends \
    application \
+   pid_ctl \
    state_machine \
    ipc_posix \
    ipc \

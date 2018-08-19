@@ -2,6 +2,8 @@
 #define SSO_DEHYDRATOR_FSM_H_
 
 #include "fsm.h"
+#include "pid_ctl.h"
+
 #define SSO_DEHYD_FSM_DEF(cb) \
 FSM_STATE_DEF(cb, SSO_DEHYD_IDLE_STID, \
      FSM_TRANSITION_DEF(cb, SSO_DEHYD_INT_SUNLIGHT_UPDATE_MID, SSO_DEHYD_READY_STID,  SSO_Dehyd_Ready_Guard, SSO_Dehyd_Gets_Ready) \
@@ -60,13 +62,15 @@ typedef union SSO_Dehyd_FSM
 typedef union SSO_Dehyd_FSM_Class
 {
     union FSM_Class FSM;
-    union State_Machine_Class State_Machine;
+    struct State_Machine_Class State_Machine;
     struct Class Class;
 }SSO_Dehyd_FSM_Class_T;
 
-extern SSO_Dehyd_FSM_Class _private SSO_Dehyd_FSM_Class;
+extern union SSO_Dehyd_FSM_Class _private SSO_Dehyd_FSM_Class;
 
-extern void Populate_SSO_Dehyd_FSM(union SSO_Dehyd_FSM * const fsm);
+extern void Populate_SSO_Dehyd_FSM(union SSO_Dehyd_FSM * const fsm,
+ union PID_Ctl * const cooler_ctl,
+ union PID_Ctl * const heater_ctl);
 
 #ifdef __cplusplus
 }

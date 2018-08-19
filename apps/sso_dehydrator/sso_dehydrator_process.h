@@ -7,9 +7,9 @@
 
 #define SSO_DEHYD_PROCESS_MAILIST(X) \
 SSO_DEHYD_SUBSCRIPTION_MAILIST(X) \
-X(SSO_DEHYD_INT_SUNLIGHT_UPDATE_MID,  SSO_Dehyd_Update_Sunlight_Reading)\
-X(SSO_DEHYD_INT_TEMP_UPDATE_MID,      SSO_Dehyd_Update_Temperature_Reading) \
-X(SSO_DEHYD_INT_TIMER_UPDATE_MID,     SSO_Dehyd_Timer_Timeout) \
+X(SSO_DEHYD_INT_SUNLIGHT_UPDATE_MID,  sso_dehyd_sunlight_monitor_update)\
+X(SSO_DEHYD_INT_TEMP_UPDATE_MID,      sso_dehyd_temperature_monitor_update) \
+X(SSO_DEHYD_INT_TIMER_UPDATE_MID,     sso_dehyd_pid_timeout) \
 
 #ifdef __cplusplus
 extern "C"{
@@ -22,15 +22,9 @@ typedef void (* SSO_Dehyd_Process_T)(union SSO_Dehyd_Worker * const, union Mail 
 #undef CHash_Map_Params 
 
 typedef CHash_Map_IPC_MID_SSO_Dehyd_Process_T SSO_Dehyd_Dispatcher_T;
-extern SSO_Dehyd_Dispatcher_T SSO_Dehyd_Dispatcher[] =
-{
-    SSO_DEHYD_PROCESS_MAILIST(SSO_DEHYD_POPULATE_DISPATCHER)
-};
+extern SSO_Dehyd_Dispatcher_T SSO_Dehyd_Dispatcher[];
 
-extern IPC_MID_T SSO_Dehyd_Mailist[] =
-{
-    SSO_DEHYD_SUBSCRIPTION_MAILIST(SSO_DEHYD_POPULATE_SUBSCRIPTION)
-};
+extern IPC_MID_T SSO_Dehyd_Mailist[];
 
 #ifdef __cplusplus
 }

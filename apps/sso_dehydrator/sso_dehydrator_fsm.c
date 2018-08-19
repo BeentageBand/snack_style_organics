@@ -1,4 +1,6 @@
 #define COBJECT_IMPLEMENTATION
+#include "ipc.h"
+#include "tmr.h"
 #include "sso_dehydrator_fsm.h"
 
 static bool SSO_Dehyd_Ready_Guard(union State_Machine * const stm, union St_Machine_State * const st);
@@ -176,16 +178,16 @@ void SSO_Dehyd_Switch_Op(union State_Machine * const st_m)
 void SSO_Dehyd_Stop_Ctl(union State_Machine * const stm)
 {
     union SSO_Dehyd_FSM * const fsm = _cast(SSO_Dehyd_FSM, st_m);
-    Isnt_Nullptr(fsm, false);
+    Isnt_Nullptr(fsm, );
 
     union PID_Ctl * pid = fsm->cooler_ctl;
-    if (pid->is_running)
+    if (pid->driver)
     {
         pid->vtbl->stop(pid);
     }
 
     pid = fsm->heater_ctl;
-    if (pid->is_running)
+    if (pid->driver)
     {
         pid->vtbl->stop(pid);
     }
@@ -199,7 +201,7 @@ void sso_dehyd_fsm_delete(struct Object * const obj)
 
 void Populate_SSO_Dehyd_FSM(union SSO_Dehyd_FSM * const this,
  union PID_Ctl * const cooler_ctl,
- union PID_Ctl * const heater_ctl,)
+ union PID_Ctl * const heater_ctl)
 {
     if(NULL == SSO_Dehyd_FSM.vtbl)
     {
@@ -207,7 +209,7 @@ void Populate_SSO_Dehyd_FSM(union SSO_Dehyd_FSM * const this,
         SSO_Dehyd_St_Chart,
         Num_Elems(SSO_Dehyd_St_Chart),
         SSO_Dehyd_FSM_States,
-        Num_Elems(SSD_Dehyd_FSM_States));
+        Num_Elems(SSO_Dehyd_FSM_States));
         Object_Init(&SSO_Dehyd_FSM.Object,
         &SSO_Dehyd_FSM_Class.Class,
         sizeof(SSO_Dehyd_FSM_Class.FSM));
