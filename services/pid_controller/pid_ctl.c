@@ -8,7 +8,8 @@
  *
  */
 /*=====================================================================================*/
-
+#define COBJECT_IMPLEMENTATION
+#define Dbg_FID PID_FID, 0
 /*=====================================================================================*
  * Project Includes
  *=====================================================================================*/
@@ -35,6 +36,7 @@
 /*=====================================================================================* 
  * Local Function Prototypes
  *=====================================================================================*/
+static void pid_ctl_delete(struct Object * const this);
 static void pid_ctl_set_point(union PID_Ctl * const this, PID_Fix32_T const set_point);
 static void pid_ctl_start(union PID_Ctl * const this, union PID_Driver * const driver);
 static void pid_ctl_stop(union PID_Ctl * const this);
@@ -44,41 +46,23 @@ static PID_Fix32_T pid_ctl_feedback(union PID_Ctl * const this);
 static void pid_ctl_calculate_err(union PID_Ctl * const this);
 static void pid_ctl_set_output(union PID_Ctl * const this);
 static void pid_ctl_read_feedback(union PID_Ctl * const this);
-static bool pid_ctl_wait_for_sample(void);
+static bool pid_ctl_wait_for_sample(union PID_Ctl * const this);
 /*=====================================================================================* 
  * Local Object Definitions
  *=====================================================================================*/
-
-const  Fix32_T TAU_MS PROGMEM = PID_CTL_TAU_COEFF_MS * 1000UL;
-
-#undef PID_CTL_LAWS
-#define PID_CTL_LAWS(ch, kp, ki) \
-const Pid_Ctl_T ch##_Coeffs PROGMEM = \
-   {\
-      1U,\
-      /* b = kp + (ki*tau)/2 */\
-      ( kp + ( ( ki * (PID_CTL_TAU_COEFF_MS * 1000UL) ) >> 1U ) ),\
-      /* c = (ki*tau)/2 - kp */\
-      ( ( ( ki * (PID_CTL_TAU_COEFF_MS * 1000UL) ) >> 1U ) - kp)\
-   };
-
-PID_CTL_LAW_COEFFS_TB
-
-#undef PID_CTL_LAWS
-#define PID_CTL_LAWS(ch, kp, ki) &ch##_Coeffs,
-
-const Pid_Ctl_T * const Pid_Laws_Coeff[PID_CTL_MAX_CHANNELS] PROGMEM=
-{
-   PID_CTL_LAW_COEFFS_TB
-};
-
-static Pid_Ctl_Channel_T Pid_Channels[PID_CTL_MAX_CHANNELS];
-
-static uint32_t Sample_Tout = 0;
+static union PID_Ctl PID_Ctl = {NULL};
 /*=====================================================================================* 
  * Exported Object Definitions
  *=====================================================================================*/
-
+struct PID_Ctl_Class PID_Ctl_Class =
+{
+     {pid_ctl_delete, NULL},
+     pid_ctl_set_point,
+     pid_ctl_start,
+     pid_ctl_stop,
+     pid_ctl_loop,
+     pid_ctl_feedback
+};
 /*=====================================================================================* 
  * Local Inline-Function Like Macros
  *=====================================================================================*/
@@ -103,7 +87,7 @@ void pid_ctl_set_output(union PID_Ctl * const this)
       this->driver->vtbl->write_u(this->driver, this->u_out[0]);
 }
 
-void pid_ctl_read_feedback(PID_Ctl * const this)
+void pid_ctl_read_feedback(union PID_Ctl * const this)
 {
       this->err[0] = this->set_point - this->feedback;
 }
@@ -111,22 +95,25 @@ void pid_ctl_read_feedback(PID_Ctl * const this)
 bool pid_ctl_wait_for_sample(union PID_Ctl * const this)
 {
    uint32_t time_now = IPC_Clock();
-   TR_INFO_2("Waiting %ld == %ld", (long)time_now, (long)this->time);
+   Dbg_Info("Waiting %ld == %ld", time_now, this->time);
    Isnt_Nullptr(this->driver, false);
+   
    return ( (time_now -  this->time) >= this->sample_tout);
 }
 /*=====================================================================================* 
  * Exported Function Definitions
  *=====================================================================================*/
-void pid_ctl_start(union PID_Ctl * const this, union PID_Driver * const driver);
+void pid_ctl_delete(struct Object * const this){}
+
+void pid_ctl_start(union PID_Ctl * const this, union PID_Driver * const driver)
 {
-      this->time_now = IPC_Clock();
+      this->time = IPC_Clock();
       this->driver = driver;
 }
 
 void pid_ctl_set_point(union PID_Ctl * const this, PID_Fix32_T const set_point)
 {
-   TR_INFO_2("pid::Set_Point pid_ch = %d, val %d", this->channel,(int32_t)set_point);
+   Dbg_Info("%s val %d", __func__, set_point);
    this->set_point = set_point;
 }
 
@@ -142,8 +129,8 @@ void pid_ctl_stop(union PID_Ctl * const this)
 
 void pid_ctl_loop(union PID_Ctl * const this, PID_Fix32_T const input_sample)
 {
-      while(!pid_ctl_wait_sample()){}
-      this->time = sample_tout;
+      while(!pid_ctl_wait_for_sample(this)){}
+      this->u_out[0] = input_sample;
 
       if (this->driver)
       {
@@ -153,4 +140,12 @@ void pid_ctl_loop(union PID_Ctl * const this, PID_Fix32_T const input_sample)
             pid_ctl_calculate_err(this);
             pid_ctl_set_output(this);
       }
+}
+void Populate_PID_Ctl(union PID_Ctl * const this)
+{
+      if(NULL == PID_Ctl.vtbl)
+      {
+            PID_Ctl.vtbl = &PID_Ctl_Class;
+      }
+      _clone(this, PID_Ctl);
 }

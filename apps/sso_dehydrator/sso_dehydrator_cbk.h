@@ -20,8 +20,6 @@ typedef struct SSO_Dehyd_Cbk_Class
     struct Class Class;
     union PID_Driver * (* _private get_driver)(union SSO_Dehyd_Cbk * const, PID_Channel_T const);
     bool (* _private is_driver_ready)(union SSO_Dehyd_Cbk * const, PID_Channel_T const);
-
-    struct PID_Laws (* _private get_laws)(union SSO_Dehyd_Cbk * const, PID_Channel_T const);
 }SSO_Dehyd_Cbk_Class_T;
 
 extern struct SSO_Dehyd_Cbk_Class _private SSO_Dehyd_Cbk_Class;

@@ -41,6 +41,9 @@ typedef union PID_Ctl
         PID_Fix32_T _private set_point;
         PID_Fix32_T _private feedback;
         IPC_Clock_T _private sample_tout;
+        PID_Fix32_T _private time;
+        PID_Fix32_T _private u_out[2];
+        PID_Fix32_T _private err[2];
         union PID_Driver _private * _private driver;
     };
 }PID_Ctl_T;
@@ -58,7 +61,7 @@ typedef struct PID_Ctl_Class
 /*=====================================================================================* 
  * Exported Object Declarations
  *=====================================================================================*/
-
+extern struct PID_Ctl_Class _private PID_Ctl_Class;
 /*=====================================================================================* 
  * Exported Function Prototypes
  *=====================================================================================*/
