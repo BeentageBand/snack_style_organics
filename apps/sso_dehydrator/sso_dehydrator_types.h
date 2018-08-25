@@ -18,6 +18,13 @@ enum SSO_DEHYD_STID
     SSO_DEHYD_MAX_STID
 };
 
+typedef enum
+{
+    SSO_DEHYD_DRIVER_GATE,
+    SSO_DEHYD_DRIVER_ELECTRIC_HEATER,
+    SSO_DEHYD_DRIVER_FAN,
+    SSO_DEHYD_DRIVER_MAX
+};
 #ifdef __cplusplus
 }
 #endif

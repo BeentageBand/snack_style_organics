@@ -26,7 +26,7 @@
  * Exported Type Declarations
  *=====================================================================================*/
 typedef uint_fast32_t PID_Fix32_T;
-
+typedef uint8_t PID_Channel_T;
 typedef struct PID_Laws
 {
     PID_Fix32_T a;

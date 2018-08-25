@@ -3,6 +3,8 @@
 
 #include "fsm.h"
 #include "pid_ctl.h"
+#include "sso_dehydrator_types.h"
+#include "tmr.h"
 
 #define SSO_DEHYD_FSM_DEF(cb) \
 FSM_STATE_DEF(cb, SSO_DEHYD_IDLE_STID, \
@@ -27,14 +29,14 @@ FSM_STATE_DEF(cb, SSO_DEHYD_SUNLIGHT_STBY_STID, \
      FSM_TRANSITION_DEF(cb, SSO_DEHYD_INT_TIMER_UPDATE_MID,    SSO_DEHYD_SUNLIGHT_OP_STID,    SSO_Dehyd_Sunlight_Start_Guard, SSO_Dehyd_Sunlight_Start_Ctl) \
 )\
 FSM_STATE_DEF(cb, SSO_DEHYD_DARK_OP_STID, \
-     FSM_TRANSITION_DEF(cb, SSO_DEHYD_INT_DARK_UPDATE_MID, SSO_DEHYD_SUNLIGHT_OP_STID,    SSO_Dehyd_Dark2Sunlight_Op_Guard, SSO_Dehyd_Switch_Op) \
-     FSM_TRANSITION_DEF(cb, SSO_DEHYD_INT_TEMP_UPDATE_MID, SSO_DEHYD_SUNLIGHT_OP_STID,    SSO_Dehyd_Feedback_Guard,        SSO_Dehyd_Feedback_Ctl) \
-     FSM_TRANSITION_DEF(cb, SSO_DEHYD_INT_STOP_OP_MID,     SSO_DEHYD_DARK_STDBY_STID,     SSO_Dehyd_Stop_Guard,             SSO_Dehyd_Stop_Ctl) \
+     FSM_TRANSITION_DEF(cb, SSO_DEHYD_INT_SUNLIGHT_UPDATE_MID, SSO_DEHYD_SUNLIGHT_OP_STID,    SSO_Dehyd_Dark2Sunlight_Op_Guard, SSO_Dehyd_Switch_Op) \
+     FSM_TRANSITION_DEF(cb, SSO_DEHYD_INT_TEMP_UPDATE_MID,     SSO_DEHYD_SUNLIGHT_OP_STID,    SSO_Dehyd_Feedback_Guard,         SSO_Dehyd_Feedback_Ctl) \
+     FSM_TRANSITION_DEF(cb, SSO_DEHYD_INT_STOP_OP_MID,         SSO_DEHYD_DARK_STBY_STID,     SSO_Dehyd_Stop_Guard,             SSO_Dehyd_Stop_Ctl) \
 )\
 FSM_STATE_DEF(cb, SSO_DEHYD_SUNLIGHT_OP_STID, \
      FSM_TRANSITION_DEF(cb, SSO_DEHYD_INT_SUNLIGHT_UPDATE_MID, SSO_DEHYD_DARK_OP_STID,        SSO_Dehyd_Sunlight2Dark_Op_Guard, SSO_Dehyd_Switch_Op) \
-     FSM_TRANSITION_DEF(cb, SSO_DEHYD_INT_TEMP_UPDATE_MID,     SSO_DEHYD_SUNLIGHT_OP_STID,    SSO_Dehyd_Feedback_Guard,        SSO_Dehyd_Feedback_Ctl) \
-     FSM_TRANSITION_DEF(cb, SSO_DEHYD_INT_STOP_OP_MID,         SSO_DEHYD_SUNLIGHT_STDBY_STID, SSO_Dehyd_Stop_Guard,             SSO_Dehyd_Stop_Ctl) \
+     FSM_TRANSITION_DEF(cb, SSO_DEHYD_INT_TEMP_UPDATE_MID,     SSO_DEHYD_SUNLIGHT_OP_STID,    SSO_Dehyd_Feedback_Guard,         SSO_Dehyd_Feedback_Ctl) \
+     FSM_TRANSITION_DEF(cb, SSO_DEHYD_INT_STOP_OP_MID,         SSO_DEHYD_SUNLIGHT_STBY_STID,  SSO_Dehyd_Stop_Guard,             SSO_Dehyd_Stop_Ctl) \
 )\
 
 #define SSO_Dehyd_Do_Nothing NULL
@@ -51,6 +53,7 @@ typedef union SSO_Dehyd_FSM
         union FSM FSM;
         int32_t temp_reading;
         int32_t sunlight_reading;
+        uint16_t countdown;
         union PID_Ctl * cooler_ctl;
         union PID_Ctl * heater_ctl;
         union Timer * pid_timer;

@@ -9,9 +9,9 @@ typedef union PID_Driver
     struct PID_Driver_Class _private * _private vtbl;
     struct
     {
-        struct Object
-        struct PID_Laws laws;
-        PID_Driver_Cbk_T cbk;
+        struct Object Object;
+        struct PID_Laws _private laws;
+        PID_Driver_Cbk_T _private cbk;
     };
 }PID_Driver_T;
 
@@ -21,7 +21,7 @@ typedef struct PID_Driver_Class
     void (*_private write_u)(union PID_Driver * const, PID_Fix32_T const);
     void (*_private tune)(union PID_Driver * const, PID_Fix32_T const,
                 PID_Fix32_T const, PID_Fix32_T const);
-}PID_Driver_Class_T:
+}PID_Driver_Class_T;
 
 extern struct PID_Driver_Class _private PID_Driver_Class;
 

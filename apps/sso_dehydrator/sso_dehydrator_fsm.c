@@ -1,23 +1,28 @@
 #define COBJECT_IMPLEMENTATION
 #include "ipc.h"
-#include "tmr.h"
+#include "sso_dehydrator_cbk.h"
 #include "sso_dehydrator_fsm.h"
+#include "sso_dehydrator_uset.h"
 
-static bool SSO_Dehyd_Ready_Guard(union State_Machine * const stm, union St_Machine_State * const st);
-static bool SSO_Dehyd_Dark_Stby_Guard(union State_Machine * const stm, union St_Machine_State * const st);
-static bool SSO_Dehyd_Sunlight_Stby_Guard(union State_Machine * const stm, union St_Machine_State * const st);
-static bool SSO_Dehyd_Dark_Start_Guard(union State_Machine * const stm, union St_Machine_State * const st);
-static bool SSO_Dehyd_Sunlight_Start_Guard(union State_Machine * const stm, union St_Machine_State * const st);
-static bool SSO_Dehyd_Dark2Sunlight_Op_Guard(union State_Machine * const stm, union St_Machine_State * const st);
-static bool SSO_Dehyd_Sunlight2Dark_Op_Guard(union State_Machine * const stm, union St_Machine_State * const st);
-static bool SSO_Dehyd_Sunlight_Start_Guard(union State_Machine * const stm, union St_Machine_State * const st);
-static bool SSO_Dehyd_Stop_Guard(union State_Machine * const stm, union St_Machine_State * const st);
+#define SSO_DEHYD_PID_TOUT (1000U)
 
-static void SSO_Dehyd_Gets_Ready(union State_Machine * const stm);
-static void SSO_Dehyd_Dark_Start_Ctl(union State_Machine * const stm);
-static void SSO_Dehyd_Sunlight_Start_Ctl(union State_Machine * const stm);
-static void SSO_Dehyd_Switch_Op(union State_Machine * const stm);
-static void SSO_Dehyd_Stop_Ctl(union State_Machine * const stm);
+static bool SSO_Dehyd_Ready_Guard(union State_Machine * const st_m, union St_Machine_State * const st);
+static bool SSO_Dehyd_Dark_Stby_Guard(union State_Machine * const st_m, union St_Machine_State * const st);
+static bool SSO_Dehyd_Sunlight_Stby_Guard(union State_Machine * const st_m, union St_Machine_State * const st);
+static bool SSO_Dehyd_Dark_Start_Guard(union State_Machine * const st_m, union St_Machine_State * const st);
+static bool SSO_Dehyd_Sunlight_Start_Guard(union State_Machine * const st_m, union St_Machine_State * const st);
+static bool SSO_Dehyd_Dark2Sunlight_Op_Guard(union State_Machine * const st_m, union St_Machine_State * const st);
+static bool SSO_Dehyd_Sunlight2Dark_Op_Guard(union State_Machine * const st_m, union St_Machine_State * const st);
+static bool SSO_Dehyd_Sunlight_Start_Guard(union State_Machine * const st_m, union St_Machine_State * const st);
+static bool SSO_Dehyd_Feedback_Guard(union State_Machine * const st_m, union St_Machine_State * const st);
+static bool SSO_Dehyd_Stop_Guard(union State_Machine * const st_m, union St_Machine_State * const st);
+
+static void SSO_Dehyd_Gets_Ready(union State_Machine * const st_m);
+static void SSO_Dehyd_Dark_Start_Ctl(union State_Machine * const st_m);
+static void SSO_Dehyd_Sunlight_Start_Ctl(union State_Machine * const st_m);
+static void SSO_Dehyd_Switch_Op(union State_Machine * const st_m);
+static void SSO_Dehyd_Feedback_Ctl(union State_Machine * const st_m);
+static void SSO_Dehyd_Stop_Ctl(union State_Machine * const st_m);
 
 static void sso_dehyd_fsm_delete(struct Object * const obj);
 
@@ -74,7 +79,7 @@ bool SSO_Dehyd_Dark2Sunlight_Op_Guard(union State_Machine * const st_m, union St
     union SSO_Dehyd_FSM * const fsm = _cast(SSO_Dehyd_FSM, st_m);
     Isnt_Nullptr(fsm, false);
     int32_t sunlight_limit = SSO_DEHYDRATOR_MIN_SUNLIGHT - SSO_DEHYDRATOR_HYSTHERESIS; 
-    return SSO_Dehyd_Sunlight_Start_Guard(st_m, st) fsm->sunlight_reading > sunlight_limit;
+    return SSO_Dehyd_Sunlight_Start_Guard(st_m, st) && fsm->sunlight_reading > sunlight_limit;
 }
 bool SSO_Dehyd_Sunlight2Dark_Op_Guard(union State_Machine * const st_m, union St_Machine_State * const st)
 {
@@ -85,14 +90,20 @@ bool SSO_Dehyd_Sunlight2Dark_Op_Guard(union State_Machine * const st_m, union St
     return SSO_Dehyd_Dark_Start_Guard(st_m, st) && fsm->sunlight_reading < sunlight_limit;
 }
 
-bool SSO_Dehyd_Stop_Guard(union State_Machine * const stm, union St_Machine_State * const st)
+bool SSO_Dehyd_Feedback_Guard(union State_Machine * const st_m, union St_Machine_State * const st)
+{
+    //TODO : feedback guard
+    return true;
+}
+
+bool SSO_Dehyd_Stop_Guard(union State_Machine * const st_m, union St_Machine_State * const st)
 {
     union SSO_Dehyd_FSM * const fsm = _cast(SSO_Dehyd_FSM, st_m);
     Isnt_Nullptr(fsm, false);
     return true;
 }
 
-void SSO_Dehyd_Gets_Ready(union State_Machine * const stm)
+void SSO_Dehyd_Gets_Ready(union State_Machine * const st_m)
 {
     union SSO_Dehyd_FSM * const fsm = _cast(SSO_Dehyd_FSM, st_m);
     Isnt_Nullptr(fsm, false);
@@ -106,22 +117,23 @@ void SSO_Dehyd_Dark_Start_Ctl(union State_Machine * const st_m)
     union SSO_Dehyd_FSM * const fsm = _cast(SSO_Dehyd_FSM, st_m);
     Isnt_Nullptr(fsm, false);
     union PID_Ctl * pid = fsm->cooler_ctl;
-    if (!pid->is_running)
+    if (!pid->driver)
     {
         pid->vtbl->start(pid, SSO_Dehyd_Cbk.vtbl->get_driver(&SSO_Dehyd_Cbk, SSO_DEHYD_DRIVER_FAN));
     }
 
     pid = fsm->heater_ctl;
 
-    if (!pid->is_running)
+    if (!pid->driver)
     {
         pid->vtbl->start(pid, SSO_Dehyd_Cbk.vtbl->get_driver(&SSO_Dehyd_Cbk, SSO_DEHYD_DRIVER_ELECTRIC_HEATER));
     }
 
-    if(fsm->heater_ctl->is_running || fsm->cooler_ctl->is_running)
+    if(fsm->heater_ctl->driver || fsm->cooler_ctl->driver)
     {
         union Timer * pid_timer = fsm->pid_timer;
-        pid_timer->vtbl->start(pid_timer, SSO_DEHYD_PID_TOUT);
+        pid_timer->vtbl->set_time(pid_timer, SSO_DEHYD_PID_TOUT, true);
+        pid_timer->vtbl->start(pid_timer);
     }
 
     if(0 == fsm->countdown)
@@ -130,27 +142,28 @@ void SSO_Dehyd_Dark_Start_Ctl(union State_Machine * const st_m)
     }
 }
 
-void SSO_Dehyd_Sunlight_Start_Ctl(union State_Machine * const stm)
+void SSO_Dehyd_Sunlight_Start_Ctl(union State_Machine * const st_m)
 {
     union SSO_Dehyd_FSM * const fsm = _cast(SSO_Dehyd_FSM, st_m);
     Isnt_Nullptr(fsm, false);
 
     union PID_Ctl * pid = fsm->cooler_ctl;
-    if (!pid->is_running)
+    if (!pid->driver)
     {
         pid->vtbl->start(pid, SSO_Dehyd_Cbk.vtbl->get_driver(&SSO_Dehyd_Cbk, SSO_DEHYD_DRIVER_FAN));
     }
 
     pid = fsm->heater_ctl;
-    if (!pid->is_running)
+    if (!pid->driver)
     {
         pid->vtbl->start(pid, SSO_Dehyd_Cbk.vtbl->get_driver(&SSO_Dehyd_Cbk, SSO_DEHYD_DRIVER_GATE));
     }
 
-    if(fsm->heater_ctl->is_running || fsm->cooler_ctl->is_running)
+    if(fsm->heater_ctl->driver || fsm->cooler_ctl->driver)
     {
         union Timer * pid_timer = fsm->pid_timer;
-        pid_timer->vtbl->start(pid_timer, SSO_DEHYD_PID_TOUT);
+        pid_timer->vtbl->set_time(pid_timer, SSO_DEHYD_PID_TOUT, true);
+        pid_timer->vtbl->start(pid_timer);
     }
 
     if(0 == fsm->countdown)
@@ -175,7 +188,13 @@ void SSO_Dehyd_Switch_Op(union State_Machine * const st_m)
     }
 }
 
-void SSO_Dehyd_Stop_Ctl(union State_Machine * const stm)
+void SSO_Dehyd_Feedback_Ctl(union State_Machine * const st_m)
+{
+    //TODO : feedback
+    
+}
+
+void SSO_Dehyd_Stop_Ctl(union State_Machine * const st_m)
 {
     union SSO_Dehyd_FSM * const fsm = _cast(SSO_Dehyd_FSM, st_m);
     Isnt_Nullptr(fsm, );

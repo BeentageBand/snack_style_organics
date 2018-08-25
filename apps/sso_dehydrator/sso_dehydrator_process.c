@@ -4,21 +4,16 @@
 #include "sso_dehydrator_fsm.h"
 
 #define SSO_DEHYD_POPULATE_DISPATCHER(mid, func) {mid, func},
-#define SSO_DEHYD_POPULATE_SUBSCRIPTION(mid, func) mid,
 
 static void sso_dehyd_sunlight_monitor_update(union SSO_Dehyd_Worker * const dehyd, union Mail * const mail);
 static void sso_dehyd_temperature_monitor_update(union SSO_Dehyd_Worker * const dehyd, union Mail * const mail);
 static void sso_dehyd_pid_timeout(union SSO_Dehyd_Worker * const dehyd, union Mail * const mail);
 static void sso_dehyd_release(union SSO_Dehyd_Worker * const dehyd, union Mail * const mail);
 
-SSO_Dehyd_Dispatcher_T SSO_Dehyd_Dispatcher[] =
+SSO_Dehyd_Dispatcher_T SSO_Dehyd_Dispatcher = {NULL};
+static SSO_Dehyd_Processed_MID_T SSO_Dehyd_Process_Mailist [] =
 {
     SSO_DEHYD_PROCESS_MAILIST(SSO_DEHYD_POPULATE_DISPATCHER)
-};
-
-IPC_MID_T SSO_Dehyd_Mailist[] =
-{
-    SSO_DEHYD_SUBSCRIPTION_MAILIST(SSO_DEHYD_POPULATE_SUBSCRIPTION)
 };
 
 void sso_dehyd_sunlight_monitor_update(union SSO_Dehyd_Worker * const dehyd, union Mail * const mail)

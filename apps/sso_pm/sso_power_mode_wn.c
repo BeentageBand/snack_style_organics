@@ -116,7 +116,7 @@ void Populate_SSO_PM_Worker(union SSO_PM_Worker * const this)
     if(NULL == SSO_PM_Worker.vtbl)
     {
         Populate_Worker(&SSO_PM_Worker.Worker,
-                        SSO_PM_TID, 
+                        SSO_PM_WORKER_TID, 
                         SSO_PM_Mail_Buff,
                         Num_Elems(SSO_PM_Mail_Buff));
 

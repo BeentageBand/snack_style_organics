@@ -101,7 +101,7 @@ void sso_pm_acquire(union SSO_PM * const this)
       { SSO_POWER_ACQUIRE_REQ, this->source}
    };
 
-   IPC_Send(SSO_PM_TID, SSO_PM_INT_POWER_ACQUIRE_REQ_MID, &pm_req, sizeof(pm_req));
+   IPC_Send(SSO_PM_WORKER_TID, SSO_PM_INT_POWER_ACQUIRE_REQ_MID, &pm_req, sizeof(pm_req));
     sso_pm_get_handle_id(this);
 }
 
@@ -114,7 +114,7 @@ void sso_pm_release(union SSO_PM * const this)
       { SSO_POWER_RELEASE_REQ, this->source}
    };
 
-   IPC_Send(SSO_PM_TID, SSO_PM_INT_POWER_RELEASE_REQ_MID, &pm_req, sizeof(pm_req));
+   IPC_Send(SSO_PM_WORKER_TID, SSO_PM_INT_POWER_RELEASE_REQ_MID, &pm_req, sizeof(pm_req));
     sso_pm_get_handle_id(this);
 }
 void sso_pm_get_handle_id(union SSO_PM * const this)
@@ -152,7 +152,7 @@ void Populate_SSO_PM(union SSO_PM * const this, SSO_PM_Source_T const source)
 
 void SSO_PM_Release_All(void)
 {
-    IPC_Send(SSO_PM_TID, SSO_PM_INT_REL_ALL_MID, NULL, 0);
+    IPC_Send(SSO_PM_WORKER_TID, SSO_PM_INT_REL_ALL_MID, NULL, 0);
 }
 
 #ifdef SSO_PM_ENABLE

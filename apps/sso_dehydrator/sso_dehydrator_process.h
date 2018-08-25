@@ -22,8 +22,9 @@ typedef void (* SSO_Dehyd_Process_T)(union SSO_Dehyd_Worker * const, union Mail 
 #undef CHash_Map_Params 
 
 typedef CHash_Map_IPC_MID_SSO_Dehyd_Process_T SSO_Dehyd_Dispatcher_T;
-extern SSO_Dehyd_Dispatcher_T SSO_Dehyd_Dispatcher[];
+typedef Pair_IPC_MID_SSO_Dehyd_Process_T SSO_Dehyd_Processed_MID_T;
 
+extern SSO_Dehyd_Dispatcher_T SSO_Dehyd_Dispatcher;
 extern IPC_MID_T SSO_Dehyd_Mailist[];
 
 #ifdef __cplusplus

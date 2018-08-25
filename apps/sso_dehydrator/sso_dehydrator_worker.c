@@ -16,8 +16,9 @@
 #define Dbg_FID SSO_DEHYD_WORKER_TID, 0
 #include "dbg_log.h"
 #include "ipc.h"
-#include "sso_dehydrator_worker.h"
+#include "sso_dehydrator_process.h"
 #include "sso_dehydrator_fsm.h"
+#include "sso_dehydrator_worker.h"
 
 /*=====================================================================================* 
  * Standard Includes
@@ -26,7 +27,7 @@
 /*=====================================================================================* 
  * Local X-Macros
  *=====================================================================================*/
-
+#define SSO_DEHYD_POPULATE_SUBSCRIPTION(mid, func) mid,
 /*=====================================================================================* 
  * Local Define Macros
  *=====================================================================================*/
@@ -62,6 +63,11 @@ union SSO_Dehyd_Worker_Class SSO_Dehyd_Worker_Class =
    sso_dehyd_worker_on_start,
    sso_dehyd_worker_on_loop,
    sso_dehyd_worker_on_stop
+};
+
+IPC_MID_T SSO_Dehyd_Mailist[] =
+{
+    SSO_DEHYD_SUBSCRIPTION_MAILIST(SSO_DEHYD_POPULATE_SUBSCRIPTION)
 };
 
 /*=====================================================================================* 
@@ -106,13 +112,12 @@ void sso_dehyd_worker_on_mail(union Worker * const super, union Mail * const mai
    Isnt_Nullptr(this, );
 
    /** handle events **/
-   SSO_Dehyd_IPC_MID_SSO_Dehyd_Process_T * process = SSO_Dehyd_Dispatcher.vtbl->find(&SSO_Dehyd_Dispatcher, mail->mid);
+   SSO_Dehyd_Processed_MID_T * process = SSO_Dehyd_Dispatcher.vtbl->find(&SSO_Dehyd_Dispatcher, mail->mid);
    if(process != SSO_Dehyd_Dispatcher.CHash_Set_Pair_IPC_MID_SSO_Dehyd_Process.vtbl->end(&SSO_Dehyd_Dispatcher))
    {
       process->obj(this, mail);
+      this->st_m->vtbl->dispatch(this->st_m, mail);
    }
-
-   this->st_m->vtbl->dispatch(this->st_m, mail);
 }
 
 /*=====================================================================================* 
@@ -126,14 +131,16 @@ void Populate_SSO_Dehyd_Worker(union SSO_Dehyd_Worker * const this)
          SSO_DEHYD_WORKER_TID,
          SSO_Dehyd_Mailbox_Buff, 
          Num_Elems(SSO_Dehyd_Mailbox_Buff));
-      Object_Init(&SSO_Dehyd_Ctl_Worker.Object,
-         &SSO_Dehyd_Ctl_Worker_Class.Class,
+      Object_Init(&SSO_Dehyd_Worker.Object,
+         &SSO_Dehyd_Worker_Class.Class,
          sizeof(SSO_Dehyd_Worker_Class.Thread));
       SSO_Dehyd_Worker.vtbl = &SSO_Dehyd_Worker_Class;
 
       Populate_PID_Ctl(&SSO_Dehyd_Cooler);
       Populate_PID_Ctl(&SSO_Dehyd_Heater);
-      Populate_SSO_Dehyd_FSM(&SSO_Dehyd_FSM);
+      Populate_SSO_Dehyd_FSM(&SSO_Dehyd_FSM,
+                    &SSO_Dehyd_Cooler,
+                    &SSO_Dehyd_Heater);
 
       SSO_Dehyd_Worker.st_m = &SSO_Dehyd_FSM.State_Machine;
       SSO_Dehyd_FSM.cooler_ctl = &SSO_Dehyd_Cooler;
