@@ -1,10 +1,10 @@
 #ifndef IPC_MAIL_LIST_H_
 #define IPC_MAIL_LIST_H_
  
-#include "application_evs.h"
-#include "sso_dehydrator_evs.h"
-#include "sso_power_mode_evs.h"
-#include "worker_evs.h"
+#include "application_mailist.h"
+#include "sso_dehydrator_mailist.h"
+#include "sso_power_mode_mailist.h"
+#include "worker_mailist.h"
 
 #define IPC_INTERNAL_MAILIST(X) \
    APP_INT_MAILIST(X) \
