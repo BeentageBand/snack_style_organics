@@ -28,6 +28,7 @@
  *=====================================================================================*/
 #define SSO_PM_PROCESS_POPULATE_SUBSCRIPTION(mid, func) mid,
 #define SSO_PM_PROCESS_POPULATE_DISPATCHER(mid, func) {mid, func},
+#define CHash_Set_Dispatcher CHash_Set_Pair_IPC_MID_SSO_PM_Process
 /*=====================================================================================* 
  * Local Type Definitions
  *=====================================================================================*/

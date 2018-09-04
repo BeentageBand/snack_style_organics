@@ -11,7 +11,6 @@
 #undef CQueue_Params
 
 static void sso_pm_fsm_delete(struct Object * const obj);
-static bool sso_pm_pop_power_request(SSO_PM_Handle_Req_T * const pm_req);
 static void sso_pm_init_source(SSO_PM_Source_T const pm_src);
 static void sso_pm_shut_source(SSO_PM_Source_T const pm_src);
 
@@ -34,7 +33,7 @@ static union SSO_PM_FSM SSO_PM_FSM = {NULL};
 static SSO_PM_Handle_Req_T SSO_PM_Power_Request_Buff [SSO_PM_POWER_REQUEST_BUFF_SZ] = {0};
 union SSO_PM_FSM_Class SSO_PM_FSM_Class = 
 {
-    {sso_pm_fsm_delete, &FSM_Class}
+    {sso_pm_fsm_delete, NULL}
 };
 FSM_Declare_Chart(SSO_PM_FSM_DEF, SSO_PM_St_Chart)
 
@@ -75,7 +74,7 @@ void SSO_PM_Subscribe_Handle(union State_Machine * const fsm)
    SSO_PM_Handle_Req_Queue.vtbl->pop_back(&SSO_PM_Handle_Req_Queue);
    if(0 == pm_req.handle_id)
    {
-      SSO_PM_Source_Cbk[pm_req.source].vtbl->subscribe(&SSO_PM_Source_Cbk);
+      SSO_PM_Source_Cbk[pm_req.source].vtbl->subscribe(SSO_PM_Source_Cbk + pm_req.source);
       pm_req.handle_id = SSO_PM_Source_Cbk[pm_req.source].handles;
    }
    IPC_Send(pm_req.tid,
@@ -83,7 +82,7 @@ void SSO_PM_Subscribe_Handle(union State_Machine * const fsm)
          &pm_req,
          sizeof(pm_req));
 
-   sso_pm_init_source(&pm_req);
+   sso_pm_init_source(pm_req.source);
 }
 
 void SSO_PM_Unsubscribe_Handle(union State_Machine * const fsm)
@@ -93,14 +92,14 @@ void SSO_PM_Unsubscribe_Handle(union State_Machine * const fsm)
    if(pm_req.handle_id && 
      pm_req.handle_id <= SSO_PM_Source_Cbk[pm_req.source].handles)  
    {
-      SSO_PM_Source_Cbk[pm_req.source].vtbl->unsubscribe(&SSO_PM_Source_Cbk);
+      SSO_PM_Source_Cbk[pm_req.source].vtbl->unsubscribe(SSO_PM_Source_Cbk + pm_req.source);
       pm_req.handle_id = SSO_PM_Source_Cbk[pm_req.source].handles;
    }
    IPC_Send(pm_req.tid,
          SSO_PM_INT_POWER_REQUEST_RES_MID,
          &pm_req,
          sizeof(pm_req));
-   sso_pm_shut_source(&pm_req);
+   sso_pm_shut_source(pm_req.source);
 }
 
 void SSO_PM_Init_12VDC_Source(union State_Machine * const fsm)
@@ -109,7 +108,7 @@ void SSO_PM_Init_12VDC_Source(union State_Machine * const fsm)
    {
       if(!SSO_PM_Source_Cbk[SSO_PM_12VDC_SOURCE].is_active)
       {
-         SSO_PM_Source_Cbk[SSO_PM_12VDC_SOURCE].vtbl->init_source(&SSO_PM_Source_Cbk);
+         SSO_PM_Source_Cbk[SSO_PM_12VDC_SOURCE].vtbl->init_source(SSO_PM_Source_Cbk + SSO_PM_12VDC_SOURCE);
       }
    }
 }
@@ -127,14 +126,14 @@ void SSO_PM_Init_120AC_Source(union State_Machine * const fsm)
    {
       if(!SSO_PM_Source_Cbk[SSO_PM_120AC_SOURCE].is_active)
       {
-         SSO_PM_Source_Cbk[SSO_PM_120AC_SOURCE].vtbl->init_source(&SSO_PM_Source_Cbk);
+         SSO_PM_Source_Cbk[SSO_PM_120AC_SOURCE].vtbl->init_source(SSO_PM_Source_Cbk + SSO_PM_120AC_SOURCE);
       }
    }
 }
 
 void SSO_PM_Shut_12VDC_Source(union State_Machine * const fsm)
 {
-   SSO_PM_Source_Cbk[SSO_PM_12VDC_SOURCE].vtbl->shut_source(&SSO_PM_Source_Cbk);
+   SSO_PM_Source_Cbk[SSO_PM_12VDC_SOURCE].vtbl->shut_source(SSO_PM_Source_Cbk + SSO_PM_12VDC_SOURCE);
 }
 
 void SSO_PM_Shut_120AC_Source(union State_Machine * const fsm)
@@ -143,7 +142,7 @@ void SSO_PM_Shut_120AC_Source(union State_Machine * const fsm)
    {
       if(SSO_PM_Source_Cbk[SSO_PM_120AC_SOURCE].is_active)
       {
-         SSO_PM_Source_Cbk[SSO_PM_120AC_SOURCE].vtbl->shut_source(&SSO_PM_Source_Cbk);
+         SSO_PM_Source_Cbk[SSO_PM_120AC_SOURCE].vtbl->shut_source(SSO_PM_Source_Cbk + SSO_PM_120AC_SOURCE);
       }
       SSO_PM_Source_Cbk[SSO_PM_120AC_SOURCE].vtbl->release_source(
             SSO_PM_Source_Cbk + SSO_PM_120AC_SOURCE);
@@ -229,7 +228,7 @@ void Populate_SSO_PM_FSM(union SSO_PM_FSM * const this)
 {
     if(NULL == SSO_PM_FSM.vtbl)
     {
-        Populate_FSM(&SSO_PM_FSM,
+        Populate_FSM(&SSO_PM_FSM.FSM,
                     SSO_PM_St_Chart,
                     Num_Elems(SSO_PM_St_Chart),
                     SSO_PM_States,

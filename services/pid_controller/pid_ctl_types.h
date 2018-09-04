@@ -35,6 +35,7 @@ typedef struct PID_Laws
     PID_Fix32_T tau;
 }PID_Laws_T;
 
+union PID_Driver;
 typedef void (* PID_Driver_Cbk_T )(union PID_Driver * const, PID_Fix32_T const u);
 
 /*=====================================================================================* 

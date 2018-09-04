@@ -121,12 +121,12 @@ void sso_pm_get_handle_id(union SSO_PM * const this)
 {
     union Mail mail = {NULL};
     IPC_TID_T mid = SSO_PM_INT_POWER_REQUEST_RES_MID;
-    if(IPC_Retrieve_From_Mailist(&mid, 1, &mail, IPC_TIMEOUT_MS))
+    if(IPC_Retrieve_From_Mailist(&mail, IPC_TIMEOUT_MS, &mid, 1UL))
     {
         SSO_PM_Handle_Req_T handle = *(SSO_PM_Handle_Req_T * const) mail.payload;
         if(handle.source == this->source)
         {
-            this->handle_id = this->handle_id;
+            //TODO WTF? this->handle_id = this->handle_id;
         }
     }
 }

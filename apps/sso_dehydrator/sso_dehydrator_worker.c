@@ -57,13 +57,20 @@ static union SSO_Dehyd_FSM SSO_Dehyd_FSM = {NULL};
  * Exported Object Definitions
  *=====================================================================================*/
 union SSO_Dehyd_Worker_Class SSO_Dehyd_Worker_Class =
-{
-   {{sso_dehyd_worker_delete, &Worker_Class}},
+{{//Worker
+   {{//Thread
+           {sso_dehyd_worker_delete, &Worker_Class.Class},
+           NULL,
+           NULL,
+           NULL,
+           NULL,
+           NULL
+   }},
    sso_dehyd_worker_on_mail,
    sso_dehyd_worker_on_start,
    sso_dehyd_worker_on_loop,
    sso_dehyd_worker_on_stop
-};
+}};
 
 IPC_MID_T SSO_Dehyd_Mailist[] =
 {
@@ -113,7 +120,8 @@ void sso_dehyd_worker_on_mail(union Worker * const super, union Mail * const mai
 
    /** handle events **/
    SSO_Dehyd_Processed_MID_T * process = SSO_Dehyd_Dispatcher.vtbl->find(&SSO_Dehyd_Dispatcher, mail->mid);
-   if(process != SSO_Dehyd_Dispatcher.CHash_Set_Pair_IPC_MID_SSO_Dehyd_Process.vtbl->end(&SSO_Dehyd_Dispatcher))
+   if(process != SSO_Dehyd_Dispatcher.CHash_Set_Pair_IPC_MID_SSO_Dehyd_Process.vtbl->end(
+           &SSO_Dehyd_Dispatcher.CHash_Set_Pair_IPC_MID_SSO_Dehyd_Process))
    {
       process->obj(this, mail);
       this->st_m->vtbl->dispatch(this->st_m, mail);

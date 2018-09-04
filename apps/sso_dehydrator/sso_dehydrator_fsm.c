@@ -31,9 +31,15 @@ static union SSO_Dehyd_Cbk SSO_Dehyd_Cbk = {NULL};
 static union St_Machine_State SSO_Dehyd_FSM_States[SSO_DEHYD_MAX_STID] = {{0}};
 
 union SSO_Dehyd_FSM_Class SSO_Dehyd_FSM_Class =
-{
-    {sso_dehyd_fsm_delete, &FSM_Class}
-};
+{{//FSM
+        {{//State_Machine
+                {sso_dehyd_fsm_delete, NULL},
+                NULL,
+                NULL,
+                NULL
+        }}
+
+}};
 
 FSM_Declare_Chart(SSO_DEHYD_FSM_DEF, SSO_Dehyd_St_Chart)
 
@@ -106,7 +112,7 @@ bool SSO_Dehyd_Stop_Guard(union State_Machine * const st_m, union St_Machine_Sta
 void SSO_Dehyd_Gets_Ready(union State_Machine * const st_m)
 {
     union SSO_Dehyd_FSM * const fsm = _cast(SSO_Dehyd_FSM, st_m);
-    Isnt_Nullptr(fsm, false);
+    Isnt_Nullptr(fsm, );
     IPC_MID_T mid = (SSO_DEHYDRATOR_MIN_SUNLIGHT > fsm->sunlight_reading)? 
         SSO_DEHYD_INT_DARK_MODE_OP_MID : SSO_DEHYD_INT_SUNLIGHT_MODE_OP_MID;
     IPC_Send_Self(mid, NULL, 0);
@@ -115,7 +121,7 @@ void SSO_Dehyd_Gets_Ready(union State_Machine * const st_m)
 void SSO_Dehyd_Dark_Start_Ctl(union State_Machine * const st_m)
 {
     union SSO_Dehyd_FSM * const fsm = _cast(SSO_Dehyd_FSM, st_m);
-    Isnt_Nullptr(fsm, false);
+    Isnt_Nullptr(fsm, );
     union PID_Ctl * pid = fsm->cooler_ctl;
     if (!pid->driver)
     {
@@ -145,7 +151,7 @@ void SSO_Dehyd_Dark_Start_Ctl(union State_Machine * const st_m)
 void SSO_Dehyd_Sunlight_Start_Ctl(union State_Machine * const st_m)
 {
     union SSO_Dehyd_FSM * const fsm = _cast(SSO_Dehyd_FSM, st_m);
-    Isnt_Nullptr(fsm, false);
+    Isnt_Nullptr(fsm, );
 
     union PID_Ctl * pid = fsm->cooler_ctl;
     if (!pid->driver)

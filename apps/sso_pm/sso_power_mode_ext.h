@@ -54,7 +54,7 @@ typedef struct SSO_PM_Source_Cbk_Class
 /*=====================================================================================*
  * Exported Object Declarations
  *=====================================================================================*/
-extern SSO_PM_Source_Cbk_T _private SSO_PM_Source_Cbk_Class;
+extern struct SSO_PM_Source_Cbk_Class _private SSO_PM_Source_Cbk_Class;
 extern union SSO_PM_Source_Cbk SSO_PM_Source_Cbk[SSO_PM_MAX_SOURCE];
 /*=====================================================================================* 
  * Exported Function Prototypes

@@ -46,7 +46,7 @@ void Populate_SSO_Dehyd_Cbk(union SSO_Dehyd_Cbk * const this)
         uint8_t i;
         for(i = 0; i < SSO_DEHYD_DRIVER_MAX; ++i)
         {
-            Populate_PID_Driver(PID_Driver + i, PID_Driver_Cbk + i);
+            Populate_PID_Driver(PID_Driver + i, PID_Driver_Cbk[i]);
         }
     }
     _clone(this, SSO_Dehyd_Cbk);

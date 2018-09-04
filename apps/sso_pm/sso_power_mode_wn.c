@@ -49,7 +49,7 @@ static void sso_pm_worker_on_stop(union Worker * const worker);
 /*=====================================================================================* 
  * Local Object Definitions
  *=====================================================================================*/
-static union SSO_PM_Worker SSO_PM_Worker = {{NULL}};
+static union SSO_PM_Worker SSO_PM_Worker = {NULL};
 static union Mail SSO_PM_Mail_Buff[64] = {{NULL}};
 static SSO_PM_Handle_Req_T SSO_PM_Handle_Req_Buff[SSO_PM_POWER_REQUEST_BUFF_SZ];
 static union SSO_PM_FSM SSO_PM_FSM = {NULL};
@@ -57,9 +57,9 @@ static union SSO_PM_FSM SSO_PM_FSM = {NULL};
  * Exported Object Definitions
  *=====================================================================================*/
 SSO_PM_Worker_Class_T SSO_PM_Worker_Class = 
-{{
-    {sso_pm_worker_delete, NULL},
-}};
+{
+    {sso_pm_worker_delete, NULL}
+};
 
 IPC_MID_T SSO_PM_Subscription_Mailist [] = 
 {
@@ -81,7 +81,8 @@ void sso_pm_worker_delete(struct Object * const obj)
 void sso_pm_worker_on_mail(union Worker * const worker, union Mail * const mail)
 {
     SSO_PM_Processed_MID_T * const process = SSO_PM_Dispatcher.vtbl->find(&SSO_PM_Dispatcher, mail->mid);
-    if(process != SSO_PM_Dispatcher.CHash_Set_Pair_IPC_MID_SSO_PM_Process.vtbl->end(&SSO_PM_Dispatcher))
+    if(process != SSO_PM_Dispatcher.CHash_Set_Pair_IPC_MID_SSO_PM_Process.vtbl->end(
+            &SSO_PM_Dispatcher.CHash_Set_Pair_IPC_MID_SSO_PM_Process))
     {
         process->obj(&SSO_PM_Worker, mail);
         SSO_PM_FSM.State_Machine.vtbl->dispatch(&SSO_PM_FSM.State_Machine, mail);

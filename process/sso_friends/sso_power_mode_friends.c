@@ -52,26 +52,33 @@ static bool NEG_Source_Is_Running = false;
 static bool NEG_Source_Signal = false;
 #endif
 /*=====================================================================================* 
+ * Local Function Prototypes
+ *=====================================================================================*/
+static void sso_pm_source_cbk_delete(struct Object * const obj);
+/*=====================================================================================*
  * Exported Object Definitions
  *=====================================================================================*/
 union SSO_PM_Source_Cbk SSO_PM_Source_Cbk[SSO_PM_MAX_SOURCE] =
 {
-      {NULL},
-      {NULL}
+        {NULL},
+        {NULL}
 };
 
-SSO_PM_Source_Cbk_T _private SSO_PM_Source_Cbk_Class =
+struct SSO_PM_Source_Cbk_Class SSO_PM_Source_Cbk_Class =
 {
-      {NULL, NULL}
+        {sso_pm_source_cbk_delete, NULL},
+        NULL,
+        NULL,
+        NULL,
+        NULL,
+        NULL,
+        NULL
 };
-/*=====================================================================================* 
- * Local Function Prototypes
- *=====================================================================================*/
 #ifdef SSO_PM_ENABLE
 #undef PMODE_SOURCE
 #define PMODE_SOURCE(src, osc) \
-   static void src##_start(void); \
-   static void src##_stop(void);
+		static void src##_start(void); \
+		static void src##_stop(void);
 POWER_MODE_SOURCES_TB
 
 static void PMode_AC_Run(void);
@@ -87,60 +94,60 @@ static void PMode_NEG_5V_Run(void);
 // Source defs
 void PMODE_SOURCE_AC_start(void)
 {
-   AC_Source_Is_Running =true;
+    AC_Source_Is_Running =true;
 
-   AC_Source_Signal_H_State = true;
-   AC_Source_Signal_L_State = false;
+    AC_Source_Signal_H_State = true;
+    AC_Source_Signal_L_State = false;
 }
 
 void PMODE_SOURCE_AC_stop(void)
 {
-   AC_Source_Is_Running = false;
+    AC_Source_Is_Running = false;
 
-   AC_Source_Signal_H_State = false;
-   AC_Source_Signal_L_State = false;
-   arduino::Set_DIO(SNACK_GPIO_AC_H_120HZ, AC_Source_Signal_H_State);
-   arduino::Set_DIO(SNACK_GPIO_AC_L_120HZ, AC_Source_Signal_L_State);
+    AC_Source_Signal_H_State = false;
+    AC_Source_Signal_L_State = false;
+    arduino::Set_DIO(SNACK_GPIO_AC_H_120HZ, AC_Source_Signal_H_State);
+    arduino::Set_DIO(SNACK_GPIO_AC_L_120HZ, AC_Source_Signal_L_State);
 
 }
 void PMODE_SOURCE_NEG_DC_start(void)
 {
-   NEG_Source_Is_Running = true;
+    NEG_Source_Is_Running = true;
 }
 
 void PMODE_SOURCE_NEG_DC_stop(void)
 {
-   NEG_Source_Is_Running = false;
+    NEG_Source_Is_Running = false;
 }
 
 void PMode_AC_Run(void)
 {
-      AC_Source_Signal_H_State = AC_Source_Signal_H_State ^ AC_Source_Is_Running;
-      AC_Source_Signal_L_State = AC_Source_Signal_L_State ^ AC_Source_Is_Running;
-      arduino::Set_DIO(SNACK_GPIO_AC_H_120HZ, AC_Source_Signal_H_State);
-      arduino::Set_DIO(SNACK_GPIO_AC_L_120HZ, AC_Source_Signal_L_State);
+    AC_Source_Signal_H_State = AC_Source_Signal_H_State ^ AC_Source_Is_Running;
+    AC_Source_Signal_L_State = AC_Source_Signal_L_State ^ AC_Source_Is_Running;
+    arduino::Set_DIO(SNACK_GPIO_AC_H_120HZ, AC_Source_Signal_H_State);
+    arduino::Set_DIO(SNACK_GPIO_AC_L_120HZ, AC_Source_Signal_L_State);
 }
 
 void PMode_NEG_5V_Run(void)
 {
-      NEG_Source_Signal = NEG_Source_Signal ^ NEG_Source_Signal;
-      arduino::Set_DIO(SNACK_GPIO_NEG_5V_1KHZ, NEG_Source_Signal);
+    NEG_Source_Signal = NEG_Source_Signal ^ NEG_Source_Signal;
+    arduino::Set_DIO(SNACK_GPIO_NEG_5V_1KHZ, NEG_Source_Signal);
 }
 /*=====================================================================================* 
  * Exported Function Definitions
  *=====================================================================================*/
 void pmode::PMODE_SOURCE_AC_init(void)
 {
-   arduino::Init_ISR(PMODE_SOURCE_AC_60HZ_THREAD);
-   arduino::Init_DIO(SNACK_GPIO_AC_H_120HZ, OUTPUT_LINE);
-   arduino::Init_DIO(SNACK_GPIO_AC_L_120HZ, OUTPUT_LINE);
-   arduino::Set_ISR(PMODE_SOURCE_AC_60HZ_THREAD, PMode_AC_Run, PMODE_SOURCE_AC_60HZ);
+    arduino::Init_ISR(PMODE_SOURCE_AC_60HZ_THREAD);
+    arduino::Init_DIO(SNACK_GPIO_AC_H_120HZ, OUTPUT_LINE);
+    arduino::Init_DIO(SNACK_GPIO_AC_L_120HZ, OUTPUT_LINE);
+    arduino::Set_ISR(PMODE_SOURCE_AC_60HZ_THREAD, PMode_AC_Run, PMODE_SOURCE_AC_60HZ);
 }
 
 void pmode::PMODE_SOURCE_NEG_DC_init(void)
 {
-   arduino::Init_DIO(SNACK_GPIO_NEG_5V_1KHZ, OUTPUT_LINE);
-   arduino::Set_ISR(PMODE_SOURCE_NEG_1kHZ_THREAD, PMode_NEG_5V_Run, PMODE_SOURCE_NEG_1KHZ);
+    arduino::Init_DIO(SNACK_GPIO_NEG_5V_1KHZ, OUTPUT_LINE);
+    arduino::Set_ISR(PMODE_SOURCE_NEG_1kHZ_THREAD, PMode_NEG_5V_Run, PMODE_SOURCE_NEG_1KHZ);
 }
 
 void pmode::Enter_PMODE_AC_OFF(void)
@@ -148,13 +155,13 @@ void pmode::Enter_PMODE_AC_OFF(void)
 
 void pmode::Enter_PMODE_ALL_OFF_STATE(void)
 {
-   PMODE_SOURCE_NEG_DC_stop();
-   arduino::Stop_ISR(PMODE_SOURCE_AC_60HZ_THREAD);
+    PMODE_SOURCE_NEG_DC_stop();
+    arduino::Stop_ISR(PMODE_SOURCE_AC_60HZ_THREAD);
 }
 
 void pmode::Enter_PMODE_ALL_ON(void)
 {
-   PMODE_SOURCE_AC_start();
+    PMODE_SOURCE_AC_start();
 }
 
 void pmode::Exit_PMODE_AC_OFF(void)
@@ -162,16 +169,18 @@ void pmode::Exit_PMODE_AC_OFF(void)
 
 void pmode::Exit_PMODE_ALL_OFF_STATE(void)
 {
-   PMODE_SOURCE_NEG_DC_start();
-   arduino::Run_ISR(PMODE_SOURCE_AC_60HZ_THREAD);
+    PMODE_SOURCE_NEG_DC_start();
+    arduino::Run_ISR(PMODE_SOURCE_AC_60HZ_THREAD);
 }
 
 
 void pmode::Exit_PMODE_ALL_ON(void)
 {
-   PMODE_SOURCE_AC_stop();
+    PMODE_SOURCE_AC_stop();
 }
 #endif
+
+void sso_pm_source_cbk_delete(struct Object * const obj){}
 /*=====================================================================================* 
  * snack_power_mode.cpp
  *=====================================================================================*
