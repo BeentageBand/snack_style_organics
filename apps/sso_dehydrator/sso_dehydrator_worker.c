@@ -103,6 +103,7 @@ void sso_dehyd_worker_on_start(union Worker * const super)
 
 void sso_dehyd_worker_on_loop(union Worker * const super)
 {
+    Dbg_Info("%s: is alive", __func__);
 }
 
 void sso_dehyd_worker_on_stop(union Worker * const this)
@@ -149,6 +150,11 @@ void Populate_SSO_Dehyd_Worker(union SSO_Dehyd_Worker * const this)
       Populate_SSO_Dehyd_FSM(&SSO_Dehyd_FSM,
                     &SSO_Dehyd_Cooler,
                     &SSO_Dehyd_Heater);
+
+      SSO_Dehyd_Worker_Class.Worker.on_loop = sso_dehyd_worker_on_loop;
+      SSO_Dehyd_Worker_Class.Worker.on_mail = sso_dehyd_worker_on_mail;
+      SSO_Dehyd_Worker_Class.Worker.on_start = sso_dehyd_worker_on_start;
+      SSO_Dehyd_Worker_Class.Worker.on_stop = sso_dehyd_worker_on_stop;
 
       SSO_Dehyd_Worker.st_m = &SSO_Dehyd_FSM.State_Machine;
       SSO_Dehyd_FSM.cooler_ctl = &SSO_Dehyd_Cooler;

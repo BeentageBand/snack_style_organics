@@ -102,6 +102,7 @@ void sso_pm_worker_on_start(union Worker * const worker)
 
 void sso_pm_worker_on_loop(union Worker * const worker)
 {
+    Dbg_Info("%s: is alive", __func__);
 
 }
 

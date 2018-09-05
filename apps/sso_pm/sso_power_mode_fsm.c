@@ -240,4 +240,5 @@ void Populate_SSO_PM_FSM(union SSO_PM_FSM * const this)
             SSO_PM_Power_Request_Buff,
             Num_Elems(SSO_PM_Power_Request_Buff));
     }
+    _clone(this, SSO_PM_FSM);
 }
