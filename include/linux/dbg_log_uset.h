@@ -7,7 +7,8 @@
    FID(IPC_FID,            DBG_WARN_LVL, "IPC FrameWork") \
    FID(PID_FID,            DBG_INFO_LVL, "PID Controller") \
    FID(STATE_MACHINE_FID,  DBG_INFO_LVL, "State Machine") \
-   FID(SSO_LAUNCHER_FID,   DBG_INFO_LVL, "Snack Style Organics launcher") \
+   FID(SSO_LAUNCHER_FID,   DBG_INFO_LVL, "Snack Style Organics launcher App") \
+   FID(SSO_LCD_FID,        DBG_INFO_LVL, "Snack Style Organics LCD Listener App") \
    FID(SSO_PM_FID,         DBG_INFO_LVL, "Snack Style Organics Power Mode App") \
 
 #define Dbg_Log_Print(feat_id, lvl, line, ...) \
