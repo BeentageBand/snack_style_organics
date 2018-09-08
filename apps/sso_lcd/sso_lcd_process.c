@@ -11,7 +11,7 @@ static SSO_LCD_Process_MID_T SSO_LCD_Process_Mailist[] =
 
 };
 
-void Populate_SSO_LCD_Dispatcher(SSO_LCD_Dispatcher_T * const dispatcher)
+void Populate_SSO_LCD_Dispatcher(SSO_LCD_Dispatcher_T * const this)
 {
     if(NULL == SSO_LCD_Dispatcher.vtbl)
     {

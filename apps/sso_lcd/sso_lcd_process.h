@@ -11,7 +11,7 @@ typedef void (* SSO_LCD_Process_T )(union SSO_LCD_Worker * const, union Mail * c
 #undef CHash_Map_Params
 
 typedef CHash_Map_IPC_MID_SSO_LCD_Process_T SSO_LCD_Dispatcher_T;
-typedef Pair_IPC_MID_SSO_LCD_Process_T SSO_LCD_Process_MID_T
+typedef Pair_IPC_MID_SSO_LCD_Process_T SSO_LCD_Process_MID_T;
 
 extern void Populate_SSO_LCD_Dispatcher(SSO_LCD_Dispatcher_T * const dispatcher);
 

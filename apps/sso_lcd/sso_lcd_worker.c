@@ -26,7 +26,7 @@ void sso_lcd_worker_delete(struct Object * const obj)
 {
 }
 
-void SSO_LCD_Worker_on_mail(union Worker * const super, union Mail * const mail)
+void sso_lcd_worker_on_mail(union Worker * const super, union Mail * const mail)
 {
     union SSO_LCD_Worker * const this = _cast(SSO_LCD_Worker, super);
     Isnt_Nullptr(this, );
@@ -37,7 +37,7 @@ void SSO_LCD_Worker_on_mail(union Worker * const super, union Mail * const mail)
     }
 }
 
-void SSO_LCD_Worker_on_start(union Worker * const super)
+void sso_lcd_worker_on_start(union Worker * const super)
 {
 }
 
@@ -46,13 +46,13 @@ void sso_lcd_worker_on_stop(union Worker * const super)
 
 }
 
-void SSO_LCD_Worker_on_loop(union Worker * const super)
+void sso_lcd_worker_on_loop(union Worker * const super)
 {
     union SSO_LCD_Worker * const this = _cast(SSO_LCD_Worker, super);
     Isnt_Nullptr(this, );
-    this->lcd->vtbl->update(this->lcd, this);
+    if (this->lcd)
+        this->lcd->vtbl->update(this->lcd, this);
     Dbg_Info("%s: is alive", __func__);
-
 }
 
 void Populate_SSO_LCD_Worker(union SSO_LCD_Worker * const this)
@@ -63,6 +63,16 @@ void Populate_SSO_LCD_Worker(union SSO_LCD_Worker * const this)
                 SSO_LCD_WORKER_TID,
                 SSO_LCD_Mailbox_Buff,
                 Num_Elems(SSO_LCD_Mailbox_Buff));
+
+        Object_Init(&SSO_LCD_Worker.Object,
+                &SSO_LCD_Worker_Class.Class,
+                sizeof(SSO_LCD_Worker_Class.Worker));
+
+        SSO_LCD_Worker_Class.Worker.on_loop = sso_lcd_worker_on_loop;
+        SSO_LCD_Worker_Class.Worker.on_start = sso_lcd_worker_on_start;
+        SSO_LCD_Worker_Class.Worker.on_stop = sso_lcd_worker_on_stop;
+        SSO_LCD_Worker_Class.Worker.on_mail = sso_lcd_worker_on_mail;
+
         Populate_SSO_LCD_Dispatcher(&SSO_LCD_Dispatcher);
     }
     _clone(this, SSO_LCD_Worker);

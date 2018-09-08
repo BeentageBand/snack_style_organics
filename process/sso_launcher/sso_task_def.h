@@ -17,6 +17,8 @@
 #include "snack_org_lcd.h"
 #endif
 #include "sso_dehydrator_worker.h"
+#include "sso_hid_worker.h"
+#include "sso_lcd_worker.h"
 #include "sso_power_mode_wn.h"
 /*=====================================================================================* 
  * Standard Includes
@@ -29,11 +31,11 @@
          /* Class, Worker Id,  Dependencies*/\
    SSO_TASK(SSO_Dehyd, SSO_DEHYD_WORKER_TID, APP_NO_DEPS) \
    SSO_TASK(SSO_PM, SSO_PM_WORKER_TID, APP_NO_DEPS) \
+   SSO_TASK(SSO_LCD,             SNACK_ORG_LCD_TID,      ""  ) \
    /*
    SSO_TASK(Arduino_WN,             ARDUINO_TID,            ""  ) \
    SSO_TASK(Test_WN,                TEST_TID,               ""  ) \
    SSO_TASK(SSO_Ctl_WN,             SNACK_ORG_CTL_TID,      ""  ) \
-   SSO_TASK(SSO_LCD_WN,             SNACK_ORG_LCD_TID,      ""  ) \
    SSO_TASK(Heater_Ctl_WN,          HEATER_CTL_TID,         ""  ) \
    SSO_TASK(Fan_Ctl_WN,             AXIAL_FAN_CTL_TID,      ""  ) \
    SSO_TASK(PID_Ctl_WN,             PID_CTL_TID,            ""  ) \

@@ -16,8 +16,10 @@ struct SSO_LCD_Class SSO_LCD_Class =
         {sso_lcd_delete, NULL},
         sso_lcd_append,
         sso_lcd_update,
-        sso_lcd_printf
+        sso_lcd_print
 };
+
+static union SSO_LCD_Cbk SSO_LCD_Cbk = {NULL};
 
 void sso_lcd_delete(struct Object * const obj){}
 
@@ -55,7 +57,7 @@ void sso_lcd_append(union SSO_LCD * const this, union SSO_LCD * const lcd)
 
 }
 
-void Populate_SSO_LCD(union SSO_LCD * const lcd,
+void Populate_SSO_LCD(union SSO_LCD * const this,
         char const * const fmt, uint32_t const cursor)
 {
     if(NULL == SSO_LCD.vtbl)
@@ -64,6 +66,7 @@ void Populate_SSO_LCD(union SSO_LCD * const lcd,
         SSO_LCD.next = NULL;
         SSO_LCD.fmt = "";
         SSO_LCD.cursor = 0;
+        Populate_SSO_LCD_Cbk(&SSO_LCD_Cbk);
     }
     _clone(this, SSO_LCD);
 }

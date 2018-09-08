@@ -11,6 +11,7 @@ $(_flavor_)_$(_feat_)_bin_libs=\
    state_machine \
    sso_dehydrator \
    sso_friends \
+   sso_hid \
    sso_lcd \
    sso_power_mode \
 #\

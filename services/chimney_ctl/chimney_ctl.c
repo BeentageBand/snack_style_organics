@@ -8,14 +8,13 @@
  *
  */
 /*=====================================================================================*/
-
+#define COBJECT_IMPLEMENTATION
 /*=====================================================================================*
  * Project Includes
  *=====================================================================================*/
-#include "../../../chimney_ctl/pk_chimney_ctl_user/chimney_ctl.h"
-
-#include "../../../../include/snack_style_gpio.h"
-#include "../../../atmel_asf/pk_arduino_fwk_code/_inc/arduino_fwk_dio.h"
+#include "chimney_ctl.h"
+#include "dio.h"
+#include "mutex.h"
 /*=====================================================================================* 
  * Standard Includes
  *=====================================================================================*/
@@ -27,19 +26,27 @@
 /*=====================================================================================* 
  * Local Define Macros
  *=====================================================================================*/
-
+#define CHIMNEY_LOCK_MS (2000)
 /*=====================================================================================* 
  * Local Type Definitions
  *=====================================================================================*/
-
+static void chimney_ctl_delete(struct Object * const obj);
+static void chimney_ctl_set(union Chimney_Ctl * const this, Chimney_Clearance_Millis_T const clearance);
+static uint16_t chimney_ctl_make_pulse(Chimney_Clearance_Millis_T const clearance);
 /*=====================================================================================* 
  * Local Object Definitions
  *=====================================================================================*/
-static Chimney_State_T Chim_State = CHIMNEY_OPEN;
+static union Chimney_Ctl Chimney_Ctl = {NULL};
+static Chimney_Clearance_Millis_T Chimney_Clearance_Milis = 0;
+static union Mutex Chimney_Lock = {NULL};
 /*=====================================================================================* 
  * Exported Object Definitions
  *=====================================================================================*/
-
+struct Chimney_Ctl_Class Chimney_Ctl_Class =
+{
+        {chimney_ctl_delete, NULL},
+        chimney_ctl_set
+};
 /*=====================================================================================* 
  * Local Function Prototypes
  *=====================================================================================*/
@@ -51,45 +58,37 @@ static Chimney_State_T Chim_State = CHIMNEY_OPEN;
 /*=====================================================================================* 
  * Local Function Definitions
  *=====================================================================================*/
+void chimney_ctl_delete(struct Object * const obj)
+{
+}
 
+void chimney_ctl_set(union Chimney_Ctl * const this, Chimney_Clearance_Millis_T const clearance)
+{
+    if(!Chimney_Lock.vtbl->lock(&Chimney_Lock, CHIMNEY_LOCK_MS)) return;
+    *this->clearance = clearance;
+    uint16_t pulse = chimney_ctl_make_pulse(clearance);
+
+    Chimney_Lock.vtbl->unlock(&Chimney_Lock);
+}
+uint16_t chimney_ctl_make_pulse(Chimney_Clearance_Millis_T const clearance)
+{
+    uint16_t pulse;
+    //According to drive spec.
+    pulse = clearance;//TODO conversion
+    return pulse;
+}
 /*=====================================================================================* 
  * Exported Function Definitions
  *=====================================================================================*/
-void chim::Init(void)
+void Populate_Chimney_Ctl(union Chimney_Ctl * const this)
 {
-   arduino::Init_DIO(SNACK_GPIO_DC_MOTOR_H, ARDUINO_DIO_OUTPUT_MODE);
-   arduino::Init_DIO(SNACK_GPIO_DC_MOTOR_L, ARDUINO_DIO_OUTPUT_MODE);
-   chim::Set_State(Chim_State);
-}
-void chim::Set_State(Chimney_State_T state)
-{
-   switch(state)
-   {
-   case CHIMNEY_OPEN:
-      Chim_State = state;
-      arduino::Set_DIO(SNACK_GPIO_DC_MOTOR_H, true );
-      arduino::Set_DIO(SNACK_GPIO_DC_MOTOR_L, false);
-      break;
-
-   case CHIMNEY_CLOSED:
-      Chim_State = state;
-      arduino::Set_DIO(SNACK_GPIO_DC_MOTOR_H, false);
-      arduino::Set_DIO(SNACK_GPIO_DC_MOTOR_L, true );
-      break;
-
-   default: break;
-   }
-}
-
-Chimney_State_T chim::Get_State(void)
-{
-   return Chim_State;
-}
-void chim::Shut(void)
-{
-   chim::Set_State(CHIMNEY_OPEN);
-   arduino::Init_DIO(SNACK_GPIO_DC_MOTOR_H, ARDUINO_DIO_INPUT_MODE);
-   arduino::Init_DIO(SNACK_GPIO_DC_MOTOR_L, ARDUINO_DIO_INPUT_MODE);
+    if(NULL == Chimney_Ctl.vtbl)
+    {
+        Chimney_Ctl.vtbl = &Chimney_Ctl_Class;
+        Chimney_Ctl.clearance = &Chimney_Clearance_Milis;
+        Populate_Mutex(&Chimney_Lock);
+    }
+    _clone(this, Chimney_Ctl);
 }
 /*=====================================================================================* 
  * chimney_ctl.cpp

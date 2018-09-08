@@ -30,6 +30,9 @@ union Worker * SSO_App_Factory_Method(IPC_TID_T const tid)
 {
         static union SSO_PM_Worker sso_pm = {NULL};
         static union SSO_Dehyd_Worker sso_dehyd = {NULL};
+        static union SSO_LCD_Worker sso_lcd = {NULL};
+        static union SSO_HID_Worker sso_hid = {NULL};
+
         union Worker * worker = NULL;
         switch(tid)
         {
@@ -50,6 +53,20 @@ union Worker * SSO_App_Factory_Method(IPC_TID_T const tid)
                 Dbg_Info("%s:create SSO_Dehyd_Worker", __func__);
             }
             worker = &sso_dehyd.Worker;
+            break;
+        case SSO_LCD_WORKER_TID:
+            if(NULL == sso_lcd.vtbl)
+            {
+                Populate_SSO_LCD_Worker(&sso_lcd);
+            }
+            worker = &sso_lcd.Worker;
+            break;
+        case SSO_HID_WORKER_TID:
+            if(NULL == sso_hid.vtbl)
+            {
+                Populate_SSO_HID_Worker(&sso_hid);
+            }
+            worker = &sso_hid.Worker;
             break;
         default: break;
         }
