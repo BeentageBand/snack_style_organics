@@ -8,10 +8,14 @@
 #ifndef DIO_H_
 #define DIO_H_
 
-#include "dio_setup.h"
-#include "reuse.h"
+#include "dio_set.h"
+#include "std_reuse.h"
 
 #define DIO_ITEM_ENUM(pin, desc) pin,
+
+#ifdef __cplusplus
+extern "C"{
+#endif
 
 enum
 {
@@ -46,4 +50,7 @@ extern DIO_Pin_Lvl_T DIO_Write(DIO_T const pin, DIO_Pin_Lvl_T const wlvl);
 
 extern DIO_Pin_Lvl_T DIO_Read(DIO_T const pin);
 
+#ifdef __cplusplus
+}
+#endif
 #endif /* DIO_H_ */

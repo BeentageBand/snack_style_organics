@@ -27,3 +27,4 @@ out.txt
 *.componentinfo.xml
 *.cppproj
 *.bak
+*.log

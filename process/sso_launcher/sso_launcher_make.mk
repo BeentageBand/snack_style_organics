@@ -4,6 +4,7 @@ $(_flavor_)_$(_feat_)_bin_objs=sso_launcher
 $(_flavor_)_$(_feat_)_bin_libs=\
    application \
    cobject \
+   chimney_ctl \
    dbg_log \
    ipc \
    ipc_posix \
