@@ -10,6 +10,14 @@
 
 #include "std_reuse.h"
 
+#ifdef __cplusplus
+extern "C" {
+#endif
+
 typedef uint16_t Chimney_Clearance_Millis_T;
+
+#ifdef __cplusplus
+}
+#endif
 
 #endif /* CHIMNEY_TYPES_H_ */

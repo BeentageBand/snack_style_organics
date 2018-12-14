@@ -19,6 +19,7 @@
 #include "pid_ctl_ext.h"
 #include "temp_monitor.h"
 #endif
+#include "dbg_log_ext.h"
 #include "ipc_posix.h"
 #include "sso_friends.h"
 
@@ -28,6 +29,13 @@ void Snack_Style_Organics_Init(void)
 	Populate_IPC_POSIX(&posix_helper);
 	IPC_Helper_Append(&posix_helper.IPC_Helper);
 }
+
+bool Dbg_Log_Available(void)
+{
+    return true;
+}
+
+void Dbg_Log_Sync(void){}
 
 #ifdef ENABLE_SSO
 Fix32_T pid::Get_PID_CTL_CHANNEL_FAN_DOOR()
