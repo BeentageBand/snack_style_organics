@@ -6,6 +6,7 @@ $(_flavor_)_$(_feat_)_bin_libs=\
    cobject \
    chimney_ctl \
    dbg_log \
+   heater_resistor_ctl \
    ipc \
    ipc_posix \
    pid_ctl \
