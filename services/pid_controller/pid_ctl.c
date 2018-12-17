@@ -141,6 +141,7 @@ void pid_ctl_loop(union PID_Ctl * const this, PID_Fix32_T const input_sample)
             pid_ctl_set_output(this);
       }
 }
+
 void Populate_PID_Ctl(union PID_Ctl * const this)
 {
       if(NULL == PID_Ctl.vtbl)

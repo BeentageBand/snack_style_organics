@@ -1,6 +1,6 @@
 /*=====================================================================================*/
 /**
- * arduino_fwk.cpp
+ * heater_ctl.c
  * author : puch
  * date : Oct 22 2015
  *
@@ -8,14 +8,15 @@
  *
  */
 /*=====================================================================================*/
-
+#define COBJECT_IMPLEMENTATION
 /*=====================================================================================*
  * Project Includes
  *=====================================================================================*/
-#include "../../../heater_resistor_ctl/pk_heater_ctl_user/heater_ctl.h"
-
-#include "../../../../include/heater_ctl_set.h"
-#include "../../../atmel_asf/pk_arduino_fwk_code/_inc/arduino_fwk_pwm.h"
+/* 
+ #include "heater_ctl_pwm.h"
+*/
+#include "heater_ctl.h"
+#include "heater_ctl_set.h"
 /*=====================================================================================* 
  * Standard Includes
  *=====================================================================================*/
@@ -32,19 +33,26 @@
  * Local Type Definitions
  *=====================================================================================*/
 
-/*=====================================================================================* 
- * Local Object Definitions
+/*=====================================================================================* * Local Function Prototypes
  *=====================================================================================*/
-static uint8_t Output = 0U;
-const ARDUINO_PWM_CHANNEL_T HEATER_CTL_PWM_CHANNEL = ARDUINO_PWM_CHANNEL_1;
+static void heater_ctl_delete(struct Object * const obj);
+static void heater_ctl_set(union Heater_Ctl * const this, uint8_t const out);
+static uint8_t heater_ctl_get(union Heater_Ctl * const this);
+
 /*=====================================================================================* 
  * Exported Object Definitions
  *=====================================================================================*/
-
+struct Heater_Ctl_Class Heater_Ctl_Class =
+{
+    {heater_ctl_delete, NULL},
+    heater_ctl_set,
+    heater_ctl_get
+};
 /*=====================================================================================* 
- * Local Function Prototypes
+ * Local Object Definitions
  *=====================================================================================*/
-
+static union Heater_Ctl Heater_Ctl = {NULL};
+//const TODO arduino_PWM_CHANNEL_T HEATER_CTL_PWM_CHANNEL = TODO arduino_PWM_CHANNEL_1;
 /*=====================================================================================* 
  * Local Inline-Function Like Macros
  *=====================================================================================*/
@@ -52,45 +60,51 @@ const ARDUINO_PWM_CHANNEL_T HEATER_CTL_PWM_CHANNEL = ARDUINO_PWM_CHANNEL_1;
 /*=====================================================================================* 
  * Local Function Definitions
  *=====================================================================================*/
-
-/*=====================================================================================* 
- * Exported Function Definitions
- *=====================================================================================*/
-void heater::Init(void)
+void heater_ctl_delete(struct Object * const obj)
 {
-   arduino::Init_PWM(HEATER_CTL_PWM_CHANNEL);
+   //TODO arduino::Stop_PWM(HEATER_CTL_PWM_CHANNEL);
 }
 
-void heater::Set_Output(const uint8_t out)
+void heater_ctl_set(union Heater_Ctl * const this, uint8_t const out)
 {
    if(out < HEATER_MAX_OUTPUT &&
       out > HEATER_MIN_OUTPUT)
    {
-      Output = out;
+      this->out = out;
    }
    else if (out >= HEATER_MAX_OUTPUT)
    {
-      Output = HEATER_MAX_OUTPUT;
+      this->out = HEATER_MAX_OUTPUT;
    }
    else
    {
-      Output = HEATER_MIN_OUTPUT;
+      this->out = HEATER_MIN_OUTPUT;
    }
-   arduino::Set_PWM(HEATER_CTL_PWM_CHANNEL, out);
+   //TODO arduino::Set_PWM(HEATER_CTL_PWM_CHANNEL, out);
 }
 
-uint8_t heater::Get_Output(void)
+uint8_t heater_ctl_get(union Heater_Ctl * const this)
 {
-   return Output;
+   return this->out;
 }
 
-void heater::Shut(void)
-{
-   arduino::Stop_PWM(HEATER_CTL_PWM_CHANNEL);
-}
 /*=====================================================================================* 
- * arduino_fwk.cpp
+ * Exported Function Definitions
+ *=====================================================================================*/
+
+void Populate_Heater_Ctl(union Heater_Ctl * const this)
+{
+    if (NULL == Heater_Ctl.vtbl)
+    {
+        Heater_Ctl.vtbl = &Heater_Ctl_Class;
+       //TODO arduino::Init_PWM(HEATER_CTL_PWM_CHANNEL);
+    }
+    _clone(this, Heater_Ctl);
+}
+
+/*=====================================================================================* 
+ * heater_ctl.c
  *=====================================================================================*
  * Log History
  *
- *=====================================================================================*/
+*=====================================================================================*/

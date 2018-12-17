@@ -17,7 +17,7 @@
 /*=====================================================================================* 
  * Standard Includes
  *=====================================================================================*/
-#include <stdint.h>
+#include "cobject.h"
 /*=====================================================================================* 
  * Exported X-Macros
  *=====================================================================================*/
@@ -29,22 +29,43 @@
 /*=====================================================================================* 
  * Exported Type Declarations
  *=====================================================================================*/
-namespace heater{
+#ifdef __cplusplus
+extern "C" {
+#endif
+
+typedef union Heater_Ctl
+{
+    struct Heater_Ctl_Class _private * _private vtbl;
+    union
+    {
+        struct Object Object;
+        uint8_t _private out;
+    };
+}Heater_Ctl_T;
+
+typedef struct Heater_Ctl_Class
+{
+    struct Class Class;
+    void (* _private set) (union Heater_Ctl * const, uint8_t const);
+    uint8_t (* _private get) (union Heater_Ctl * const);
+}Heater_Ctl_Class_T;
+
 /*=====================================================================================* 
  * Exported Object Declarations
  *=====================================================================================*/
 
+extern struct Heater_Ctl_Class _private Heater_Ctl_Class;
 /*=====================================================================================* 
  * Exported Function Prototypes
  *=====================================================================================*/
-extern void Init(void);
-extern void Set_Output(const uint8_t out);
-extern uint8_t Get_Output(void);
-extern void Shut(void);
+
+extern void Populate_Heater_Ctl(union Heater_Ctl * const heater);
 /*=====================================================================================* 
  * Exported Function Like Macros
  *=====================================================================================*/
-}/*heater*/
+#ifdef __cplusplus
+}
+#endif
 /*=====================================================================================* 
  * arduino_fwk.h
  *=====================================================================================*
