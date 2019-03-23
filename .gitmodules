@@ -25,3 +25,6 @@
 [submodule "support/console"]
 	path = support/console
 	url = git@github.com:BeentageBand/console
+[submodule "support/ipc_common"]
+	path = support/ipc_common
+	url = git@github.com:BeentageBand/ipc_common.git
